@@ -5,6 +5,8 @@ use bevy::{prelude::*, transform};
 const RUN_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Run.png";
 const IDLE_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Idle.png";
 const ATTACK1_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Attack.png";
+
+const GROUND_LVL: f32 = -(793./2.) +103.;
 pub struct PlayerPlugin;
 
 // ressource for player animations
@@ -71,7 +73,7 @@ fn player_setup(
 fn player_keyboard_event_system(
     mut commands: Commands,
     kb: Res<Input<KeyCode>>,
-    ground_level: Res<GroundLevel>,
+    
     animations: Res<PlayerAnimations>,
     mut query: Query<
         (
@@ -111,13 +113,22 @@ fn player_keyboard_event_system(
         }
 
         if kb.pressed(KeyCode::Space){
-            velocity.vy = 100.;
+            if  transform.translation.y <= GROUND_LVL + 50. {
+                    velocity.vy = 100.;
+                }
+            else{
+                velocity.vy = -100.
+            }
         }
-        else if transform.translation.y > ground_level.0 {
-            velocity.vy = -50.;
+        
+        else if transform.translation.y > GROUND_LVL {
+            
+            velocity.vy = -100.
+            
         }
         else {
             velocity.vy = 0.;
         }
     }
 }
+

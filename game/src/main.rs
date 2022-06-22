@@ -10,7 +10,7 @@ use player::PlayerPlugin;
 
 const BACKGROUND : &str = "textures/forest/Free Pixel Art Forest/Preview/Background.png";
 const CROUCH_SPRITE : &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Crouch.png";
-
+const GROUND_LVL: f32 = -(793./2.) +103.;
 struct GroundLevel(f32);
 struct WinSize{
     win_h : f32,
@@ -31,7 +31,6 @@ fn main() {
         .add_plugin(PlayerPlugin)
         .add_startup_system(setup)
         .add_system(animate_sprite)
-
         .add_system(movement)
         .run();
 }
