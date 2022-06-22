@@ -1,5 +1,4 @@
 mod components;
-
 use components::*;
 use bevy::{prelude::*, render::texture::ImageSettings};
 
@@ -36,7 +35,7 @@ fn setup(
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
-    let texture_handle = asset_server.load("textures/knight/Colour1/Outline/120x80_PNGSheets/_Run.png");
+    let texture_handle = asset_server.load("textures/knight/Colour2/Outline/120x80_PNGSheets/_AttackComboNoMovement.png");
     let texture_atlas = TextureAtlas::from_grid(texture_handle, Vec2::new(120.0, 80.0), 10, 1);
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
     commands.spawn_bundle(Camera2dBundle::default());
