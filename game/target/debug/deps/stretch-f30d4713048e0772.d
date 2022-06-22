@@ -1,0 +1,13 @@
+/Users/jimmybao/Desktop/Rust_Bevy/projetx/game/target/debug/deps/stretch-f30d4713048e0772.rmeta: /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/lib.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/geometry.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/node.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/number.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/result.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/style.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/algo.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/forest.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/id.rs
+
+/Users/jimmybao/Desktop/Rust_Bevy/projetx/game/target/debug/deps/stretch-f30d4713048e0772.d: /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/lib.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/geometry.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/node.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/number.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/result.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/style.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/algo.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/forest.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/id.rs
+
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/lib.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/geometry.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/node.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/number.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/result.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/style.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/algo.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/forest.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/stretch-0.3.2/src/id.rs:

@@ -1,0 +1,13 @@
+/Users/jimmybao/Desktop/Rust_Bevy/projetx/game/target/debug/deps/indexmap-2456bdea3bc84bdf.rmeta: /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/lib.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/macros.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/equivalent.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/mutable_keys.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/util.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/map.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/map/core.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/map/core/raw.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/set.rs
+
+/Users/jimmybao/Desktop/Rust_Bevy/projetx/game/target/debug/deps/indexmap-2456bdea3bc84bdf.d: /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/lib.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/macros.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/equivalent.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/mutable_keys.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/util.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/map.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/map/core.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/map/core/raw.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/set.rs
+
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/lib.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/macros.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/equivalent.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/mutable_keys.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/util.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/map.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/map/core.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/map/core/raw.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.0/src/set.rs:

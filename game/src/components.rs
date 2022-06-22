@@ -9,9 +9,10 @@ pub enum Movement{
     Running,
 }
 
-#[derive(Component)]
-pub enum Direction {
-	
+#[derive(Component, Default)]
+pub struct Velocity {
+	pub vx : f32,
+	pub vy : f32,
 }
 
 #[derive(Component, Deref, DerefMut)]
@@ -21,12 +22,12 @@ pub struct AnimationTimer(pub Timer);
 //region : player components
 
 #[derive(Component)]
-pub struct PlayerComponent;
+pub struct Player;
 
 //endregion : player components
 
 //region : enemy components
 #[derive(Component)]
-pub struct EnemyComponent;
+pub struct Enemy;
 
 //endregion : enemy components 

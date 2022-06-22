@@ -1,0 +1,1 @@
+/Users/jimmybao/Desktop/Rust_Bevy/projetx/game/target/debug/game: /Users/jimmybao/Desktop/Rust_Bevy/projetx/game/src/components.rs /Users/jimmybao/Desktop/Rust_Bevy/projetx/game/src/main.rs /Users/jimmybao/Desktop/Rust_Bevy/projetx/game/src/player.rs

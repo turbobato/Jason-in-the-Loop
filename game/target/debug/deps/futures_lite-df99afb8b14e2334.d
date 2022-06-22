@@ -1,0 +1,11 @@
+/Users/jimmybao/Desktop/Rust_Bevy/projetx/game/target/debug/deps/futures_lite-df99afb8b14e2334.rmeta: /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/lib.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/future.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/prelude.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/stream.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/io.rs
+
+/Users/jimmybao/Desktop/Rust_Bevy/projetx/game/target/debug/deps/libfutures_lite-df99afb8b14e2334.rlib: /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/lib.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/future.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/prelude.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/stream.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/io.rs
+
+/Users/jimmybao/Desktop/Rust_Bevy/projetx/game/target/debug/deps/futures_lite-df99afb8b14e2334.d: /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/lib.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/future.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/prelude.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/stream.rs /Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/io.rs
+
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/lib.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/future.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/prelude.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/stream.rs:
+/Users/jimmybao/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-lite-1.12.0/src/io.rs:
