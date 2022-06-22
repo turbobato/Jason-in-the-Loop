@@ -4,6 +4,7 @@ use bevy::{prelude::*, transform};
 
 const RUN_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Run.png";
 const IDLE_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Idle.png";
+const ATTACK1_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Attack.png";
 pub struct PlayerPlugin;
 
 // ressource for player animations
@@ -11,6 +12,7 @@ pub struct PlayerPlugin;
 pub struct PlayerAnimations {
     pub idle: Handle<TextureAtlas>,
     pub run: Handle<TextureAtlas>,
+    pub attack1: Handle<TextureAtlas>
 }
 
 impl Plugin for PlayerPlugin {
@@ -33,14 +35,19 @@ fn player_setup(
 ) {
     let idle_sprite = asset_server.load(IDLE_SPRITE);
     let run_sprite = asset_server.load(RUN_SPRITE);
+    let attack1_sprite: Handle<Image> = asset_server.load(ATTACK1_SPRITE);
     let texture_atlas_running = TextureAtlas::from_grid(run_sprite, Vec2::new(120., 80.), 10, 1);
     let texture_atlas_handle_running = texture_atlases.add(texture_atlas_running);
     let texture_atlas_idle = TextureAtlas::from_grid(idle_sprite, Vec2::new(120., 80.), 10, 1);
     let texture_atlas_handle_idle = texture_atlases.add(texture_atlas_idle);
     let idle = texture_atlas_handle_idle.clone();
+    let texture_atlas_a1 = TextureAtlas::from_grid(attack1_sprite, Vec2::new(120.0, 80.0), 10, 1);
+    let texture_atlas_attack1 = texture_atlases.add(texture_atlas_a1);
+
     let animations_ressource = PlayerAnimations {
         run: texture_atlas_handle_running,
         idle,
+        attack1: texture_atlas_attack1
     };
     commands.insert_resource(animations_ressource);
     let level = ground_level.0;
@@ -62,6 +69,7 @@ fn player_setup(
 }
 
 fn player_keyboard_event_system(
+    mut commands: Commands,
     kb: Res<Input<KeyCode>>,
     ground_level: Res<GroundLevel>,
     animations: Res<PlayerAnimations>,
@@ -87,6 +95,12 @@ fn player_keyboard_event_system(
             transform.scale.x = 1.;
             if *texture_atlas != animations.run {
                 *texture_atlas = animations.run.clone();
+            };
+        }
+        else if kb.pressed(KeyCode::Q){
+            velocity.vx = 0.;
+            if *texture_atlas != animations.attack1 {
+                *texture_atlas = animations.attack1.clone();
             };
         }
         else {
