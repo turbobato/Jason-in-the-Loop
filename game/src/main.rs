@@ -29,6 +29,7 @@ fn main() {
         .add_plugin(PlayerPlugin)
         .add_startup_system(setup)
         .add_system(animate_sprite)
+        .add_system(movement)
         .run();
 }
 
@@ -77,5 +78,14 @@ fn animate_sprite(
             let texture_atlas = texture_atlases.get(texture_atlas_handle).unwrap();
             sprite.index = (sprite.index + 1) % texture_atlas.textures.len();
         }
+    }
+}
+
+
+fn movement(time : Res<Time>, mut query : Query<(&Velocity, &mut Transform),With<Player>>){
+    let delta = time.delta_seconds();
+    for (velocity, mut transform) in query.iter_mut() {
+        transform.translation.x += velocity.vx * delta;
+        transform.translation.y += velocity.vy * delta;
     }
 }

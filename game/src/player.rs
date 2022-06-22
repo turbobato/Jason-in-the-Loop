@@ -5,6 +5,13 @@ const RUN_SPRITE : &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_R
 const IDLE_SPRITE : &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Idle.png";
 pub struct PlayerPlugin;
 
+// ressource for player animations
+
+pub struct PlayerAnimations {
+    pub run : Handle<TextureAtlas>,
+    pub idle : Handle<TextureAtlas>,
+}
+
 impl Plugin for PlayerPlugin {
     fn build(&self, app : &mut App){
         app.add_startup_system_to_stage(StartupStage::PostStartup, player_setup);
@@ -29,14 +36,27 @@ fn player_setup(mut commands : Commands, asset_server : Res<AssetServer>, ground
         1
     );
     let texture_atlas_handle_idle = texture_atlases.add(texture_atlas_idle);
+    let idle = texture_atlas_handle_idle.clone();
+    let animations_ressource = PlayerAnimations {
+        run : texture_atlas_handle_running,
+        idle,
+    };
+    commands.insert_resource(animations_ressource);
     let level = ground_level.0;
     commands.spawn_bundle(SpriteSheetBundle{
-        texture_atlas : texture_atlas_handle_running,
+        texture_atlas : texture_atlas_handle_idle,
         transform : Transform {
             translation : Vec3::new(0.,level,1.),
             ..Default::default()
         },
         ..Default::default()
     })
-    .insert(AnimationTimer(Timer::from_seconds(0.1, true)));
+    .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
+    .insert(Player)
+    .insert(Velocity {
+        vx : 1.,
+        ..Default::default()
+    });
+
 }
+
