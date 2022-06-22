@@ -58,6 +58,7 @@ fn player_setup(
 
 fn player_keyboard_event_system(
     kb: Res<Input<KeyCode>>,
+    ground_level: Res<GroundLevel>,
     animations: Res<PlayerAnimations>,
     mut query: Query<
         (
@@ -70,16 +71,34 @@ fn player_keyboard_event_system(
 ) {
     if let Ok((mut velocity,mut texture_atlas,mut transform)) = query.get_single_mut() {
         if kb.pressed(KeyCode::Left) {
-            velocity.vx = -50.;
+            velocity.vx = -100.;
             transform.scale.x = -1.;
-            //texture_atlas = animations.run;
+            if *texture_atlas != animations.run {
+                *texture_atlas = animations.run.clone();
+            };
         }
         else if kb.pressed(KeyCode::Right) {
-            velocity.vx = 50.;
+            velocity.vx = 100.;
             transform.scale.x = 1.;
+            if *texture_atlas != animations.run {
+                *texture_atlas = animations.run.clone();
+            };
         }
         else {
             velocity.vx = 0.;
+            if *texture_atlas != animations.idle {
+                *texture_atlas = animations.idle.clone();
+            };
+        }
+
+        if kb.pressed(KeyCode::Space){
+            velocity.vy = 100.;
+        }
+        else if transform.translation.y > ground_level.0 {
+            velocity.vy = -50.;
+        }
+        else {
+            velocity.vy = 0.;
         }
     }
 }
