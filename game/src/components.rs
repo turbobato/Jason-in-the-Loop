@@ -15,14 +15,30 @@ pub struct Velocity {
 	pub vy : f32,
 }
 
+#[derive(Component, Default)]
+pub struct Acceleration {
+    pub ax : f32,
+    pub ay : f32,
+}
+
 #[derive(Component, Deref, DerefMut)]
 pub struct AnimationTimer(pub Timer);
+
+#[derive(Component)]
+pub struct Platform{
+    pub ground_level : f32,
+    pub left_bound : f32,
+    pub right_bound : f32,
+}
 //endregion : general components 
 
 //region : player components
 
 #[derive(Component)]
 pub struct Player;
+
+#[derive(Component)]
+pub struct Grounded(pub bool);
 
 //endregion : player components
 
