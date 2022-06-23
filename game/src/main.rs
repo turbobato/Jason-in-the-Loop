@@ -1,9 +1,6 @@
 mod components;
-<<<<<<< HEAD
-=======
 mod player;
 
->>>>>>> f599957c2da12101e6302bfb3470e924b10835f0
 use components::*;
 use bevy::{prelude::*, render::texture::ImageSettings};
 use player::PlayerPlugin;
@@ -37,18 +34,7 @@ fn main() {
 }
 
 
-<<<<<<< HEAD
-fn setup(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-) {
-    let texture_handle = asset_server.load("textures/knight/Colour2/Outline/120x80_PNGSheets/_AttackComboNoMovement.png");
-    let texture_atlas = TextureAtlas::from_grid(texture_handle, Vec2::new(120.0, 80.0), 10, 1);
-    let texture_atlas_handle = texture_atlases.add(texture_atlas);
-=======
 fn setup(mut commands : Commands, asset_server : Res<AssetServer>, windows : Res<Windows>){
->>>>>>> f599957c2da12101e6302bfb3470e924b10835f0
     commands.spawn_bundle(Camera2dBundle::default());
     let background_image: Handle<Image> = asset_server.load(BACKGROUND);
     commands.spawn_bundle(SpriteBundle {
