@@ -1,8 +1,9 @@
-use crate::{components::*, GroundLevel};
+use crate::{components::*, WinSize};
 use bevy::{prelude::*, transform};
 
 const RUN_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Run.png";
 const IDLE_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Idle.png";
+const SPRITE_DIMENSIONS : (f32,f32) = (120., 80.);
 pub struct PlayerPlugin;
 
 // ressource for player animations
@@ -22,15 +23,15 @@ impl Plugin for PlayerPlugin {
 
 fn player_setup(
     mut commands: Commands,
+    win_size : Res<WinSize>,
     asset_server: Res<AssetServer>,
-    ground_level: Res<GroundLevel>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
     let idle_sprite = asset_server.load(IDLE_SPRITE);
     let run_sprite = asset_server.load(RUN_SPRITE);
-    let texture_atlas_running = TextureAtlas::from_grid(run_sprite, Vec2::new(120., 80.), 10, 1);
+    let texture_atlas_running = TextureAtlas::from_grid(run_sprite, Vec2::new(SPRITE_DIMENSIONS.0, SPRITE_DIMENSIONS.1), 10, 1);
     let texture_atlas_handle_running = texture_atlases.add(texture_atlas_running);
-    let texture_atlas_idle = TextureAtlas::from_grid(idle_sprite, Vec2::new(120., 80.), 10, 1);
+    let texture_atlas_idle = TextureAtlas::from_grid(idle_sprite, Vec2::new(SPRITE_DIMENSIONS.0, SPRITE_DIMENSIONS.1), 10, 1);
     let texture_atlas_handle_idle = texture_atlases.add(texture_atlas_idle);
     let idle = texture_atlas_handle_idle.clone();
     let animations_ressource = PlayerAnimations {
@@ -38,12 +39,12 @@ fn player_setup(
         idle,
     };
     commands.insert_resource(animations_ressource);
-    let level = ground_level.0;
+    let level = -win_size.win_h/2. + 67.;
     commands
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_idle,
             transform: Transform {
-                translation: Vec3::new(0., level, 1.),
+                translation: Vec3::new(0.,level + SPRITE_DIMENSIONS.1/2., 1.),
                 ..Default::default()
             },
             ..Default::default()
@@ -51,17 +52,20 @@ fn player_setup(
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
         .insert(Player)
         .insert(Velocity {
-            vx: 1.,
             ..Default::default()
-        });
+        })
+        .insert(Acceleration{
+            ..Default::default()
+        })
+        .insert(Grounded(true));
 }
 
 fn player_keyboard_event_system(
     kb: Res<Input<KeyCode>>,
-    ground_level: Res<GroundLevel>,
     animations: Res<PlayerAnimations>,
     mut query: Query<
         (
+            &mut Grounded,
             &mut Velocity,
             &mut Handle<TextureAtlas>,
             &mut Transform
@@ -69,15 +73,15 @@ fn player_keyboard_event_system(
         With<Player>,
     >,
 ) {
-    if let Ok((mut velocity,mut texture_atlas,mut transform)) = query.get_single_mut() {
-        if kb.pressed(KeyCode::Left) {
+    if let Ok((mut grounded, mut velocity,mut texture_atlas,mut transform)) = query.get_single_mut() {
+        if kb.pressed(KeyCode::Q) {
             velocity.vx = -100.;
             transform.scale.x = -1.;
             if *texture_atlas != animations.run {
                 *texture_atlas = animations.run.clone();
             };
         }
-        else if kb.pressed(KeyCode::Right) {
+        else if kb.pressed(KeyCode::D) {
             velocity.vx = 100.;
             transform.scale.x = 1.;
             if *texture_atlas != animations.run {
@@ -91,14 +95,11 @@ fn player_keyboard_event_system(
             };
         }
 
-        if kb.pressed(KeyCode::Space){
+        if kb.pressed(KeyCode::Z)
+        && grounded.0 == true 
+        {
             velocity.vy = 100.;
-        }
-        else if transform.translation.y > ground_level.0 {
-            velocity.vy = -50.;
-        }
-        else {
-            velocity.vy = 0.;
+            grounded.0 = false;
         }
     }
 }
