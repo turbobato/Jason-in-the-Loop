@@ -3,20 +3,48 @@ use bevy::prelude::*;
 
 // region : general components
 
+
+
 #[derive(Component)]
 pub enum Movement{
     Idle,
     Running,
 }
 
+#[derive(Component)]
+pub struct Gravity(pub f32);
+
+#[derive(Component)]
+pub struct AffectedByGravity;
+
 #[derive(Component, Default)]
 pub struct Velocity {
 	pub vx : f32,
 	pub vy : f32,
 }
+#[derive(Component,Default)]
+pub struct Acceleration {
+    pub ax: f32,
+    pub ay: f32
+}
+
+#[derive(Component)]
+pub struct Platform{
+    pub ground_level : f32,
+    pub left_bound : f32,
+    pub right_bound : f32,
+}
+
+#[derive(Component)]
+pub struct Grounded(pub bool);
+
+#[derive(Component)]
+pub struct RepeatAnimation(pub bool);
+
 
 #[derive(Component, Deref, DerefMut)]
 pub struct AnimationTimer(pub Timer);
+
 //endregion : general components 
 
 //region : player components

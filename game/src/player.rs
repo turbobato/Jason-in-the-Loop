@@ -1,11 +1,14 @@
-use crate::{components::*,GroundLevel};
+use crate::{components::*, WinSize};
 
 use bevy::{prelude::*, transform};
 
 const RUN_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Run.png";
 const IDLE_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Idle.png";
 const ATTACK1_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Attack.png";
+const JUMP_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Jump.png";
+const JUMP_FALL_SPRITE: &str ="textures/knight/Colour1/NoOutline/120x80_PNGSheets/_JumpFallInbetween.png";
 
+const SPRITE_DIMENSIONS: (f32,f32) = (120.,80.);
 const GROUND_LVL: f32 = -(793./2.) +103.;
 pub struct PlayerPlugin;
 
@@ -14,45 +17,59 @@ pub struct PlayerPlugin;
 pub struct PlayerAnimations {
     pub idle: Handle<TextureAtlas>,
     pub run: Handle<TextureAtlas>,
-    pub attack1: Handle<TextureAtlas>
+    pub attack1: Handle<TextureAtlas>,
+    pub jump: Handle<TextureAtlas>,
+    pub jump_fall: Handle<TextureAtlas>,
 }
+
+
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app
         .add_startup_system_to_stage(StartupStage::PostStartup, player_setup)
         .add_system(player_keyboard_event_system);
-    }
-
-    fn name(&self) -> &str {
-        std::any::type_name::<Self>()
+        
     }
 }
 
 fn player_setup(
     mut commands: Commands,
+    win_size : Res<WinSize>,
     asset_server: Res<AssetServer>,
-    ground_level: Res<GroundLevel>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
-    let idle_sprite = asset_server.load(IDLE_SPRITE);
     let run_sprite = asset_server.load(RUN_SPRITE);
-    let attack1_sprite: Handle<Image> = asset_server.load(ATTACK1_SPRITE);
     let texture_atlas_running = TextureAtlas::from_grid(run_sprite, Vec2::new(120., 80.), 10, 1);
     let texture_atlas_handle_running = texture_atlases.add(texture_atlas_running);
+
+    let idle_sprite = asset_server.load(IDLE_SPRITE);
     let texture_atlas_idle = TextureAtlas::from_grid(idle_sprite, Vec2::new(120., 80.), 10, 1);
     let texture_atlas_handle_idle = texture_atlases.add(texture_atlas_idle);
     let idle = texture_atlas_handle_idle.clone();
-    let texture_atlas_a1 = TextureAtlas::from_grid(attack1_sprite, Vec2::new(120.0, 80.0), 10, 1);
+
+    let attack1_sprite: Handle<Image> = asset_server.load(ATTACK1_SPRITE);
+    let texture_atlas_a1 = TextureAtlas::from_grid(attack1_sprite, Vec2::new(120.0, 80.0), 4, 1);
     let texture_atlas_attack1 = texture_atlases.add(texture_atlas_a1);
+
+    let jump_sprite: Handle<Image> = asset_server.load(JUMP_SPRITE);
+    let texture_atlas_j = TextureAtlas::from_grid(jump_sprite, Vec2::new(120.0, 80.0), 3, 1);
+    let texture_atlas_jump = texture_atlases.add(texture_atlas_j);
+
+    let jump_fall_sprite: Handle<Image> = asset_server.load(JUMP_FALL_SPRITE);
+    let texture_atlas_jf = TextureAtlas::from_grid(jump_fall_sprite, Vec2::new(120.0, 80.0), 2, 1);
+    let texture_atlas_jump_fall = texture_atlases.add(texture_atlas_jf);
 
     let animations_ressource = PlayerAnimations {
         run: texture_atlas_handle_running,
         idle,
-        attack1: texture_atlas_attack1
+        attack1: texture_atlas_attack1,
+        jump: texture_atlas_jump,
+        jump_fall: texture_atlas_jump_fall,
     };
     commands.insert_resource(animations_ressource);
-    let level = ground_level.0;
+    let level = -win_size.win_h/2. + 67. + SPRITE_DIMENSIONS.1/2.;
+    println!("level = {:}",level);
     commands
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_idle,
@@ -65,18 +82,22 @@ fn player_setup(
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
         .insert(Player)
         .insert(Velocity {
-            vx: 1.,
             ..Default::default()
-        });
+        })
+        .insert(Acceleration{
+            ..Default::default()
+        })
+        .insert(Grounded(true));
 }
 
 fn player_keyboard_event_system(
-    mut commands: Commands,
-    kb: Res<Input<KeyCode>>,
     
+    kb: Res<Input<KeyCode>>,
     animations: Res<PlayerAnimations>,
     mut query: Query<
         (
+            &mut Grounded,
+            &mut TextureAtlasSprite,
             &mut Velocity,
             &mut Handle<TextureAtlas>,
             &mut Transform
@@ -84,25 +105,26 @@ fn player_keyboard_event_system(
         With<Player>,
     >,
 ) {
-    if let Ok((mut velocity,mut texture_atlas,mut transform)) = query.get_single_mut() {
-        if kb.pressed(KeyCode::Left) {
+    if let Ok(( mut grounded, mut sprite,mut velocity,mut texture_atlas,mut transform)) = query.get_single_mut() {
+        if kb.pressed(KeyCode::Q) {
             velocity.vx = -100.;
             transform.scale.x = -1.;
             if *texture_atlas != animations.run {
                 *texture_atlas = animations.run.clone();
             };
         }
-        else if kb.pressed(KeyCode::Right) {
+        else if kb.pressed(KeyCode::D) {
             velocity.vx = 100.;
             transform.scale.x = 1.;
             if *texture_atlas != animations.run {
                 *texture_atlas = animations.run.clone();
             };
         }
-        else if kb.pressed(KeyCode::Q){
+        else if kb.pressed(KeyCode::J){
             velocity.vx = 0.;
             if *texture_atlas != animations.attack1 {
                 *texture_atlas = animations.attack1.clone();
+                sprite.index = 0;
             };
         }
         else {
@@ -111,24 +133,23 @@ fn player_keyboard_event_system(
                 *texture_atlas = animations.idle.clone();
             };
         }
-
-        if kb.pressed(KeyCode::Space){
-            if  transform.translation.y <= GROUND_LVL + 50. {
-                    velocity.vy = 100.;
-                }
-            else{
-                velocity.vy = -100.
-            }
-        }
         
-        else if transform.translation.y > GROUND_LVL {
-            
-            velocity.vy = -100.
-            
-        }
-        else {
-            velocity.vy = 0.;
-        }
-    }
-}
+        if kb.pressed(KeyCode::Z){
+            if *texture_atlas != animations.jump {
+                *texture_atlas = animations.jump.clone();
+                sprite.index = 0;
 
+                if grounded.0 == true{
+                    velocity.vy = 100.;  
+                    grounded.0 = false;
+                }        
+            };
+        }
+        if velocity.vy < 0. { 
+            if *texture_atlas != animations.jump_fall {
+                *texture_atlas = animations.jump_fall.clone();
+                sprite.index = 0;
+            }
+        };
+    }   
+}

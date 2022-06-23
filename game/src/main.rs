@@ -3,15 +3,14 @@ mod player;
 
 
 use bevy::{prelude::*, render::texture::ImageSettings, math::const_vec3};
-
-use components::*;
 use player::PlayerPlugin;
-
+use components::*;
 
 const BACKGROUND : &str = "textures/forest/Free Pixel Art Forest/Preview/Background.png";
-const CROUCH_SPRITE : &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Crouch.png";
-const GROUND_LVL: f32 = -(793./2.) +103.;
-struct GroundLevel(f32);
+const MARGIN : f32 = 0.5;
+
+
+
 struct WinSize{
     win_h : f32,
     win_w : f32
@@ -35,26 +34,29 @@ fn main() {
         .run();
 }
 
-#[derive(Component, Deref, DerefMut)]
-struct AnimationTimer(Timer);
 
 
 fn setup(mut commands : Commands, asset_server : Res<AssetServer>, windows : Res<Windows>){
     commands.spawn_bundle(Camera2dBundle::default());
     let background_image: Handle<Image> = asset_server.load(BACKGROUND);
+    let window = windows.get_primary().unwrap();
+    let (win_h, win_w) = (window.height(),window.width());
+    let ground_lvl :f32 = -win_h/2. + 67.;
+    commands.insert_resource(WinSize { win_h, win_w });
     commands.spawn_bundle(SpriteBundle {
-        texture : background_image,
-        transform : Transform {
-            translation : Vec3::new(0.,0.,0.),
-            ..Default::default()
-        },
-        ..Default::default()
-    });
-    if let Some(window) = windows.get_primary() {
-        let (win_h, win_w) = (window.height(),window.width());
-        let ground_lvl :f32 = -win_h/2. + 103.;
-        commands.insert_resource(WinSize {win_h, win_w,});
-        commands.insert_resource(GroundLevel(ground_lvl));
+                texture : background_image,
+                transform : Transform {
+                    translation : Vec3::new(0.,0.,0.),
+                    ..Default::default()
+                },
+                ..Default::default()
+            })
+            .insert(Platform{
+                ground_level : ground_lvl,
+                left_bound : -win_w/2.,
+                right_bound : win_w/2.,
+            });
+    }
         /* let player_sprite = asset_server.load(CROUCH_SPRITE);
         commands.spawn_bundle(SpriteBundle{
             texture : player_sprite,
@@ -65,8 +67,7 @@ fn setup(mut commands : Commands, asset_server : Res<AssetServer>, windows : Res
             },
             ..Default::default()
         }); */
-    }   
-}
+
 
 fn animate_sprite(
     time: Res<Time>,
@@ -89,11 +90,35 @@ fn animate_sprite(
 
 
 
-fn movement(time : Res<Time>, mut query : Query<(&Velocity, &mut Transform),With<Player>>){
+fn movement(time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query: Query<(&mut Grounded, &mut Velocity, &mut Acceleration, &mut Transform, &Handle<TextureAtlas>), With<Player>>, query_platforms : Query<&Platform>) {
     let delta = time.delta_seconds();
-    for (velocity, mut transform) in query.iter_mut() {
+    for (mut grounded, mut velocity, mut acceleration, mut transform, texture_atlas) in query.iter_mut() {
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
+        velocity.vx += acceleration.ax * delta;
+        velocity.vy += acceleration.ay * delta;
+        let sprite_height = texture_atlases.get(texture_atlas).unwrap().size.y /2.;
+        for platform in query_platforms.iter(){
+            let ground_level = platform.ground_level;
+            let left_bound = platform.left_bound;
+            let right_bound = platform.right_bound;
+            //println!("ground_level {ground_level}, left_bound {left_bound}, right_bound {right_bound}, y_level : {}", transform.translation.y);
+            if grounded.0 == false {
+                if ground_level + sprite_height + MARGIN >= transform.translation.y
+                && ground_level + sprite_height - MARGIN <= transform.translation.y
+                && transform.translation.x >= left_bound
+                && transform.translation.x <= right_bound
+                {
+                    acceleration.ay = 0.;
+                    velocity.vy = 0.;
+                    grounded.0 = true;
+                }
+                else {
+                    acceleration.ay = -100.
+                }
+            }
+            //println!("ground_level = {:}, sprite_height ={:}, left_bound = {:}",ground_level,sprite_height,left_bound)
+        }
     }
-}
 
+}
