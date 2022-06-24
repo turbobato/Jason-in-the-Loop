@@ -1,12 +1,18 @@
 mod components;
 mod player;
 
-use bevy::{prelude::*, render::texture::ImageSettings};
+use bevy::{
+    log::LogSettings,
+    prelude::*,
+    render::texture::ImageSettings,
+    sprite::collide_aabb::{collide, Collision},
+};
 use components::*;
 use player::PlayerPlugin;
 
 const BACKGROUND: &str = "textures/forest/Free Pixel Art Forest/Preview/Background.png";
-const MARGIN : f32 = 0.5;
+pub const GROUND_LEVEL: f32 = -330.5;
+pub const PLATFORM_MARGIN: f32 = 1.; // this is the thickness of the platforms
 
 // TODO : refactor interactions with ground (add sprite sizes constants, add ground components and change ground level)
 
@@ -30,6 +36,7 @@ fn main() {
         .add_startup_system(setup)
         .add_system(animate_sprite)
         .add_system(movement)
+        .add_system(collision_with_platform)
         .run();
 }
 
@@ -38,7 +45,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
     let background_image: Handle<Image> = asset_server.load(BACKGROUND);
     let window = windows.get_primary().unwrap();
     let (win_h, win_w) = (window.height(), window.width());
-    let ground_lvl: f32 = -win_h / 2. + 67.;
     commands.insert_resource(WinSize { win_h, win_w });
     commands
         .spawn_bundle(SpriteBundle {
@@ -49,23 +55,10 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
             },
             ..Default::default()
         })
-        .insert(Platform{
-            ground_level : ground_lvl,
-            left_bound : -win_w/2.,
-            right_bound : win_w/2.,
+        .insert(Platform {
+            size: Vec2::new(win_w, PLATFORM_MARGIN),
+            position: Vec3::new(0., GROUND_LEVEL, 0.),
         });
-        //println!("{ground_lvl}");
-    //commands.insert_resource(GroundLevel(ground_lvl));
-    /* let player_sprite = asset_server.load(CROUCH_SPRITE);
-    commands.spawn_bundle(SpriteBundle{
-        texture : player_sprite,
-        transform : Transform {
-            translation : Vec3::new(0.,ground_lvl,1.),
-            //scale : Vec3::new(2.,2.,1.),
-            ..Default::default()
-        },
-        ..Default::default()
-    }); */
 }
 
 fn animate_sprite(
@@ -86,14 +79,23 @@ fn animate_sprite(
     }
 }
 
-fn movement(time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query: Query<(&mut Grounded, &mut Velocity, &mut Acceleration, &mut Transform, &Handle<TextureAtlas>), With<Player>>, query_platforms : Query<&Platform>) {
+fn movement(
+    time: Res<Time>,
+    mut query: Query<(&Grounded, &mut Velocity, &mut Acceleration, &mut Transform), With<Player>>,
+) {
     let delta = time.delta_seconds();
-    for (mut grounded, mut velocity, mut acceleration, mut transform, texture_atlas) in query.iter_mut() {
+    for (grounded, mut velocity, mut acceleration, mut transform) in query.iter_mut() {
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
         velocity.vx += acceleration.ax * delta;
         velocity.vy += acceleration.ay * delta;
-        let sprite_height = texture_atlases.get(texture_atlas).unwrap().size.y /2.;
+        if grounded.0 {
+            acceleration.ay = 0.;
+            velocity.vy = 0.;
+        } else {
+            acceleration.ay = -100.
+        }
+        /* let sprite_height = texture_atlases.get(texture_atlas).unwrap().size.y /2.;
         for platform in query_platforms.iter(){
             let ground_level = platform.ground_level;
             let left_bound = platform.left_bound;
@@ -113,7 +115,35 @@ fn movement(time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut que
                     acceleration.ay = -100.
                 }
             }
-        }
+        } */
     }
 }
 
+fn collision_with_platform(
+    mut query: Query<(&mut Grounded, &mut Transform, &SpriteSize), With<Player>>,
+    query_platforms: Query<&Platform>,
+) {
+    for (mut grounded, mut transform, sprite_size) in query.iter_mut() {
+        for platform in query_platforms.iter() {
+            let entity_position = &mut transform.translation;
+            let entity_size = sprite_size.0;
+            debug!(?entity_size, "taille de l'entité");
+            let platform_position = platform.position;
+            let platform_size = platform.size;
+            if let Some(collision) = collide(
+                *entity_position,
+                entity_size,
+                platform_position,
+                platform_size,
+            ) {
+                match collision {
+                    Collision::Top => {
+                        grounded.0 = true;
+                        entity_position.y = platform_position.y + entity_size.y / 2.;
+                    }
+                    _ => (),
+                }
+            }
+        }
+    }
+}
