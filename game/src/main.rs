@@ -32,7 +32,7 @@ fn main() {
         .add_startup_system(setup)
         .add_system(animate_sprite)
         .add_system(movement)
-        //.add_system(enemy_movement)
+        .add_system(enemy_movement)
         .add_system(bevy::window::close_on_esc)
         .run();
 }
@@ -99,7 +99,7 @@ fn enemy_movement(time: Res<Time>, textures_atlas: Res<Assets<TextureAtlas>>, mu
     }
 }
 
-fn movement(time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query: Query<(&mut Grounded, &mut Velocity, &mut Acceleration, &mut Transform, &Handle<TextureAtlas>), Or<(With<Enemy>, With<Player>)>>, query_platforms : Query<&Platform>) {
+fn movement(time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query: Query<(&mut Grounded, &mut Velocity, &mut Acceleration, &mut Transform, &Handle<TextureAtlas>), With<Player>>, query_platforms : Query<&Platform>) {
     let delta = time.delta_seconds();
     for (mut grounded, mut velocity, mut acceleration, mut transform, texture_atlas) in query.iter_mut() {        
         transform.translation.x += velocity.vx * delta;

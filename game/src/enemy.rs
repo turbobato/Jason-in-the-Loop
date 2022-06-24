@@ -39,9 +39,5 @@ fn enemy_setup(
         })
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
         .insert(Enemy)
-        .insert(Velocity{vx: 10., vy: 0.})
-        .insert(Acceleration{
-            ..Default::default()
-        })
-        .insert(Grounded(true));
+        .insert(Velocity{vx: 10., vy: 0.});
 }
