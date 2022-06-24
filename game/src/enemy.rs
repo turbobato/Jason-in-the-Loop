@@ -16,7 +16,7 @@ impl Plugin for EnemyPlugin{
         .add_system(enemy_movement)
         .add_system(projectile_movement)
         .add_system_set(SystemSet::new()
-            .with_run_criteria(enemy_attack_criteria)
+            .with_run_criteria(FixedTimestep::step(3.))
             .with_system(enemy_attack_system));
     }
 }
@@ -27,6 +27,7 @@ pub struct EnemyAnimations {
     pub projectile: Handle<TextureAtlas>
 }
 
+// attaque aléatoire
 fn enemy_attack_criteria() -> ShouldRun{
     if thread_rng().gen_bool(1./120.){
         ShouldRun::Yes
@@ -34,18 +35,18 @@ fn enemy_attack_criteria() -> ShouldRun{
         ShouldRun::No
     }
 }
-
-fn enemy_attack_system(mut commands: Commands, animations : Res<EnemyAnimations>, enemy_query : Query<&Transform, With<Enemy>>){
-    for &tf in enemy_query.iter(){
+// modifier ça 
+fn enemy_attack_system(mut commands: Commands, animations : Res<EnemyAnimations>,  enemy_query : Query<(&Transform, &Velocity), With<Enemy>>){
+    for (&tf, velocity) in enemy_query.iter(){
         let (x, y) = (tf.translation.x, tf.translation.y);
         commands.spawn_bundle(SpriteSheetBundle{
             texture_atlas: animations.projectile.clone(),
             transform: Transform { 
-                translation: Vec3::new(x + 50., y - 10., 1.), 
+                translation: Vec3::new(x + 50. * velocity.vx.signum(), y - 10., 1.), 
                 ..Default::default()},
         ..Default::default()})
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
-        .insert(Velocity{vx: 100., vy: 0.})
+        .insert(Velocity{vx: 150. * velocity.vx.signum() , vy: 0.})
         .insert(Projectile)
         .insert(FromEnemy);
     }
@@ -54,31 +55,30 @@ fn enemy_attack_system(mut commands: Commands, animations : Res<EnemyAnimations>
 // mouvements des projectiles avec auto-despawn
 fn projectile_movement(time: Res<Time>,mut commands:Commands, win_size : Res<WinSize>, mut query: Query<(Entity, &mut Velocity, &mut Transform,&mut TextureAtlasSprite), With<Projectile>>){
     let delta = time.delta_seconds();
+    const MARGIN : f32 = 50.;
     for (entity, velocity, mut transform, sprite) in query.iter_mut(){
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
 
         if sprite.index == 7 {
             commands.entity(entity).despawn();
-        }
-
-        const MARGIN : f32 = 200.;
-        if transform.translation.x <= -win_size.win_h / 2.0 + MARGIN || transform.translation.x >= win_size.win_h / 2.0 - MARGIN {
+        } else if transform.translation.x <= -win_size.win_h / 2.0 - MARGIN || transform.translation.x >= win_size.win_h / 2.0 + MARGIN {
             commands.entity(entity).despawn();
         }
     }
 }
 
 // mouvement des ennemis
-fn enemy_movement(time: Res<Time>, win_size: Res<WinSize>,mut query: Query<(Entity, &mut Velocity, &mut Transform), With<Enemy>>){
+fn enemy_movement(time: Res<Time>, win_size: Res<WinSize>, mut query: Query<(&mut Velocity, &mut Transform), With<Enemy>>){
     let delta = time.delta_seconds();
     const MARGIN : f32 = 50.;
-    for (entity, mut velocity, mut transform) in query.iter_mut(){
+    for (mut velocity,mut transform) in query.iter_mut(){
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
        
         if transform.translation.x <=  -win_size.win_w / 2. + MARGIN || transform.translation.x >= win_size.win_w /2. - MARGIN{
             velocity.vx = -velocity.vx;
+            transform.scale.x *= -1.;
         }
     }
 }
@@ -116,5 +116,5 @@ fn enemy_setup(
         })
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
         .insert(Enemy)
-        .insert(Velocity{vx: 20., vy: 0.});
+        .insert(Velocity{vx: 50., vy: 0.});
 }
