@@ -49,6 +49,10 @@ pub struct Enemy;
 #[derive(Component)]
 pub struct Projectile;
 
+#[derive(Component)]
+pub struct Movable{
+    pub auto_despawn: bool,
+}
 
 #[derive(Component)]
 pub struct FromEnemy;

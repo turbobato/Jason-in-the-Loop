@@ -28,7 +28,7 @@ pub struct EnemyAnimations {
 }
 
 fn enemy_attack_criteria() -> ShouldRun{
-    if thread_rng().gen_bool(1./60.){
+    if thread_rng().gen_bool(1./180.){
         ShouldRun::Yes
     }else{
         ShouldRun::No
@@ -41,13 +41,14 @@ fn enemy_attack_system(mut commands: Commands, animations : Res<EnemyAnimations>
         commands.spawn_bundle(SpriteSheetBundle{
             texture_atlas: animations.projectile.clone(),
             transform: Transform { 
-                translation: Vec3::new(x, y - 25., 1.), 
+                translation: Vec3::new(x + 20., y - 10., 1.), 
                 ..Default::default()},
         ..Default::default()})
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
-        .insert(Velocity{vx: 0., vy: -5.})
+        .insert(Velocity{vx: 20., vy: 0.})
         .insert(Projectile)
-        .insert(FromEnemy);
+        .insert(FromEnemy)
+        .insert(Movable {auto_despawn : true});
     }
 
 }
@@ -93,5 +94,6 @@ fn enemy_setup(
         })
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
         .insert(Enemy)
-        .insert(Velocity{vx: 10., vy: 0.});
+        .insert(Velocity{vx: 0., vy: 0.})
+        .insert(Movable{auto_despawn: true});
 }

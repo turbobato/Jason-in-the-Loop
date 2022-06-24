@@ -59,7 +59,8 @@ fn player_setup(
         .insert(Acceleration{
             ..Default::default()
         })
-        .insert(Grounded(true));
+        .insert(Grounded(true))
+        .insert(Movable{auto_despawn: false});
 }
 
 fn player_keyboard_event_system(
