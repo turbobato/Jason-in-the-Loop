@@ -46,4 +46,11 @@ pub struct Grounded(pub bool);
 #[derive(Component)]
 pub struct Enemy;
 
+#[derive(Component)]
+pub struct Projectile;
+
+
+#[derive(Component)]
+pub struct FromEnemy;
 //endregion : enemy components 
+
