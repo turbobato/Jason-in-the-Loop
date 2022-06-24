@@ -41,7 +41,7 @@ fn enemy_attack_system(mut commands: Commands, animations : Res<EnemyAnimations>
         commands.spawn_bundle(SpriteSheetBundle{
             texture_atlas: animations.projectile.clone(),
             transform: Transform { 
-                translation: Vec3::new(x + 30., y - 10., 1.), 
+                translation: Vec3::new(x + 50., y - 10., 1.), 
                 ..Default::default()},
         ..Default::default()})
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
@@ -52,7 +52,7 @@ fn enemy_attack_system(mut commands: Commands, animations : Res<EnemyAnimations>
 }
 
 // mouvements des projectiles avec auto-despawn
-fn projectile_movement(time: Res<Time>,mut commands:Commands, mut query: Query<(Entity, &mut Velocity, &mut Transform,&mut TextureAtlasSprite), With<Projectile>>){
+fn projectile_movement(time: Res<Time>,mut commands:Commands, win_size : Res<WinSize>, mut query: Query<(Entity, &mut Velocity, &mut Transform,&mut TextureAtlasSprite), With<Projectile>>){
     let delta = time.delta_seconds();
     for (entity, velocity, mut transform, mut sprite) in query.iter_mut(){
         transform.translation.x += velocity.vx * delta;
@@ -61,15 +61,25 @@ fn projectile_movement(time: Res<Time>,mut commands:Commands, mut query: Query<(
         if sprite.index == 7 {
             commands.entity(entity).despawn();
         }
+
+        const MARGIN : f32 = 200.;
+        if transform.translation.x <= win_size.win_h / 2.0 - MARGIN || transform.translation.x >= win_size.win_h / 2.0 + MARGIN {
+            commands.entity(entity).despawn();
+        }
     }
 }
 
 // mouvement des ennemis
-fn enemy_movement(time: Res<Time>, mut query: Query<(Entity, &mut Velocity, &mut Transform), With<Enemy>>){
+fn enemy_movement(time: Res<Time>, win_size: Res<WinSize>,mut query: Query<(Entity, &mut Velocity, &mut Transform), With<Enemy>>){
     let delta = time.delta_seconds();
-    for (entity, velocity, mut transform) in query.iter_mut(){
+    const MARGIN : f32 = 200.;
+    for (entity, mut velocity, mut transform) in query.iter_mut(){
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
+       
+        if transform.translation.x <=  win_size.win_w / 2. - MARGIN || transform.translation.x >= win_size.win_w /2. + MARGIN{
+            velocity.vx = -velocity.vx;
+        }
     }
 }
 
@@ -107,5 +117,5 @@ fn enemy_setup(
         })
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
         .insert(Enemy)
-        .insert(Velocity{vx: 0., vy: 0.});
+        .insert(Velocity{vx: 20., vy: 0.});
 }
