@@ -1,5 +1,6 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, ecs::schedule::ShouldRun, time::FixedTimestep};
 use crate::{components::*, WinSize};
+use rand::{thread_rng, Rng};
 
 // Les différents chemins des png des animations
 const ATTACK_SPRITE_EYE: &str = "textures/monsters/Monster_Creatures_Fantasy(Version 1.3)/Flying eye/Attack3.png";
@@ -13,7 +14,10 @@ impl Plugin for EnemyPlugin{
     fn build(&self, app: &mut App) {
         app.add_startup_system_to_stage(StartupStage::PostStartup, enemy_setup)
         .add_system(enemy_movement)
-        .add_system(enemy_attack_system);
+        //.add_system(enemy_attack_system);
+        .add_system_set(SystemSet::new()
+            .with_run_criteria(enemy_attack_criteria)
+            .with_system(enemy_attack_system));
     }
 }
 
@@ -21,6 +25,14 @@ impl Plugin for EnemyPlugin{
 pub struct EnemyAnimations {
     pub attack: Handle<TextureAtlas>,
     pub projectile: Handle<TextureAtlas>
+}
+
+fn enemy_attack_criteria() -> ShouldRun{
+    if thread_rng().gen_bool(1./60.){
+        ShouldRun::Yes
+    }else{
+        ShouldRun::No
+    }
 }
 
 fn enemy_attack_system(mut commands: Commands, animations : Res<EnemyAnimations>, enemy_query : Query<&Transform, With<Enemy>>){
