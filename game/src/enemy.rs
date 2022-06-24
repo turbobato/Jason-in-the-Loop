@@ -14,7 +14,7 @@ impl Plugin for EnemyPlugin{
     fn build(&self, app: &mut App) {
         app.add_startup_system_to_stage(StartupStage::PostStartup, enemy_setup)
         .add_system(enemy_movement)
-        //.add_system(enemy_attack_system);
+        .add_system(projectile_movement)
         .add_system_set(SystemSet::new()
             .with_run_criteria(enemy_attack_criteria)
             .with_system(enemy_attack_system));
@@ -41,25 +41,38 @@ fn enemy_attack_system(mut commands: Commands, animations : Res<EnemyAnimations>
         commands.spawn_bundle(SpriteSheetBundle{
             texture_atlas: animations.projectile.clone(),
             transform: Transform { 
-                translation: Vec3::new(x + 20., y - 10., 1.), 
+                translation: Vec3::new(x + 30., y - 10., 1.), 
                 ..Default::default()},
         ..Default::default()})
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
-        .insert(Velocity{vx: 20., vy: 0.})
+        .insert(Velocity{vx: 100., vy: 0.})
         .insert(Projectile)
-        .insert(FromEnemy)
-        .insert(Movable {auto_despawn : true});
+        .insert(FromEnemy);
     }
-
 }
 
-fn enemy_movement(time: Res<Time>, textures_atlas: Res<Assets<TextureAtlas>>, mut query: Query<(&mut Velocity, &mut Transform, &Handle<TextureAtlas>), Or<(With<Enemy>, With<Projectile>)>>){
+// mouvements des projectiles avec auto-despawn
+fn projectile_movement(time: Res<Time>,mut commands:Commands, mut query: Query<(Entity, &mut Velocity, &mut Transform,&mut TextureAtlasSprite), With<Projectile>>){
     let delta = time.delta_seconds();
-    for (velocity, mut transform, texture_atlas) in query.iter_mut(){
+    for (entity, velocity, mut transform, mut sprite) in query.iter_mut(){
+        transform.translation.x += velocity.vx * delta;
+        transform.translation.y += velocity.vy * delta;
+
+        if sprite.index == 7 {
+            commands.entity(entity).despawn();
+        }
+    }
+}
+
+// mouvement des ennemis
+fn enemy_movement(time: Res<Time>, mut query: Query<(Entity, &mut Velocity, &mut Transform), With<Enemy>>){
+    let delta = time.delta_seconds();
+    for (entity, velocity, mut transform) in query.iter_mut(){
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
     }
 }
+
 // copier-coller de sprite_sheet avec début de modif
 fn enemy_setup(
     mut commands: Commands,
@@ -94,6 +107,5 @@ fn enemy_setup(
         })
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
         .insert(Enemy)
-        .insert(Velocity{vx: 0., vy: 0.})
-        .insert(Movable{auto_despawn: true});
+        .insert(Velocity{vx: 0., vy: 0.});
 }

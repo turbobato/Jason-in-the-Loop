@@ -50,11 +50,6 @@ pub struct Enemy;
 pub struct Projectile;
 
 #[derive(Component)]
-pub struct Movable{
-    pub auto_despawn: bool,
-}
-
-#[derive(Component)]
 pub struct FromEnemy;
 //endregion : enemy components 
 
