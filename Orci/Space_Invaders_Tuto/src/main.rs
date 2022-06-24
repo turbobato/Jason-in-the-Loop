@@ -1,8 +1,25 @@
 use bevy::prelude::*;
+
+mod components;
+mod player;
+
+use crate::{player::*};
 //region: ---ASSET CONSTANT
 
-const PLAYER_SPRITE: &str = "player_a_01.png";
-const PLAYER_SIZE: (f32,f32) = (144., 75.);
+//region: ---Resources
+pub struct WinSize{
+		pub w: f32,
+		pub h: f32,
+}
+struct GameTextures{
+	player: Handle<Image>
+}
+
+//endregion: ---Resources
+
+const PLAYER_SPRITE: &str = "_Crouch.png";
+const PLAYER_SIZE: (f32,f32) = (120., 80.);
+const SPRITE_SCALE: f32 = 2.;
 
 // endregion: ---ASSET CONSTANT
 fn main() {
@@ -15,6 +32,7 @@ fn main() {
 			..Default::default()
 		})
 		.add_plugins(DefaultPlugins)
+		.add_plugin(PlayerPlugin)
 		.add_startup_system(setup_system)
 		.run()
 	}
@@ -31,11 +49,14 @@ fn main() {
 		let (win_w, win_h) = (window.width(), window.height());
 		
 		//position of window
-		window.set_position(IVec2::new(2780, 4900));
+		window.set_position(IVec2::new(1100, 0));
+		let win_size = WinSize {w: win_w, h: win_h};
+		commands.insert_resource(win_size);	
 
-		//player
-		commands.spawn_bundle(SpriteBundle{
-			texture: asset_serveur.load(PLAYER_SPRITE),
-			..Default::default()
-		});
+		//game texture resource
+		let game_texture = GameTextures{
+			player: asset_serveur.load(PLAYER_SPRITE)
+		};
+		commands.insert_resource(game_texture);
 	}
+	
