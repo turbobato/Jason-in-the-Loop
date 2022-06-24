@@ -1,5 +1,5 @@
 use crate::{components::*, WinSize};
-use bevy::{prelude::*, transform};
+use bevy::{prelude::*};
 
 const RUN_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Run.png";
 const IDLE_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Idle.png";
@@ -29,11 +29,14 @@ fn player_setup(
 ) {
     let idle_sprite = asset_server.load(IDLE_SPRITE);
     let run_sprite = asset_server.load(RUN_SPRITE);
+
     let texture_atlas_running = TextureAtlas::from_grid(run_sprite, Vec2::new(SPRITE_DIMENSIONS.0, SPRITE_DIMENSIONS.1), 10, 1);
     let texture_atlas_handle_running = texture_atlases.add(texture_atlas_running);
+    
     let texture_atlas_idle = TextureAtlas::from_grid(idle_sprite, Vec2::new(SPRITE_DIMENSIONS.0, SPRITE_DIMENSIONS.1), 10, 1);
     let texture_atlas_handle_idle = texture_atlases.add(texture_atlas_idle);
     let idle = texture_atlas_handle_idle.clone();
+    
     let animations_ressource = PlayerAnimations {
         run: texture_atlas_handle_running,
         idle,

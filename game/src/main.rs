@@ -1,9 +1,11 @@
 mod components;
 mod player;
+mod enemy;
 
 use bevy::{prelude::*, render::texture::ImageSettings};
 use components::*;
 use player::PlayerPlugin;
+use enemy::EnemyPlugin;
 
 const BACKGROUND: &str = "textures/forest/Free Pixel Art Forest/Preview/Background.png";
 const MARGIN : f32 = 0.5;
@@ -20,19 +22,20 @@ fn main() {
         .insert_resource(ImageSettings::default_nearest()) //prevent blurry sprites
         .insert_resource(WindowDescriptor {
             title: "ProjetX".to_string(),
-            width: 928.0,
-            height: 793.0,
-            resizable: false,
+            width: 928.,
+            height: 793.,
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)
         .add_plugin(PlayerPlugin)
+        .add_plugin(EnemyPlugin)
         .add_startup_system(setup)
         .add_system(animate_sprite)
         .add_system(movement)
         .run();
 }
 
+// Caméra, fenêtre, fond d'écran, sol
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Windows>) {
     commands.spawn_bundle(Camera2dBundle::default());
     let background_image: Handle<Image> = asset_server.load(BACKGROUND);
