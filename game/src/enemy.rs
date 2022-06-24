@@ -28,7 +28,7 @@ pub struct EnemyAnimations {
 }
 
 fn enemy_attack_criteria() -> ShouldRun{
-    if thread_rng().gen_bool(1./180.){
+    if thread_rng().gen_bool(1./120.){
         ShouldRun::Yes
     }else{
         ShouldRun::No
@@ -54,7 +54,7 @@ fn enemy_attack_system(mut commands: Commands, animations : Res<EnemyAnimations>
 // mouvements des projectiles avec auto-despawn
 fn projectile_movement(time: Res<Time>,mut commands:Commands, win_size : Res<WinSize>, mut query: Query<(Entity, &mut Velocity, &mut Transform,&mut TextureAtlasSprite), With<Projectile>>){
     let delta = time.delta_seconds();
-    for (entity, velocity, mut transform, mut sprite) in query.iter_mut(){
+    for (entity, velocity, mut transform, sprite) in query.iter_mut(){
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
 
@@ -63,7 +63,7 @@ fn projectile_movement(time: Res<Time>,mut commands:Commands, win_size : Res<Win
         }
 
         const MARGIN : f32 = 200.;
-        if transform.translation.x <= win_size.win_h / 2.0 - MARGIN || transform.translation.x >= win_size.win_h / 2.0 + MARGIN {
+        if transform.translation.x <= -win_size.win_h / 2.0 + MARGIN || transform.translation.x >= win_size.win_h / 2.0 - MARGIN {
             commands.entity(entity).despawn();
         }
     }
@@ -72,12 +72,12 @@ fn projectile_movement(time: Res<Time>,mut commands:Commands, win_size : Res<Win
 // mouvement des ennemis
 fn enemy_movement(time: Res<Time>, win_size: Res<WinSize>,mut query: Query<(Entity, &mut Velocity, &mut Transform), With<Enemy>>){
     let delta = time.delta_seconds();
-    const MARGIN : f32 = 200.;
+    const MARGIN : f32 = 50.;
     for (entity, mut velocity, mut transform) in query.iter_mut(){
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
        
-        if transform.translation.x <=  win_size.win_w / 2. - MARGIN || transform.translation.x >= win_size.win_w /2. + MARGIN{
+        if transform.translation.x <=  -win_size.win_w / 2. + MARGIN || transform.translation.x >= win_size.win_w /2. - MARGIN{
             velocity.vx = -velocity.vx;
         }
     }
@@ -86,7 +86,6 @@ fn enemy_movement(time: Res<Time>, win_size: Res<WinSize>,mut query: Query<(Enti
 // copier-coller de sprite_sheet avec début de modif
 fn enemy_setup(
     mut commands: Commands,
-    win_size : Res<WinSize>,
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
