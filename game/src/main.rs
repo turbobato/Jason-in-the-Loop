@@ -13,6 +13,11 @@ use platforms::PlatformsPlugin;
 use player::PlayerPlugin;
 
 const BACKGROUND: &str = "textures/forest/Free Pixel Art Forest/Preview/Background.png";
+const BACKGROUND_LAYER1: &str = "textures/oak_woods_v1.0/background/background_layer_1.png";
+const BACKGROUND_LAYER2: &str = "textures/oak_woods_v1.0/background/background_layer_2.png";
+const BACKGROUND_LAYER3: &str = "textures/oak_woods_v1.0/background/background_layer_3.png";
+
+const SPRITE_SCALE: f32 = 2.;
 const MARGIN: f32 = 5.;
 
 struct WinSize {
@@ -25,8 +30,8 @@ fn main() {
         .insert_resource(ImageSettings::default_nearest()) //prevent blurry sprites
         .insert_resource(WindowDescriptor {
             title: "ProjetX".to_string(),
-            width: 928.0,
-            height: 793.0,
+            width: 600.0,
+            height: 400.0,
             resizable: false,
             ..Default::default()
         })
@@ -43,19 +48,50 @@ fn main() {
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Windows>) {
     commands.spawn_bundle(Camera2dBundle::default());
-    let background_image: Handle<Image> = asset_server.load(BACKGROUND);
+
+    let background: Handle<Image> = asset_server.load(BACKGROUND);;
+    let background_layer1: Handle<Image> = asset_server.load(BACKGROUND_LAYER1);
+    let background_layer2: Handle<Image> = asset_server.load(BACKGROUND_LAYER2);
+    let background_layer3: Handle<Image> = asset_server.load(BACKGROUND_LAYER3);
+
+    // capture window size
     let window = windows.get_primary().unwrap();
     let (win_h, win_w) = (window.height(), window.width());
+
     commands.insert_resource(WinSize { win_h, win_w });
     commands
         .spawn_bundle(SpriteBundle {
-            texture: background_image,
+            texture: background_layer1,
             transform: Transform {
                 translation: Vec3::new(0., 0., 0.),
+                scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
                 ..Default::default()
             },
             ..Default::default()
-        }); /*          .insert(Platform {
+        });
+    commands.spawn_bundle(SpriteBundle {
+            texture: background_layer2,
+            transform: Transform {
+                translation: Vec3::new(0., 0., 1.),
+                scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+                ..Default::default()
+            },
+            ..Default::default()
+        });
+    commands.spawn_bundle(SpriteBundle {
+            texture: background_layer3,
+            transform: Transform {
+                translation: Vec3::new(0., 0., 1.),
+                scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+                ..Default::default()
+            },
+            ..Default::default()
+        });
+        
+        
+        
+        
+        /*          .insert(Platform {
                 ground_level: ground_lvl + 50.,
                 left_bound: 100. / 2.,
                 right_bound: 150.,
@@ -121,6 +157,7 @@ fn movement(
             let ground_level = platform.ground_level;
             let left_bound = platform.left_bound;
             let right_bound = platform.right_bound;
+            
             println!("ground_level {ground_level}, left_bound {left_bound}, right_bound {right_bound}, y_level : {}", transform.translation.y);
             if velocity.vy < 0. {
                 grounded.0 = false

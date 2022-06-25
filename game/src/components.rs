@@ -1,10 +1,9 @@
 use bevy::prelude::*;
 
-
 // region : general components
 
 #[derive(Component)]
-pub enum Movement{
+pub enum Movement {
     Idle,
     Running,
 }
@@ -14,29 +13,28 @@ pub struct AffectedByGravity;
 
 #[derive(Component, Default)]
 pub struct Velocity {
-	pub vx : f32,
-	pub vy : f32,
+    pub vx: f32,
+    pub vy: f32,
 }
-#[derive(Component,Default)]
+#[derive(Component, Default)]
 pub struct Acceleration {
     pub ax: f32,
-    pub ay: f32
+    pub ay: f32,
 }
 #[derive(Component)]
 pub struct SpriteSize(pub Vec2);
 
-impl  From<(f32,f32)> for SpriteSize {
-    fn from(val: (f32,f32)) -> Self {
-        SpriteSize(Vec2::new(val.0,val.1))
+impl From<(f32, f32)> for SpriteSize {
+    fn from(val: (f32, f32)) -> Self {
+        SpriteSize(Vec2::new(val.0, val.1))
     }
 }
 
 #[derive(Component)]
-pub struct Platform{
-    pub ground_level : f32,
-    pub left_bound : f32,
+pub struct Platform {
+    pub ground_level: f32,
+    pub left_bound: f32,
     pub right_bound: f32,
-
 }
 
 #[derive(Component)]
@@ -45,11 +43,10 @@ pub struct Grounded(pub bool);
 #[derive(Component)]
 pub struct RepeatAnimation(pub bool);
 
-
 #[derive(Component, Deref, DerefMut)]
 pub struct AnimationTimer(pub Timer);
 
-//endregion : general components 
+//endregion : general components
 
 //region : player components
 
@@ -62,4 +59,4 @@ pub struct Player;
 #[derive(Component)]
 pub struct Enemy;
 
-//endregion : enemy components 
+//endregion : enemy components
