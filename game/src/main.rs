@@ -17,8 +17,10 @@ const BACKGROUND_LAYER1: &str = "textures/oak_woods_v1.0/background/background_l
 const BACKGROUND_LAYER2: &str = "textures/oak_woods_v1.0/background/background_layer_2.png";
 const BACKGROUND_LAYER3: &str = "textures/oak_woods_v1.0/background/background_layer_3.png";
 
+const BACKGROUND_DIM:(f32,f32) = (640.,360.);
+
 const SPRITE_SCALE: f32 = 2.;
-const MARGIN: f32 = 5.;
+const MARGIN: f32 = 1.;
 
 struct WinSize {
     win_h: f32,
@@ -30,9 +32,9 @@ fn main() {
         .insert_resource(ImageSettings::default_nearest()) //prevent blurry sprites
         .insert_resource(WindowDescriptor {
             title: "ProjetX".to_string(),
-            width: 600.0,
-            height: 400.0,
-            resizable: false,
+            width: 640.0,
+            height: 360.0,
+            resizable: true,
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)
@@ -46,10 +48,13 @@ fn main() {
         .run();
 }
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Windows>) {
+fn setup(mut commands: Commands, 
+    asset_server: Res<AssetServer>,
+    windows: Res<Windows>) {
+
     commands.spawn_bundle(Camera2dBundle::default());
 
-    let background: Handle<Image> = asset_server.load(BACKGROUND);;
+    let background: Handle<Image> = asset_server.load(BACKGROUND);
     let background_layer1: Handle<Image> = asset_server.load(BACKGROUND_LAYER1);
     let background_layer2: Handle<Image> = asset_server.load(BACKGROUND_LAYER2);
     let background_layer3: Handle<Image> = asset_server.load(BACKGROUND_LAYER3);
@@ -57,6 +62,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
     // capture window size
     let window = windows.get_primary().unwrap();
     let (win_h, win_w) = (window.height(), window.width());
+    let ground_lvl: f32 = -win_h / 2. + 67.;
 
     commands.insert_resource(WinSize { win_h, win_w });
     commands
@@ -86,7 +92,13 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
                 ..Default::default()
             },
             ..Default::default()
+        })
+        .insert(Platform {
+            ground_level: ground_lvl,
+            left_bound: -win_w / 2.,
+            right_bound: win_w / 2.,
         });
+    }
         
         
         
@@ -96,7 +108,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
                 left_bound: 100. / 2.,
                 right_bound: 150.,
             })*/
-}
 /* let player_sprite = asset_server.load(CROUCH_SPRITE);
 commands.spawn_bundle(SpriteBundle{
     texture : player_sprite,
@@ -126,68 +137,53 @@ fn animate_sprite(
     }
 }
 
-fn movement(
-    time: Res<Time>,
-    texture_atlases: Res<Assets<TextureAtlas>>,
-    mut query: Query<
-        (
-            &mut Grounded,
-            &mut Velocity,
-            &mut Acceleration,
-            &mut Transform,
-            &Handle<TextureAtlas>,
-        ),
-        With<Player>,
-    >,
-    query_platforms: Query<&Platform>,
-) {
+fn movement(time: Res<Time>, 
+    texture_atlases: Res<Assets<TextureAtlas>>, 
+    mut query: Query<(
+        &mut Grounded, 
+        &mut Velocity, 
+        &mut Acceleration, 
+        &mut Transform, 
+        &Handle<TextureAtlas>), 
+    With<Player>>, 
+    query_platforms : Query<&Platform>) {
+
     let delta = time.delta_seconds();
-    for (mut grounded, mut velocity, mut acceleration, mut transform, texture_atlas) in
-        query.iter_mut()
-    {
+    for (mut grounded, 
+         mut velocity, 
+         mut acceleration, 
+         mut transform, 
+         texture_atlas) in query.iter_mut() {
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
         velocity.vx += acceleration.ax * delta;
         velocity.vy += acceleration.ay * delta;
-        let sprite_height = texture_atlases.get(texture_atlas).unwrap().size.y / 2.;
-        if velocity.vy < 0. {
-            grounded.0 = false
-        };
-        for platform in query_platforms.iter() {
+        let sprite_height = texture_atlases.get(texture_atlas).unwrap().size.y /2.;
+        //println!("velocity vy {}, acceleration ay{}, y_level : {}",velocity.vy,acceleration.ay, transform.translation.y);
+        for platform in query_platforms.iter(){
             let ground_level = platform.ground_level;
             let left_bound = platform.left_bound;
             let right_bound = platform.right_bound;
-            
-            println!("ground_level {ground_level}, left_bound {left_bound}, right_bound {right_bound}, y_level : {}", transform.translation.y);
-            if velocity.vy < 0. {
-                grounded.0 = false
-            }
+
+            //println!("ground_level {ground_level}, left_bound {left_bound}, right_bound {right_bound}, y_level : {}", transform.translation.y);
             if grounded.0 == false {
                 if ground_level + sprite_height + MARGIN >= transform.translation.y
-                    //&& ground_level + sprite_height - MARGIN <= transform.translation.y
-                    && transform.translation.x >= left_bound
-                    && transform.translation.x <= right_bound
+                && ground_level + sprite_height - MARGIN <= transform.translation.y
+                && transform.translation.x >= left_bound
+                && transform.translation.x <= right_bound
                 {
                     acceleration.ay = 0.;
                     velocity.vy = 0.;
-                    transform.translation.y = ground_level + sprite_height;
                     grounded.0 = true;
-                } 
+                }
                 else {
                     acceleration.ay = -100.
                 }
-            } 
-            else if grounded.0 == true
-              && (transform.translation.x < platform.left_bound||transform.translation.x > platform.right_bound)
-              {
-                  println!("test successful");
-                  acceleration.ay = -100.
-              }
-
-            //println!("ground_level = {:}, sprite_height ={:}, left_bound = {:}",ground_level,sprite_height,left_bound)
+            }
         }
     }
 }
+
 
 /* 
 fn player_collide_platform(

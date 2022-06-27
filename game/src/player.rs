@@ -82,7 +82,7 @@ fn player_setup(
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_idle,
             transform: Transform {
-                translation: Vec3::new(0., level, 1.),
+                translation: Vec3::new(0., level, 2.),
                 ..Default::default()
             },
             ..Default::default()
@@ -108,11 +108,12 @@ fn player_keyboard_event_system(
             &mut Velocity,
             &mut Handle<TextureAtlas>,
             &mut Transform,
+            &mut Acceleration
         ),
         With<Player>,
     >,
 ) {
-    if let Ok((mut grounded, mut sprite, mut velocity, mut texture_atlas, mut transform)) =
+    if let Ok((mut grounded, mut sprite, mut velocity, mut texture_atlas, mut transform, mut acceleration)) =
         query.get_single_mut()
     {
         if kb.pressed(KeyCode::Q) {
@@ -144,12 +145,10 @@ fn player_keyboard_event_system(
             if *texture_atlas != animations.jump {
                 *texture_atlas = animations.jump.clone();
                 sprite.index = 0;
-
-                if grounded.0 == true {
-                    velocity.vy = 100.;
-                    grounded.0 = false;
-                }
-            };
+                grounded.0 = false;
+                velocity.vy = 100.;
+                acceleration.ay =-100.;
         }
     }
+}
 }
