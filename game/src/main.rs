@@ -1,6 +1,6 @@
 mod components;
-mod player;
 mod platforms;
+mod player;
 
 use bevy::{
     math::{const_vec3, Vec3Swizzles},
@@ -17,7 +17,7 @@ const BACKGROUND_LAYER1: &str = "textures/oak_woods_v1.0/background/background_l
 const BACKGROUND_LAYER2: &str = "textures/oak_woods_v1.0/background/background_layer_2.png";
 const BACKGROUND_LAYER3: &str = "textures/oak_woods_v1.0/background/background_layer_3.png";
 
-const BACKGROUND_DIM:(f32,f32) = (640.,360.);
+const BACKGROUND_DIM: (f32, f32) = (640., 360.);
 
 const SPRITE_SCALE: f32 = 2.;
 const MARGIN: f32 = 1.;
@@ -48,10 +48,7 @@ fn main() {
         .run();
 }
 
-fn setup(mut commands: Commands, 
-    asset_server: Res<AssetServer>,
-    windows: Res<Windows>) {
-
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Windows>) {
     commands.spawn_bundle(Camera2dBundle::default());
 
     let background: Handle<Image> = asset_server.load(BACKGROUND);
@@ -65,26 +62,26 @@ fn setup(mut commands: Commands,
     let ground_lvl: f32 = -win_h / 2. + 67.;
 
     commands.insert_resource(WinSize { win_h, win_w });
+    commands.spawn_bundle(SpriteBundle {
+        texture: background_layer1,
+        transform: Transform {
+            translation: Vec3::new(0., 0., 0.),
+            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+            ..Default::default()
+        },
+        ..Default::default()
+    });
+    commands.spawn_bundle(SpriteBundle {
+        texture: background_layer2,
+        transform: Transform {
+            translation: Vec3::new(0., 0., 1.),
+            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+            ..Default::default()
+        },
+        ..Default::default()
+    });
     commands
         .spawn_bundle(SpriteBundle {
-            texture: background_layer1,
-            transform: Transform {
-                translation: Vec3::new(0., 0., 0.),
-                scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
-                ..Default::default()
-            },
-            ..Default::default()
-        });
-    commands.spawn_bundle(SpriteBundle {
-            texture: background_layer2,
-            transform: Transform {
-                translation: Vec3::new(0., 0., 1.),
-                scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
-                ..Default::default()
-            },
-            ..Default::default()
-        });
-    commands.spawn_bundle(SpriteBundle {
             texture: background_layer3,
             transform: Transform {
                 translation: Vec3::new(0., 0., 1.),
@@ -98,16 +95,13 @@ fn setup(mut commands: Commands,
             left_bound: -win_w / 2.,
             right_bound: win_w / 2.,
         });
-    }
-        
-        
-        
-        
-        /*          .insert(Platform {
-                ground_level: ground_lvl + 50.,
-                left_bound: 100. / 2.,
-                right_bound: 150.,
-            })*/
+}
+
+/*          .insert(Platform {
+    ground_level: ground_lvl + 50.,
+    left_bound: 100. / 2.,
+    right_bound: 150.,
+})*/
 /* let player_sprite = asset_server.load(CROUCH_SPRITE);
 commands.spawn_bundle(SpriteBundle{
     texture : player_sprite,
@@ -137,30 +131,32 @@ fn animate_sprite(
     }
 }
 
-fn movement(time: Res<Time>, 
-    texture_atlases: Res<Assets<TextureAtlas>>, 
-    mut query: Query<(
-        &mut Grounded, 
-        &mut Velocity, 
-        &mut Acceleration, 
-        &mut Transform, 
-        &Handle<TextureAtlas>), 
-    With<Player>>, 
-    query_platforms : Query<&Platform>) {
-
+fn movement(
+    time: Res<Time>,
+    texture_atlases: Res<Assets<TextureAtlas>>,
+    mut query: Query<
+        (
+            &mut Grounded,
+            &mut Velocity,
+            &mut Acceleration,
+            &mut Transform,
+            &Handle<TextureAtlas>,
+        ),
+        With<Player>,
+    >,
+    query_platforms: Query<&Platform>,
+) {
     let delta = time.delta_seconds();
-    for (mut grounded, 
-         mut velocity, 
-         mut acceleration, 
-         mut transform, 
-         texture_atlas) in query.iter_mut() {
+    for (mut grounded, mut velocity, mut acceleration, mut transform, texture_atlas) in
+        query.iter_mut()
+    {
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
         velocity.vx += acceleration.ax * delta;
         velocity.vy += acceleration.ay * delta;
-        let sprite_height = texture_atlases.get(texture_atlas).unwrap().size.y /2.;
+        let sprite_height = texture_atlases.get(texture_atlas).unwrap().size.y / 2.;
         //println!("velocity vy {}, acceleration ay{}, y_level : {}",velocity.vy,acceleration.ay, transform.translation.y);
-        for platform in query_platforms.iter(){
+        for platform in query_platforms.iter() {
             let ground_level = platform.ground_level;
             let left_bound = platform.left_bound;
             let right_bound = platform.right_bound;
@@ -168,15 +164,14 @@ fn movement(time: Res<Time>,
             //println!("ground_level {ground_level}, left_bound {left_bound}, right_bound {right_bound}, y_level : {}", transform.translation.y);
             if grounded.0 == false {
                 if ground_level + sprite_height + MARGIN >= transform.translation.y
-                && ground_level + sprite_height - MARGIN <= transform.translation.y
-                && transform.translation.x >= left_bound
-                && transform.translation.x <= right_bound
+                    && ground_level + sprite_height - MARGIN <= transform.translation.y
+                    && transform.translation.x >= left_bound
+                    && transform.translation.x <= right_bound
                 {
                     acceleration.ay = 0.;
                     velocity.vy = 0.;
                     grounded.0 = true;
-                }
-                else {
+                } else {
                     acceleration.ay = -100.
                 }
             }
@@ -184,8 +179,7 @@ fn movement(time: Res<Time>,
     }
 }
 
-
-/* 
+/*
 fn player_collide_platform(
     collision_: Res<Collision>,
     platform_query: Query<(&Transform, &SpriteSize), With<Platform>>,

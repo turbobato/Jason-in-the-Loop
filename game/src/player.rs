@@ -108,13 +108,19 @@ fn player_keyboard_event_system(
             &mut Velocity,
             &mut Handle<TextureAtlas>,
             &mut Transform,
-            &mut Acceleration
+            &mut Acceleration,
         ),
         With<Player>,
     >,
 ) {
-    if let Ok((mut grounded, mut sprite, mut velocity, mut texture_atlas, mut transform, mut acceleration)) =
-        query.get_single_mut()
+    if let Ok((
+        mut grounded,
+        mut sprite,
+        mut velocity,
+        mut texture_atlas,
+        mut transform,
+        mut acceleration,
+    )) = query.get_single_mut()
     {
         if kb.pressed(KeyCode::Q) {
             velocity.vx = -100.;
@@ -147,8 +153,8 @@ fn player_keyboard_event_system(
                 sprite.index = 0;
                 grounded.0 = false;
                 velocity.vy = 100.;
-                acceleration.ay =-100.;
+                acceleration.ay = -100.;
+            }
         }
     }
-}
 }
