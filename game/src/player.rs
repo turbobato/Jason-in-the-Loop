@@ -94,7 +94,7 @@ fn player_keyboard_event_system(
             };
         }
 
-        if kb.pressed(KeyCode::Z) && grounded.0 == true {
+        if kb.pressed(KeyCode::Z) && grounded.0 {
             velocity.vy = 100.;
             transform.translation.x += PLATFORM_MARGIN; //this line is to be sure the player gets out of the platform
             grounded.0 = false;

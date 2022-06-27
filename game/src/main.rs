@@ -1,5 +1,6 @@
 mod components;
 mod player;
+mod collisions;
 
 use bevy::{
     log::LogSettings,
@@ -7,6 +8,7 @@ use bevy::{
     render::texture::ImageSettings,
     sprite::collide_aabb::{collide, Collision},
 };
+use collisions::CollisionsPlugin;
 use components::*;
 use player::PlayerPlugin;
 
@@ -33,10 +35,10 @@ fn main() {
         })
         .add_plugins(DefaultPlugins)
         .add_plugin(PlayerPlugin)
+        .add_plugin(CollisionsPlugin)
         .add_startup_system(setup)
         .add_system(animate_sprite)
         .add_system(movement)
-        .add_system(collision_with_platform)
         .run();
 }
 
@@ -119,31 +121,3 @@ fn movement(
     }
 }
 
-fn collision_with_platform(
-    mut query: Query<(&mut Grounded, &mut Transform, &SpriteSize), With<Player>>,
-    query_platforms: Query<&Platform>,
-) {
-    for (mut grounded, mut transform, sprite_size) in query.iter_mut() {
-        for platform in query_platforms.iter() {
-            let entity_position = &mut transform.translation;
-            let entity_size = sprite_size.0;
-            debug!(?entity_size, "taille de l'entité");
-            let platform_position = platform.position;
-            let platform_size = platform.size;
-            if let Some(collision) = collide(
-                *entity_position,
-                entity_size,
-                platform_position,
-                platform_size,
-            ) {
-                match collision {
-                    Collision::Top => {
-                        grounded.0 = true;
-                        entity_position.y = platform_position.y + entity_size.y / 2.;
-                    }
-                    _ => (),
-                }
-            }
-        }
-    }
-}
