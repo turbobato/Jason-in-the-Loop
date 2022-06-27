@@ -1,6 +1,6 @@
+mod collisions;
 mod components;
 mod player;
-mod collisions;
 
 use bevy::{
     log::LogSettings,
@@ -120,4 +120,3 @@ fn movement(
         } */
     }
 }
-

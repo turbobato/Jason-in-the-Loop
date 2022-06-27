@@ -1,10 +1,10 @@
-use bevy::prelude::*;
 use crate::*;
+use bevy::prelude::*;
 
 pub struct CollisionsPlugin;
 
 impl Plugin for CollisionsPlugin {
-    fn build(&self, app : &mut App){
+    fn build(&self, app: &mut App) {
         app.add_system(collision_with_platform);
     }
 }
