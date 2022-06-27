@@ -1,9 +1,0 @@
-/Users/jimmybao/Desktop/Rust_Bevy/projetx/game/target/debug/deps/bevy_diagnostic-358d605697cb3bc7.rmeta: /Users/jimmybao/.cargo/git/checkouts/bevy-f7ffde730c324c74/c4fc5d8/crates/bevy_diagnostic/src/lib.rs /Users/jimmybao/.cargo/git/checkouts/bevy-f7ffde730c324c74/c4fc5d8/crates/bevy_diagnostic/src/diagnostic.rs /Users/jimmybao/.cargo/git/checkouts/bevy-f7ffde730c324c74/c4fc5d8/crates/bevy_diagnostic/src/entity_count_diagnostics_plugin.rs /Users/jimmybao/.cargo/git/checkouts/bevy-f7ffde730c324c74/c4fc5d8/crates/bevy_diagnostic/src/frame_time_diagnostics_plugin.rs /Users/jimmybao/.cargo/git/checkouts/bevy-f7ffde730c324c74/c4fc5d8/crates/bevy_diagnostic/src/log_diagnostics_plugin.rs
-
-/Users/jimmybao/Desktop/Rust_Bevy/projetx/game/target/debug/deps/bevy_diagnostic-358d605697cb3bc7.d: /Users/jimmybao/.cargo/git/checkouts/bevy-f7ffde730c324c74/c4fc5d8/crates/bevy_diagnostic/src/lib.rs /Users/jimmybao/.cargo/git/checkouts/bevy-f7ffde730c324c74/c4fc5d8/crates/bevy_diagnostic/src/diagnostic.rs /Users/jimmybao/.cargo/git/checkouts/bevy-f7ffde730c324c74/c4fc5d8/crates/bevy_diagnostic/src/entity_count_diagnostics_plugin.rs /Users/jimmybao/.cargo/git/checkouts/bevy-f7ffde730c324c74/c4fc5d8/crates/bevy_diagnostic/src/frame_time_diagnostics_plugin.rs /Users/jimmybao/.cargo/git/checkouts/bevy-f7ffde730c324c74/c4fc5d8/crates/bevy_diagnostic/src/log_diagnostics_plugin.rs
-
-/Users/jimmybao/.cargo/git/checkouts/bevy-f7ffde730c324c74/c4fc5d8/crates/bevy_diagnostic/src/lib.rs:
-/Users/jimmybao/.cargo/git/checkouts/bevy-f7ffde730c324c74/c4fc5d8/crates/bevy_diagnostic/src/diagnostic.rs:
-/Users/jimmybao/.cargo/git/checkouts/bevy-f7ffde730c324c74/c4fc5d8/crates/bevy_diagnostic/src/entity_count_diagnostics_plugin.rs:
-/Users/jimmybao/.cargo/git/checkouts/bevy-f7ffde730c324c74/c4fc5d8/crates/bevy_diagnostic/src/frame_time_diagnostics_plugin.rs:
-/Users/jimmybao/.cargo/git/checkouts/bevy-f7ffde730c324c74/c4fc5d8/crates/bevy_diagnostic/src/log_diagnostics_plugin.rs:
