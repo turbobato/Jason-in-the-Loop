@@ -1,8 +1,7 @@
-mod components;
-mod player;
-mod enemy;
 mod collisions;
-
+mod components;
+mod enemy;
+mod player;
 
 use bevy::{
     log::LogSettings,
@@ -12,8 +11,8 @@ use bevy::{
 };
 use collisions::CollisionsPlugin;
 use components::*;
-use player::PlayerPlugin;
 use enemy::EnemyPlugin;
+use player::PlayerPlugin;
 
 const BACKGROUND: &str = "textures/forest/Free Pixel Art Forest/Preview/Background.png";
 pub const GROUND_LEVEL: f32 = -330.5;
@@ -86,7 +85,6 @@ fn animate_sprite(
     }
 }
 
-
 fn movement(
     time: Res<Time>,
     mut query: Query<(&Grounded, &mut Velocity, &mut Acceleration, &mut Transform), With<Player>>,
@@ -126,4 +124,3 @@ fn movement(
         } */
     }
 }
-
