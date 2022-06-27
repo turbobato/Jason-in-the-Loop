@@ -2,23 +2,32 @@ mod collisions;
 mod components;
 mod enemy;
 mod player;
+mod platforms;
 
 use bevy::{
     log::LogSettings,
+    math::{const_vec3, Vec3Swizzles},
     prelude::*,
     render::texture::ImageSettings,
     sprite::collide_aabb::{collide, Collision},
 };
-use collisions::CollisionsPlugin;
+
 use components::*;
+use collisions::CollisionsPlugin;
 use enemy::EnemyPlugin;
+use platforms::PlatformsPlugin;
 use player::PlayerPlugin;
 
-const BACKGROUND: &str = "textures/forest/Free Pixel Art Forest/Preview/Background.png";
-pub const GROUND_LEVEL: f32 = -330.5;
+pub const GROUND_LEVEL: f32 = 0.;
 pub const PLATFORM_MARGIN: f32 = 1.; // this is the thickness of the platforms
 
-// TODO : refactor interactions with ground (add sprite sizes constants, add ground components and change ground level)
+const BACKGROUND: &str = "textures/forest/Free Pixel Art Forest/Preview/Background.png";
+const BACKGROUND_LAYER1: &str = "textures/oak_woods_v1.0/background/background_layer_1.png";
+const BACKGROUND_LAYER2: &str = "textures/oak_woods_v1.0/background/background_layer_2.png";
+const BACKGROUND_LAYER3: &str = "textures/oak_woods_v1.0/background/background_layer_3.png";
+const BACKGROUND_DIM: (f32, f32) = (960., 540.);
+const SPRITE_SCALE: f32 = 3.;
+
 
 struct WinSize {
     win_h: f32,
@@ -30,14 +39,16 @@ fn main() {
         .insert_resource(ImageSettings::default_nearest()) //prevent blurry sprites
         .insert_resource(WindowDescriptor {
             title: "ProjetX".to_string(),
-            width: 928.,
-            height: 793.,
+            width: 960.0,
+            height: 540.0,
+            resizable: false,
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)
         .add_plugin(PlayerPlugin)
         .add_plugin(EnemyPlugin)
         .add_plugin(CollisionsPlugin)
+        .add_plugin(PlatformsPlugin)
         .add_startup_system(setup)
         .add_system(animate_sprite)
         .add_system(movement)
@@ -45,18 +56,44 @@ fn main() {
         .run();
 }
 
-// Caméra, fenêtre, fond d'écran, sol
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Windows>) {
     commands.spawn_bundle(Camera2dBundle::default());
-    let background_image: Handle<Image> = asset_server.load(BACKGROUND);
+
+    let background: Handle<Image> = asset_server.load(BACKGROUND);
+    let background_layer1: Handle<Image> = asset_server.load(BACKGROUND_LAYER1);
+    let background_layer2: Handle<Image> = asset_server.load(BACKGROUND_LAYER2);
+    let background_layer3: Handle<Image> = asset_server.load(BACKGROUND_LAYER3);
+
+    // capture window size
     let window = windows.get_primary().unwrap();
     let (win_h, win_w) = (window.height(), window.width());
+    
+
     commands.insert_resource(WinSize { win_h, win_w });
+    commands.spawn_bundle(SpriteBundle {
+        texture: background_layer1,
+        transform: Transform {
+            translation: Vec3::new(0., 0., 0.),
+            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+            ..Default::default()
+        },
+        ..Default::default()
+    });
+    commands.spawn_bundle(SpriteBundle {
+        texture: background_layer2,
+        transform: Transform {
+            translation: Vec3::new(0., 0., 1.),
+            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+            ..Default::default()
+        },
+        ..Default::default()
+    });
     commands
         .spawn_bundle(SpriteBundle {
-            texture: background_image,
+            texture: background_layer3,
             transform: Transform {
-                translation: Vec3::new(0., 0., 0.),
+                translation: Vec3::new(0., 0., 1.),
+                scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
                 ..Default::default()
             },
             ..Default::default()
@@ -66,6 +103,22 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
             position: Vec3::new(0., GROUND_LEVEL, 0.),
         });
 }
+
+/*          .insert(Platform {
+    ground_level: ground_lvl + 50.,
+    left_bound: 100. / 2.,
+    right_bound: 150.,
+})*/
+/* let player_sprite = asset_server.load(CROUCH_SPRITE);
+commands.spawn_bundle(SpriteBundle{
+    texture : player_sprite,
+    transform : Transform {
+        translation : Vec3::new(0.,ground_lvl,1.),
+        //scale : Vec3::new(2.,2.,1.),
+        ..Default::default()
+    },
+    ..Default::default()
+}); */
 
 fn animate_sprite(
     time: Res<Time>,
@@ -87,10 +140,23 @@ fn animate_sprite(
 
 fn movement(
     time: Res<Time>,
-    mut query: Query<(&Grounded, &mut Velocity, &mut Acceleration, &mut Transform), With<Player>>,
+    texture_atlases: Res<Assets<TextureAtlas>>,
+    mut query: Query<
+        (
+            &mut Grounded,
+            &mut Velocity,
+            &mut Acceleration,
+            &mut Transform,
+            &Handle<TextureAtlas>,
+        ),
+        With<Player>,
+    >,
+    query_platforms: Query<&Platform>,
 ) {
     let delta = time.delta_seconds();
-    for (grounded, mut velocity, mut acceleration, mut transform) in query.iter_mut() {
+    for (mut grounded, mut velocity, mut acceleration, mut transform, texture_atlas) in
+        query.iter_mut()
+    {
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
         velocity.vx += acceleration.ax * delta;
@@ -99,7 +165,7 @@ fn movement(
             acceleration.ay = 0.;
             velocity.vy = 0.;
         } else {
-            acceleration.ay = -100.
+            acceleration.ay = -100.;
         }
         /* let sprite_height = texture_atlases.get(texture_atlas).unwrap().size.y /2.;
         for platform in query_platforms.iter(){
