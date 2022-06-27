@@ -68,7 +68,6 @@ fn platform_setup(
     */
 
     let (win_h, win_w) = (windows.win_h, windows.win_w);
-    let ground_lvl: f32 = -win_h / 2. + 67.;
 
     /* 
     //earthy plat left down
