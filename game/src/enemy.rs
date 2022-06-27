@@ -15,9 +15,7 @@ const ATTACK_SPRITE_SKETELON: &str =
 const WALK_SPRITE_SKELETON: &str =
 "textures/monster2/Skeleton/Walk.png";
 const SPRITE_DIMENSIONS_SKELETON: (f32, f32) = (150., 150.);
-const PROJECTILE_SPRITE_SKELETON: &str =
-    "textures/monsters/Monster_Creatures_Fantasy(Version 1.3)/Skeleton/sword_sprite.png";
-const PROJECTILE_SPRITE_SKELETON_DIMENSION: (f32, f32) = (92., 106.);
+
 pub struct EnemyPlugin;
 
 impl Plugin for EnemyPlugin {
@@ -59,30 +57,49 @@ fn enemy_attack_criteria() -> ShouldRun {
 
 fn skeleton_movement(
     time: Res<Time>,
-    win_size: Res<WinSize>,
-    mut query_monster: Query<(&mut Velocity, &mut Transform), (With<Skeleton>, Without<Player>)>,
-    query_player: Query<&Transform, With<Player>>
+    mut query_monster: Query<(&mut Velocity, &mut Transform, &mut Handle<TextureAtlas>, &mut TextureAtlasSprite), (With<Skeleton>, Without<Player>)>,
+    query_player: Query<&Transform, With<Player>>,
+    enemy_animations: Res<EnemyAnimations>
 ) {
     let delta = time.delta_seconds();
     const MARGIN: f32 = 50.;
 
     let tf_player = query_player.single();
 
-    for (mut velocity, mut transform) in query_monster.iter_mut() {
+    for (mut velocity, mut transform, mut texture_atlas, mut sprite) in query_monster.iter_mut() {
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
 
         if transform.translation.x <=  tf_player.translation.x - MARGIN
         {
+            if *texture_atlas != enemy_animations.walk_skeleton{
+                *texture_atlas = enemy_animations.walk_skeleton.clone();
+                sprite.index = 0;}
+
+            if velocity.vx >= 0. {
+                transform.scale.x = 1.;
+            }
+
             velocity.vx = 30.; 
             // on est à gauche
         }
         else if transform.translation.x >= tf_player.translation.x + MARGIN {
-            velocity.vx = -30.;
             // on est à droite
+            if *texture_atlas != enemy_animations.walk_skeleton{
+            *texture_atlas = enemy_animations.walk_skeleton.clone();
+            sprite.index = 0;}
+
+            if velocity.vx >= 0. {
+                transform.scale.x = -1.;
+            }
+            velocity.vx = -30.;
         }
         else{
             velocity.vx = 0.;
+            if *texture_atlas != enemy_animations.attack_skeleton{
+                *texture_atlas = enemy_animations.attack_skeleton.clone();
+                sprite.index = 0;
+            }
             // on est à côté
         }
     }
@@ -172,7 +189,7 @@ fn enemy_setup(
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
-    // animation perso
+    // animation eye
     let texture_handle_perso = asset_server.load(ATTACK_SPRITE_EYE);
     let texture_atlas_perso = TextureAtlas::from_grid(
         texture_handle_perso,
@@ -182,7 +199,7 @@ fn enemy_setup(
     );
     let texture_atlas_handle_perso = texture_atlases.add(texture_atlas_perso);
 
-    // animation projectile
+    // animation projectile eye
     let texture_handle_proj = asset_server.load(PROJECTILE_SPRITE_EYE);
     let texture_atlas_proj = TextureAtlas::from_grid(
         texture_handle_proj,
@@ -195,6 +212,7 @@ fn enemy_setup(
     );
     let texture_atlas_handle_proj = texture_atlases.add(texture_atlas_proj);
 
+    // animation attaque squelette
     let texture_handle_skeleton = asset_server.load(ATTACK_SPRITE_SKETELON);
     let texture_atlas_skeleton = TextureAtlas::from_grid(
         texture_handle_skeleton,
@@ -204,6 +222,7 @@ fn enemy_setup(
     );
     let texture_atlas_handle_skeleton = texture_atlases.add(texture_atlas_skeleton);
 
+    // animation walk squelette
     let texture_handle_skeleton_walk = asset_server.load(WALK_SPRITE_SKELETON);
     let texture_atlas_skeleton_walk = TextureAtlas::from_grid(
         texture_handle_skeleton_walk,
@@ -241,7 +260,7 @@ fn enemy_setup(
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_skeleton_walk,
             transform: Transform {
-                translation: Vec3::new(0., -100., 10.),
+                translation: Vec3::new(-200., -100., 10.),
                 ..Default::default()
             },
             ..default()
