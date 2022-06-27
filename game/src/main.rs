@@ -41,7 +41,7 @@ fn main() {
             title: "ProjetX".to_string(),
             width: 960.0,
             height: 540.0,
-            resizable: false,
+            resizable: true,
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)

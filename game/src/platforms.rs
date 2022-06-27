@@ -110,13 +110,27 @@ fn platform_setup(
         },
         ..Default::default()
     });
+    //dirt block left down
+    commands.spawn_bundle(SpriteBundle {
+        texture: dirt_block.clone(),
+        transform: Transform {
+            translation: Vec3::new(
+                -BACKGROUND_DIM.0/2.5,
+                -BACKGROUND_DIM.1 /2. ,
+                1.6,
+            ),
+            scale: Vec3::new(2.*DIRT_BLOCK_SCALE, 1.5*DIRT_BLOCK_SCALE, 1.6),
+            ..Default::default()
+        },
+        ..Default::default()
+    });
     // earthy plat middle down
     commands.spawn_bundle(SpriteBundle {
         texture: earthy_hblock_cut.clone(),
         transform: Transform {
             translation: Vec3::new(
-                EARTHY_HBLOCK_DIM.0,
-                -BACKGROUND_DIM.1 / 2. - EARTHY_HBLOCK_DIM.1 / 1.9,
+                -EARTHY_HBLOCK_DIM.0/2.,
+                -BACKGROUND_DIM.1 / 2. - EARTHY_HBLOCK_DIM.0 / 3.5,
                 1.5,
             ),
             scale: Vec3::new(EARTHY_HBLOCK_SCALE, EARTHY_HBLOCK_SCALE, 1.),
@@ -150,20 +164,8 @@ fn platform_setup(
             ..Default::default()
         },
         ..Default::default()
-    });/* 
-    commands.spawn_bundle(SpriteBundle {
-        texture: dirt_block.clone(),
-        transform: Transform {
-            translation: Vec3::new(
-                5. * TRANSITION_EART_ROCK_DIM.0,
-                -BACKGROUND_DIM.1 / 1.9 + 1.25 * BACKGROUND_DIM.1,
-                1.4,
-            ),
-            scale: Vec3::new(DIRT_BLOCK_SCALE, DIRT_BLOCK_SCALE, 1.),
-            ..Default::default()
-        },
-        ..Default::default()
-    });*/
+    });
+    
     /*
     commands.spawn_bundle(SpriteBundle{
         texture: earthy_small_platform.clone(),
