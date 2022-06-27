@@ -32,6 +32,10 @@ const TRANSITION_EARTH_ROCK_SCALE: f32 = 2.;
 const ROCK_HPLATFORM: &str = "textures/oak_woods_v1.0/platforms/rock_hplatform(97x25).png";
 const ROCK_HPLAT_DIM: (f32, f32) = (97., 25.);
 const ROCK_HPLATFORM_SCALE: f32 = 2.;
+
+const DIRT_BLOCK: &str = "textures/oak_woods_v1.0/platforms/dirt_block(56x18).png";
+const DIRT_BLOCK_DIM: (f32, f32) = (97., 25.);
+const DIRT_BLOCK_SCALE: f32 = 2.;
 pub struct PlatformsPlugin;
 
 impl Plugin for PlatformsPlugin {
@@ -64,7 +68,7 @@ fn platform_setup(
         transform: Transform {
             translation: Vec3::new(
                 -BACKGROUND_DIM.0 / 2. + 1.5 * EARTHY_HBLOCK_DIM.0,
-                -BACKGROUND_DIM.1 / 1.8 - EARTHY_HBLOCK_DIM.0 / 3.2,
+                -BACKGROUND_DIM.1 / 2. - EARTHY_HBLOCK_DIM.0 / 3.5,
                 1.5,
             ),
             scale: Vec3::new(EARTHY_HBLOCK_SCALE, EARTHY_HBLOCK_SCALE, 1.),
@@ -77,7 +81,7 @@ fn platform_setup(
         transform: Transform {
             translation: Vec3::new(
                 -BACKGROUND_DIM.0 / 2. + 0.5 * EARTHY_HBLOCK_DIM.0,
-                -BACKGROUND_DIM.1 / 1.9,
+                -BACKGROUND_DIM.1 / 2.15,
                 1.4,
             ),
             scale: Vec3::new(EARTHY_HBLOCK_SCALE, EARTHY_HBLOCK_SCALE, 1.),
@@ -90,7 +94,7 @@ fn platform_setup(
         transform: Transform {
             translation: Vec3::new(
                 -BACKGROUND_DIM.0 / 2. - 0.89 * TRANSITION_EART_DIRT_DIM.0,
-                -BACKGROUND_DIM.1 / 1.925,
+                -BACKGROUND_DIM.1 / 2.12,
                 1.6,
             ),
             scale: Vec3::new(

@@ -17,9 +17,9 @@ const BACKGROUND_LAYER1: &str = "textures/oak_woods_v1.0/background/background_l
 const BACKGROUND_LAYER2: &str = "textures/oak_woods_v1.0/background/background_layer_2.png";
 const BACKGROUND_LAYER3: &str = "textures/oak_woods_v1.0/background/background_layer_3.png";
 
-const BACKGROUND_DIM: (f32, f32) = (640., 360.);
+const BACKGROUND_DIM: (f32, f32) = (960., 540.);
 
-const SPRITE_SCALE: f32 = 2.;
+const SPRITE_SCALE: f32 = 3.;
 const MARGIN: f32 = 1.;
 
 struct WinSize {
@@ -32,8 +32,8 @@ fn main() {
         .insert_resource(ImageSettings::default_nearest()) //prevent blurry sprites
         .insert_resource(WindowDescriptor {
             title: "ProjetX".to_string(),
-            width: 640.0,
-            height: 360.0,
+            width: 960.0,
+            height: 540.0,
             resizable: true,
             ..Default::default()
         })

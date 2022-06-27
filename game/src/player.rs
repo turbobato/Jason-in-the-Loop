@@ -83,6 +83,7 @@ fn player_setup(
             texture_atlas: texture_atlas_handle_idle,
             transform: Transform {
                 translation: Vec3::new(0., level, 2.),
+                scale: Vec3::splat(1.5),
                 ..Default::default()
             },
             ..Default::default()
@@ -124,13 +125,13 @@ fn player_keyboard_event_system(
     {
         if kb.pressed(KeyCode::Q) {
             velocity.vx = -100.;
-            transform.scale.x = -1.;
+            transform.scale.x = -1.5;
             if *texture_atlas != animations.run {
                 *texture_atlas = animations.run.clone();
             };
         } else if kb.pressed(KeyCode::D) && *texture_atlas != animations.turn_around {
             velocity.vx = 100.;
-            transform.scale.x = 1.;
+            transform.scale.x = 1.5;
             if *texture_atlas != animations.run {
                 *texture_atlas = animations.run.clone();
             };
