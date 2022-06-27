@@ -80,7 +80,7 @@ fn player_setup(
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_idle,
             transform: Transform {
-                translation: Vec3::new(0., GROUND_LEVEL + PLAYER_DIMENSIONS.1 / 2., 1.),
+                translation: Vec3::new(0., GROUND_LEVEL + PLAYER_DIMENSIONS.1 / 2., 2.),
                 scale: Vec3::splat(1.5),
                 ..Default::default()
             },
