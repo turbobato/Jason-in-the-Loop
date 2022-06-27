@@ -59,10 +59,12 @@ fn platform_setup(
     let transition_plat_dirt: Handle<Image> = asset_server.load(TRANSITION_EARTH_DIRT);
     let transition_plat_earth_rock: Handle<Image> = asset_server.load(TRASITION_PLAT_EARTH_ROCK);
     let rock_hplatform: Handle<Image> = asset_server.load(ROCK_HPLATFORM);
+    let dirt_block: Handle<Image> = asset_server.load(DIRT_BLOCK);
 
     let (win_h, win_w) = (windows.win_h, windows.win_w);
     let ground_lvl: f32 = -win_h / 2. + 67.;
 
+    //earthy plat left down
     commands.spawn_bundle(SpriteBundle {
         texture: earthy_hblock.clone(),
         transform: Transform {
@@ -76,6 +78,7 @@ fn platform_setup(
         },
         ..Default::default()
     });
+    //earthy plat left up
     commands.spawn_bundle(SpriteBundle {
         texture: earthy_hblock.clone(),
         transform: Transform {
@@ -89,6 +92,7 @@ fn platform_setup(
         },
         ..Default::default()
     });
+    //transition plat-dirt left down
     commands.spawn_bundle(SpriteBundle {
         texture: transition_plat_dirt.clone(),
         transform: Transform {
@@ -106,6 +110,7 @@ fn platform_setup(
         },
         ..Default::default()
     });
+    // earthy plat middle down
     commands.spawn_bundle(SpriteBundle {
         texture: earthy_hblock_cut.clone(),
         transform: Transform {
@@ -119,6 +124,7 @@ fn platform_setup(
         },
         ..Default::default()
     });
+
     commands.spawn_bundle(SpriteBundle {
         texture: transition_plat_earth_rock.clone(),
         transform: Transform {
@@ -144,7 +150,20 @@ fn platform_setup(
             ..Default::default()
         },
         ..Default::default()
-    });
+    });/* 
+    commands.spawn_bundle(SpriteBundle {
+        texture: dirt_block.clone(),
+        transform: Transform {
+            translation: Vec3::new(
+                5. * TRANSITION_EART_ROCK_DIM.0,
+                -BACKGROUND_DIM.1 / 1.9 + 1.25 * BACKGROUND_DIM.1,
+                1.4,
+            ),
+            scale: Vec3::new(DIRT_BLOCK_SCALE, DIRT_BLOCK_SCALE, 1.),
+            ..Default::default()
+        },
+        ..Default::default()
+    });*/
     /*
     commands.spawn_bundle(SpriteBundle{
         texture: earthy_small_platform.clone(),
