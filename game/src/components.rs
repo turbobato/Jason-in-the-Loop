@@ -61,7 +61,6 @@ pub struct Eye;
 #[derive(Component)]
 pub struct Skeleton;
 
-
 #[derive(Component)]
 pub struct Projectile;
 

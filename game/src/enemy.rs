@@ -10,10 +10,9 @@ const PROJECTILE_SPRITE_EYE: &str =
     "textures/monsters/Monster_Creatures_Fantasy(Version 1.3)/Flying eye/projectile_sprite.png";
 const PROJECTILE_SPRITE_EYE_DIMENSION: (f32, f32) = (48., 48.);
 
-const ATTACK_SPRITE_SKETELON: &str =
-    "textures/monster2/Skeleton/Attack.png";
-const WALK_SPRITE_SKELETON: &str =
-"textures/monster2/Skeleton/Walk.png";
+const ATTACK_SPRITE_SKETELON: &str = "textures/monster2/Skeleton/Attack.png";
+const WALK_SPRITE_SKELETON: &str = "textures/monster2/Skeleton/Walk.png";
+const IDLE_SPRITE_SKELETON: &str = "textures/monster2/Skeleton/Idle.png";
 const SPRITE_DIMENSIONS_SKELETON: (f32, f32) = (150., 150.);
 
 pub struct EnemyPlugin;
@@ -24,15 +23,14 @@ impl Plugin for EnemyPlugin {
             .add_system(eye_movement)
             .add_system(skeleton_movement)
             .add_system(projectile_movement)
-           // .add_system_set(
-           //     SystemSet::new()
-           //         .with_run_criteria(FixedTimestep::step(1.))
-           //         .with_system(skeleton_attack_system))
-            
+            // .add_system_set(
+            //     SystemSet::new()
+            //         .with_run_criteria(FixedTimestep::step(1.))
+            //         .with_system(skeleton_attack_system))
             .add_system_set(
                 SystemSet::new()
                     .with_run_criteria(FixedTimestep::step(3.))
-                    .with_system(eye_attack_system)
+                    .with_system(eye_attack_system),
             );
     }
 }
@@ -43,6 +41,7 @@ pub struct EnemyAnimations {
     pub projectile_eye: Handle<TextureAtlas>,
     pub attack_skeleton: Handle<TextureAtlas>,
     pub walk_skeleton: Handle<TextureAtlas>,
+    pub idle_skeleton: Handle<TextureAtlas>,
 }
 
 // attaque aléatoire
@@ -54,15 +53,23 @@ fn enemy_attack_criteria() -> ShouldRun {
     }
 }
 
-
 fn skeleton_movement(
     time: Res<Time>,
-    mut query_monster: Query<(&mut Velocity, &mut Transform, &mut Handle<TextureAtlas>, &mut TextureAtlasSprite), (With<Skeleton>, Without<Player>)>,
+    mut query_monster: Query<
+        (
+            &mut Velocity,
+            &mut Transform,
+            &mut Handle<TextureAtlas>,
+            &mut TextureAtlasSprite,
+        ),
+        (With<Skeleton>, Without<Player>),
+    >,
     query_player: Query<&Transform, With<Player>>,
-    enemy_animations: Res<EnemyAnimations>
+    enemy_animations: Res<EnemyAnimations>,
 ) {
     let delta = time.delta_seconds();
-    const MARGIN: f32 = 50.;
+    const MARGIN_IN: f32 = 80.;
+    const MARGIN_OUT: f32 = 300.;
 
     let tf_player = query_player.single();
 
@@ -70,37 +77,43 @@ fn skeleton_movement(
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
 
-        if transform.translation.x <=  tf_player.translation.x - MARGIN
-        {
-            if *texture_atlas != enemy_animations.walk_skeleton{
+        if transform.translation.x <= tf_player.translation.x - MARGIN_IN && transform.translation.x > tf_player.translation.x - MARGIN_OUT {
+            if *texture_atlas != enemy_animations.walk_skeleton {
                 *texture_atlas = enemy_animations.walk_skeleton.clone();
-                sprite.index = 0;}
+                sprite.index = 0;
+            }
 
             if velocity.vx >= 0. {
                 transform.scale.x = 1.;
             }
 
-            velocity.vx = 30.; 
+            velocity.vx = 30.;
             // on est à gauche
-        }
-        else if transform.translation.x >= tf_player.translation.x + MARGIN {
+        } else if transform.translation.x >= tf_player.translation.x + MARGIN_IN && transform.translation.x < tf_player.translation.x + MARGIN_OUT {
             // on est à droite
-            if *texture_atlas != enemy_animations.walk_skeleton{
-            *texture_atlas = enemy_animations.walk_skeleton.clone();
-            sprite.index = 0;}
+            if *texture_atlas != enemy_animations.walk_skeleton {
+                *texture_atlas = enemy_animations.walk_skeleton.clone();
+                sprite.index = 0;
+            }
 
             if velocity.vx >= 0. {
                 transform.scale.x = -1.;
             }
             velocity.vx = -30.;
-        }
-        else{
+        } else if transform.translation.x >= tf_player.translation.x - MARGIN_IN && transform.translation.x <= tf_player.translation.x + MARGIN_IN{
             velocity.vx = 0.;
-            if *texture_atlas != enemy_animations.attack_skeleton{
+            if *texture_atlas != enemy_animations.attack_skeleton {
                 *texture_atlas = enemy_animations.attack_skeleton.clone();
                 sprite.index = 0;
             }
             // on est à côté
+        }
+        else {
+            velocity.vx = 0.;
+            if *texture_atlas != enemy_animations.idle_skeleton {
+                *texture_atlas = enemy_animations.idle_skeleton.clone();
+                sprite.index = 0;
+            }
         }
     }
 }
@@ -217,7 +230,7 @@ fn enemy_setup(
     let texture_atlas_skeleton = TextureAtlas::from_grid(
         texture_handle_skeleton,
         Vec2::new(SPRITE_DIMENSIONS_SKELETON.0, SPRITE_DIMENSIONS_SKELETON.1),
-        6,
+        8,
         1,
     );
     let texture_atlas_handle_skeleton = texture_atlases.add(texture_atlas_skeleton);
@@ -232,11 +245,21 @@ fn enemy_setup(
     );
     let texture_atlas_handle_skeleton_walk = texture_atlases.add(texture_atlas_skeleton_walk);
 
+    let texture_handle_skeleton_idle = asset_server.load(IDLE_SPRITE_SKELETON);
+    let texture_atlas_skeleton_idle = TextureAtlas::from_grid(
+        texture_handle_skeleton_idle,
+        Vec2::new(SPRITE_DIMENSIONS_SKELETON.0, SPRITE_DIMENSIONS_SKELETON.1),
+        4,
+        1,
+    );
+    let texture_atlas_handle_skeleton_idle = texture_atlases.add(texture_atlas_skeleton_idle);
+
     let enemy_animations_ressource = EnemyAnimations {
         attack_eye: texture_atlas_handle_perso.clone(),
         projectile_eye: texture_atlas_handle_proj.clone(),
         attack_skeleton: texture_atlas_handle_skeleton.clone(),
         walk_skeleton: texture_atlas_handle_skeleton_walk.clone(),
+        idle_skeleton: texture_atlas_handle_skeleton_idle.clone(),
     };
     commands.insert_resource(enemy_animations_ressource);
 
@@ -258,9 +281,9 @@ fn enemy_setup(
     // squelette spawn avec la sheet walk
     commands
         .spawn_bundle(SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle_skeleton_walk,
+            texture_atlas: texture_atlas_handle_skeleton_idle,
             transform: Transform {
-                translation: Vec3::new(-200., -100., 10.),
+                translation: Vec3::new(-200., 0., 10.),
                 ..Default::default()
             },
             ..default()

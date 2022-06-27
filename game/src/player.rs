@@ -107,7 +107,7 @@ fn player_keyboard_event_system(
             &mut Velocity,
             &mut Handle<TextureAtlas>,
             &mut Transform,
-            &mut TextureAtlasSprite
+            &mut TextureAtlasSprite,
         ),
         With<Player>,
     >,

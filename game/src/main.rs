@@ -1,8 +1,8 @@
 mod collisions;
 mod components;
 mod enemy;
-mod player;
 mod platforms;
+mod player;
 
 use bevy::{
     log::LogSettings,
@@ -12,8 +12,8 @@ use bevy::{
     sprite::collide_aabb::{collide, Collision},
 };
 
-use components::*;
 use collisions::CollisionsPlugin;
+use components::*;
 use enemy::EnemyPlugin;
 use platforms::PlatformsPlugin;
 use player::PlayerPlugin;
@@ -27,7 +27,6 @@ const BACKGROUND_LAYER2: &str = "textures/oak_woods_v1.0/background/background_l
 const BACKGROUND_LAYER3: &str = "textures/oak_woods_v1.0/background/background_layer_3.png";
 const BACKGROUND_DIM: (f32, f32) = (960., 540.);
 const SPRITE_SCALE: f32 = 3.;
-
 
 struct WinSize {
     win_h: f32,
@@ -67,7 +66,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
     // capture window size
     let window = windows.get_primary().unwrap();
     let (win_h, win_w) = (window.height(), window.width());
-    
 
     commands.insert_resource(WinSize { win_h, win_w });
     commands.spawn_bundle(SpriteBundle {
