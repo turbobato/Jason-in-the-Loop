@@ -11,10 +11,10 @@ const PROJECTILE_SPRITE_EYE: &str =
 const PROJECTILE_SPRITE_EYE_DIMENSION: (f32, f32) = (48., 48.);
 
 const ATTACK_SPRITE_SKETELON: &str =
-    "textures/monsters/Monster_Creatures_Fantasy(Version 1.3)/Skeleton/Attack3.png";
+    "textures/monsters2/Skeleton/Attack.png";
 const SPRITE_DIMENSIONS_SKELETON: (f32, f32) = (150., 150.);
 const PROJECTILE_SPRITE_SKELETON: &str =
-    "textures/monsters/Monster_Creatures_Fantasy(Version 1.3)/Skeleton/projectile_sprite.png";
+    "textures/monsters/Monster_Creatures_Fantasy(Version 1.3)/Skeleton/sword_sprite.png";
 const PROJECTILE_SPRITE_SKELETON_DIMENSION: (f32, f32) = (92., 106.);
 pub struct EnemyPlugin;
 
@@ -25,7 +25,7 @@ impl Plugin for EnemyPlugin {
             .add_system(projectile_movement)
             .add_system_set(
                 SystemSet::new()
-                    .with_run_criteria(FixedTimestep::step(3.))
+                    .with_run_criteria(FixedTimestep::step(1.))
                     .with_system(skeleton_attack_system)
             )
             .add_system_set(
@@ -64,7 +64,7 @@ fn skeleton_attack_system(
             .spawn_bundle(SpriteSheetBundle {
                 texture_atlas: animations.projectile_skeleton.clone(),
                 transform: Transform {
-                    translation: Vec3::new(x + 50. * velocity.vx.signum(), y - 10., 1.),
+                    translation: Vec3::new(x + 50. * velocity.vx.signum(), y - 10., 10.),
                     ..Default::default()
                 },
                 ..Default::default()
@@ -90,7 +90,7 @@ fn eye_attack_system(
             .spawn_bundle(SpriteSheetBundle {
                 texture_atlas: animations.projectile_eye.clone(),
                 transform: Transform {
-                    translation: Vec3::new(x + 50. * velocity.vx.signum(), y - 10., 1.),
+                    translation: Vec3::new(x + 50. * velocity.vx.signum(), y - 10., 10.),
                     ..Default::default()
                 },
                 ..Default::default()
