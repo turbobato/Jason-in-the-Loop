@@ -5,11 +5,17 @@ use rand::{thread_rng, Rng};
 // Les différents chemins des png des animations
 const ATTACK_SPRITE_EYE: &str =
     "textures/monsters/Monster_Creatures_Fantasy(Version 1.3)/Flying eye/Attack3.png";
-const SPRITE_DIMENSIONS: (f32, f32) = (150., 150.);
-
+const SPRITE_DIMENSIONS_EYE: (f32, f32) = (150., 150.);
 const PROJECTILE_SPRITE_EYE: &str =
     "textures/monsters/Monster_Creatures_Fantasy(Version 1.3)/Flying eye/projectile_sprite.png";
-const PROJECTILE_SPRITE_DIMENSION: (f32, f32) = (48., 48.);
+const PROJECTILE_SPRITE_EYE_DIMENSION: (f32, f32) = (48., 48.);
+
+const ATTACK_SPRITE_SKETELON: &str =
+    "textures/monsters/Monster_Creatures_Fantasy(Version 1.3)/Skeleton/Attack3.png";
+const SPRITE_DIMENSIONS_SKELETON: (f32, f32) = (150., 150.);
+const PROJECTILE_SPRITE_SKELETON: &str =
+    "textures/monsters/Monster_Creatures_Fantasy(Version 1.3)/Skeleton/projectile_sprite.png";
+const PROJECTILE_SPRITE_SKELETON_DIMENSION: (f32, f32) = (92., 106.);
 pub struct EnemyPlugin;
 
 impl Plugin for EnemyPlugin {
@@ -20,15 +26,22 @@ impl Plugin for EnemyPlugin {
             .add_system_set(
                 SystemSet::new()
                     .with_run_criteria(FixedTimestep::step(3.))
-                    .with_system(enemy_attack_system),
+                    .with_system(skeleton_attack_system)
+            )
+            .add_system_set(
+                SystemSet::new()
+                    .with_run_criteria(FixedTimestep::step(3.))
+                    .with_system(eye_attack_system)
             );
     }
 }
 
 // les différentes animations des ennemis
 pub struct EnemyAnimations {
-    pub attack: Handle<TextureAtlas>,
-    pub projectile: Handle<TextureAtlas>,
+    pub attack_eye: Handle<TextureAtlas>,
+    pub projectile_eye: Handle<TextureAtlas>,
+    pub attack_skeleton: Handle<TextureAtlas>,
+    pub projectile_skeleton: Handle<TextureAtlas>,
 }
 
 // attaque aléatoire
@@ -39,17 +52,43 @@ fn enemy_attack_criteria() -> ShouldRun {
         ShouldRun::No
     }
 }
-// modifier ça
-fn enemy_attack_system(
+
+fn skeleton_attack_system(
     mut commands: Commands,
     animations: Res<EnemyAnimations>,
-    enemy_query: Query<(&Transform, &Velocity), With<Enemy>>,
+    enemy_query: Query<(&Transform, &Velocity), With<Skeleton>>,
 ) {
     for (&tf, velocity) in enemy_query.iter() {
         let (x, y) = (tf.translation.x, tf.translation.y);
         commands
             .spawn_bundle(SpriteSheetBundle {
-                texture_atlas: animations.projectile.clone(),
+                texture_atlas: animations.projectile_skeleton.clone(),
+                transform: Transform {
+                    translation: Vec3::new(x + 50. * velocity.vx.signum(), y - 10., 1.),
+                    ..Default::default()
+                },
+                ..Default::default()
+            })
+            .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
+            .insert(Velocity {
+                vx: 150. * velocity.vx.signum(),
+                vy: 0.,
+            })
+            .insert(Projectile)
+            .insert(FromEnemy);
+    }
+}
+
+fn eye_attack_system(
+    mut commands: Commands,
+    animations: Res<EnemyAnimations>,
+    enemy_query: Query<(&Transform, &Velocity), With<Eye>>,
+) {
+    for (&tf, velocity) in enemy_query.iter() {
+        let (x, y) = (tf.translation.x, tf.translation.y);
+        commands
+            .spawn_bundle(SpriteSheetBundle {
+                texture_atlas: animations.projectile_eye.clone(),
                 transform: Transform {
                     translation: Vec3::new(x + 50. * velocity.vx.signum(), y - 10., 1.),
                     ..Default::default()
@@ -128,7 +167,7 @@ fn enemy_setup(
     let texture_handle_perso = asset_server.load(ATTACK_SPRITE_EYE);
     let texture_atlas_perso = TextureAtlas::from_grid(
         texture_handle_perso,
-        Vec2::new(SPRITE_DIMENSIONS.0, SPRITE_DIMENSIONS.1),
+        Vec2::new(SPRITE_DIMENSIONS_EYE.0, SPRITE_DIMENSIONS_EYE.1),
         6,
         1,
     );
@@ -138,15 +177,41 @@ fn enemy_setup(
     let texture_handle_proj = asset_server.load(PROJECTILE_SPRITE_EYE);
     let texture_atlas_proj = TextureAtlas::from_grid(
         texture_handle_proj,
-        Vec2::new(PROJECTILE_SPRITE_DIMENSION.0, PROJECTILE_SPRITE_DIMENSION.1),
+        Vec2::new(
+            PROJECTILE_SPRITE_EYE_DIMENSION.0,
+            PROJECTILE_SPRITE_EYE_DIMENSION.1,
+        ),
         8,
         1,
     );
     let texture_atlas_handle_proj = texture_atlases.add(texture_atlas_proj);
 
+    let texture_handle_skeleton = asset_server.load(ATTACK_SPRITE_SKETELON);
+    let texture_atlas_skeleton = TextureAtlas::from_grid(
+        texture_handle_skeleton,
+        Vec2::new(SPRITE_DIMENSIONS_SKELETON.0, SPRITE_DIMENSIONS_SKELETON.1),
+        6,
+        1,
+    );
+    let texture_atlas_handle_skeleton = texture_atlases.add(texture_atlas_skeleton);
+
+    let texture_handle_proj_skeleton = asset_server.load(PROJECTILE_SPRITE_SKELETON);
+    let texture_atlas_proj_skeleton = TextureAtlas::from_grid(
+        texture_handle_proj_skeleton,
+        Vec2::new(
+            PROJECTILE_SPRITE_SKELETON_DIMENSION.0,
+            PROJECTILE_SPRITE_SKELETON_DIMENSION.1,
+        ),
+        8,
+        1,
+    );
+    let texture_atlas_handle_proj_skeleton = texture_atlases.add(texture_atlas_proj_skeleton);
+
     let enemy_animations_ressource = EnemyAnimations {
-        attack: texture_atlas_handle_perso.clone(),
-        projectile: texture_atlas_handle_proj.clone(),
+        attack_eye: texture_atlas_handle_perso.clone(),
+        projectile_eye: texture_atlas_handle_proj.clone(),
+        attack_skeleton: texture_atlas_handle_skeleton.clone(),
+        projectile_skeleton: texture_atlas_handle_proj_skeleton.clone(),
     };
     commands.insert_resource(enemy_animations_ressource);
 
@@ -161,5 +226,20 @@ fn enemy_setup(
         })
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
         .insert(Enemy)
-        .insert(Velocity { vx: 50., vy: 0. });
+        .insert(Velocity { vx: 50., vy: 0. })
+        .insert(Eye);
+
+    commands
+        .spawn_bundle(SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle_skeleton,
+            transform: Transform {
+                translation: Vec3::new(0., -100., 10.),
+                ..Default::default()
+            },
+            ..default()
+        })
+        .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
+        .insert(Enemy)
+        .insert(Velocity { vx: 0., vy: 0. })
+        .insert(Skeleton);
 }
