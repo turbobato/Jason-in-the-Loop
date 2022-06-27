@@ -11,7 +11,7 @@ const PROJECTILE_SPRITE_EYE: &str =
 const PROJECTILE_SPRITE_EYE_DIMENSION: (f32, f32) = (48., 48.);
 
 const ATTACK_SPRITE_SKETELON: &str =
-    "textures/monsters2/Skeleton/Attack.png";
+    "textures/monster2/Skeleton/Attack.png";
 const SPRITE_DIMENSIONS_SKELETON: (f32, f32) = (150., 150.);
 const PROJECTILE_SPRITE_SKELETON: &str =
     "textures/monsters/Monster_Creatures_Fantasy(Version 1.3)/Skeleton/sword_sprite.png";
@@ -21,7 +21,8 @@ pub struct EnemyPlugin;
 impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system_to_stage(StartupStage::PostStartup, enemy_setup)
-            .add_system(enemy_movement)
+            .add_system(eye_movement)
+            .add_system(skeleton_movement)
             .add_system(projectile_movement)
             .add_system_set(
                 SystemSet::new()
@@ -76,6 +77,37 @@ fn skeleton_attack_system(
             })
             .insert(Projectile)
             .insert(FromEnemy);
+    }
+}
+
+fn skeleton_movement(
+    time: Res<Time>,
+    win_size: Res<WinSize>,
+    mut query_monster: Query<(&mut Velocity, &mut Transform), With<Skeleton>>,
+    query_player: Query<&Transform, With<Player>>
+) {
+    let delta = time.delta_seconds();
+    const MARGIN: f32 = 50.;
+
+    let tf_player = query_player.single();
+
+    for (mut velocity, mut transform) in query_monster.iter_mut() {
+        transform.translation.x += velocity.vx * delta;
+        transform.translation.y += velocity.vy * delta;
+
+        if transform.translation.x <=  tf_player.translation.x - MARGIN
+        {
+            velocity.vx = 30.; 
+            // on est à gauche
+        }
+        else if transform.translation.x >= tf_player.translation.x + MARGIN {
+            velocity.vx = -30.;
+            // on est à droite
+        }
+        else{
+            velocity.vx = 0.;
+            // on est à côté
+        }
     }
 }
 
@@ -137,7 +169,7 @@ fn projectile_movement(
 }
 
 // mouvement des ennemis
-fn enemy_movement(
+fn eye_movement(
     time: Res<Time>,
     win_size: Res<WinSize>,
     mut query: Query<(&mut Velocity, &mut Transform), With<Enemy>>,
