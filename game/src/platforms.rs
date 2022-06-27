@@ -2,6 +2,9 @@ use crate::{components::*, WinSize, BACKGROUND_DIM};
 
 use bevy::{prelude::*, text, transform};
 
+
+
+/* 
 const EARTHY_PLATFORM: &str = "textures/oak_woods_v1.0/platforms/earthy_platform(74x26).png";
 const EARTHY_PLAT_DIM: (f32, f32) = (74., 26.);
 const EARTHY_PLATFORM_SCALE: f32 = 2.;
@@ -36,6 +39,7 @@ const ROCK_HPLATFORM_SCALE: f32 = 2.;
 const DIRT_BLOCK: &str = "textures/oak_woods_v1.0/platforms/dirt_block(56x18).png";
 const DIRT_BLOCK_DIM: (f32, f32) = (97., 25.);
 const DIRT_BLOCK_SCALE: f32 = 2.;
+*/
 pub struct PlatformsPlugin;
 
 impl Plugin for PlatformsPlugin {
@@ -52,6 +56,7 @@ fn platform_setup(
 ) {
     //commands.spawn_bundle(Camera2dBundle::default());
 
+    /* 
     let earthy_platform: Handle<Image> = asset_server.load(EARTHY_SPLATFORM);
     let earthy_small_platform: Handle<Image> = asset_server.load(EARTHY_PLATFORM);
     let earthy_hblock: Handle<Image> = asset_server.load(HUGE_EARTHY_BLOCK);
@@ -60,17 +65,19 @@ fn platform_setup(
     let transition_plat_earth_rock: Handle<Image> = asset_server.load(TRASITION_PLAT_EARTH_ROCK);
     let rock_hplatform: Handle<Image> = asset_server.load(ROCK_HPLATFORM);
     let dirt_block: Handle<Image> = asset_server.load(DIRT_BLOCK);
+    */
 
     let (win_h, win_w) = (windows.win_h, windows.win_w);
     let ground_lvl: f32 = -win_h / 2. + 67.;
 
+    /* 
     //earthy plat left down
     commands.spawn_bundle(SpriteBundle {
         texture: earthy_hblock.clone(),
         transform: Transform {
             translation: Vec3::new(
                 -BACKGROUND_DIM.0 / 2. + 1.5 * EARTHY_HBLOCK_DIM.0,
-                -BACKGROUND_DIM.1 / 2. - EARTHY_HBLOCK_DIM.0 / 3.5,
+                -BACKGROUND_DIM.1 /1.815,
                 1.5,
             ),
             scale: Vec3::new(EARTHY_HBLOCK_SCALE, EARTHY_HBLOCK_SCALE, 1.),
@@ -130,7 +137,7 @@ fn platform_setup(
         transform: Transform {
             translation: Vec3::new(
                 -EARTHY_HBLOCK_DIM.0/2.,
-                -BACKGROUND_DIM.1 / 2. - EARTHY_HBLOCK_DIM.0 / 3.5,
+                -BACKGROUND_DIM.1 /1.815,
                 1.5,
             ),
             scale: Vec3::new(EARTHY_HBLOCK_SCALE, EARTHY_HBLOCK_SCALE, 1.),
@@ -138,13 +145,13 @@ fn platform_setup(
         },
         ..Default::default()
     });
-
+    // transition middle left plat 
     commands.spawn_bundle(SpriteBundle {
         texture: transition_plat_earth_rock.clone(),
         transform: Transform {
             translation: Vec3::new(
-                4. * TRANSITION_EART_ROCK_DIM.0,
-                -BACKGROUND_DIM.1 / 1.9 + 1.25 * TRANSITION_EART_ROCK_DIM.1,
+                 0.05*BACKGROUND_DIM.0,
+                -BACKGROUND_DIM.1/2.439,
                 1.5,
             ),
             scale: Vec3::new(EARTHY_HBLOCK_SCALE, EARTHY_HBLOCK_SCALE, 1.),
@@ -164,7 +171,7 @@ fn platform_setup(
             ..Default::default()
         },
         ..Default::default()
-    });
+    });*/
     
     /*
     commands.spawn_bundle(SpriteBundle{
