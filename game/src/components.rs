@@ -58,5 +58,4 @@ pub struct Projectile;
 
 #[derive(Component)]
 pub struct FromEnemy;
-//endregion : enemy components 
-
+//endregion : enemy components

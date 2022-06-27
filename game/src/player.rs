@@ -42,8 +42,9 @@ fn player_setup(
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_idle,
             transform: Transform {
-                translation: Vec3::new(0.,GROUND_LEVEL + PLAYER_DIMENSIONS.1/2., 1.),
-                ..Default::default()},
+                translation: Vec3::new(0., GROUND_LEVEL + PLAYER_DIMENSIONS.1 / 2., 1.),
+                ..Default::default()
+            },
             ..Default::default()
         })
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
