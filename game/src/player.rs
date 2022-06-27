@@ -28,9 +28,9 @@ fn player_setup(
 ) {
     let idle_sprite = asset_server.load(IDLE_SPRITE);
     let run_sprite = asset_server.load(RUN_SPRITE);
-    let texture_atlas_running = TextureAtlas::from_grid(run_sprite, Vec2::new(120., 80.), 10, 1);
+    let texture_atlas_running = TextureAtlas::from_grid(run_sprite, Vec2::new(SPRITE_DIMENSIONS.0, SPRITE_DIMENSIONS.1), 10, 1);
     let texture_atlas_handle_running = texture_atlases.add(texture_atlas_running);
-    let texture_atlas_idle = TextureAtlas::from_grid(idle_sprite, Vec2::new(120., 80.), 10, 1);
+    let texture_atlas_idle = TextureAtlas::from_grid(idle_sprite, Vec2::new(SPRITE_DIMENSIONS.0, SPRITE_DIMENSIONS.1), 10, 1);
     let texture_atlas_handle_idle = texture_atlases.add(texture_atlas_idle);
     let idle = texture_atlas_handle_idle.clone();
     let animations_ressource = PlayerAnimations {
@@ -42,9 +42,8 @@ fn player_setup(
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_idle,
             transform: Transform {
-                translation: Vec3::new(0., GROUND_LEVEL + PLAYER_DIMENSIONS.1 / 2., 1.),
-                ..Default::default()
-            },
+                translation: Vec3::new(0.,level + SPRITE_DIMENSIONS.1/2., 1.),
+                ..Default::default()},
             ..Default::default()
         })
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
