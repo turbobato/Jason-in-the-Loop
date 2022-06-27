@@ -10,10 +10,10 @@ impl Plugin for CollisionsPlugin {
 }
 
 fn collision_with_platform(
-    mut query: Query<(&mut Grounded, &mut Transform, &SpriteSize), With<Player>>,
+    mut query: Query<(&mut Grounded, &mut Transform, &SpriteSize, &mut Velocity), With<Player>>,
     query_platforms: Query<&Platform>,
 ) {
-    for (mut grounded, mut transform, sprite_size) in query.iter_mut() {
+    for (mut grounded, mut transform, sprite_size, mut velocity) in query.iter_mut() {
         for platform in query_platforms.iter() {
             let entity_position = &mut transform.translation;
             let entity_size = sprite_size.0;
@@ -27,11 +27,19 @@ fn collision_with_platform(
             ) {
                 match collision {
                     Collision::Top => {
-                        grounded.0 = true;
-                        entity_position.y = platform_position.y + entity_size.y / 2.;
+                        if velocity.vy <= 1. {
+                            grounded.0 = true;
+                            velocity.vy= 0.;
+                            entity_position.y = platform_position.y + entity_size.y / 2.;
+                            //set player on the platform to avoid float precision issues
+                            break;
+                        }
                     }
                     _ => (),
-                }
+                };
+            }
+            else {
+                grounded.0 = false;
             }
         }
     }

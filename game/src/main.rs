@@ -1,8 +1,8 @@
 mod collisions;
 mod components;
 mod enemy;
-mod player;
 mod platforms;
+mod player;
 
 use bevy::{
     log::LogSettings,
@@ -12,14 +12,14 @@ use bevy::{
     sprite::collide_aabb::{collide, Collision},
 };
 
-use components::*;
 use collisions::CollisionsPlugin;
+use components::*;
 use enemy::EnemyPlugin;
 use platforms::PlatformsPlugin;
 use player::PlayerPlugin;
 
 pub const GROUND_LEVEL: f32 = 0.;
-pub const PLATFORM_MARGIN: f32 = 1.; // this is the thickness of the platforms
+pub const PLATFORM_MARGIN: f32 = 2.; // this is the thickness of the platforms
 
 const BACKGROUND: &str = "textures/forest/Free Pixel Art Forest/Preview/Background.png";
 const BACKGROUND_LAYER1: &str = "textures/oak_woods_v1.0/background/background_layer_1.png";
@@ -27,7 +27,6 @@ const BACKGROUND_LAYER2: &str = "textures/oak_woods_v1.0/background/background_l
 const BACKGROUND_LAYER3: &str = "textures/oak_woods_v1.0/background/background_layer_3.png";
 const BACKGROUND_DIM: (f32, f32) = (960., 540.);
 const SPRITE_SCALE: f32 = 3.;
-
 
 struct WinSize {
     win_h: f32,
@@ -67,7 +66,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
     // capture window size
     let window = windows.get_primary().unwrap();
     let (win_h, win_w) = (window.height(), window.width());
-    
 
     commands.insert_resource(WinSize { win_h, win_w });
     commands.spawn_bundle(SpriteBundle {
@@ -97,10 +95,63 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
                 ..Default::default()
             },
             ..Default::default()
-        })
+        });
+    commands
+        .spawn()
         .insert(Platform {
             size: Vec2::new(win_w, PLATFORM_MARGIN),
             position: Vec3::new(0., GROUND_LEVEL, 0.),
+        });
+    commands
+        .spawn_bundle(SpriteBundle {
+            sprite: Sprite {
+                color: Color::AQUAMARINE,
+                custom_size: Some(Vec2::new(70., PLATFORM_MARGIN)),
+                ..Default::default()
+            },
+            transform: Transform {
+                translation: Vec3::new(0., 40., 3.),
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .insert(Platform {
+            position: Vec3::new(0., 40., 1.),
+            size: Vec2::new(70., PLATFORM_MARGIN),
+        });
+        commands
+        .spawn_bundle(SpriteBundle {
+            sprite: Sprite {
+                color: Color::AQUAMARINE,
+                custom_size: Some(Vec2::new(70., PLATFORM_MARGIN)),
+                ..Default::default()
+            },
+            transform: Transform {
+                translation: Vec3::new(0., 120., 3.),
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .insert(Platform {
+            position: Vec3::new(0., 120., 1.),
+            size: Vec2::new(70., PLATFORM_MARGIN),
+        });
+        commands
+        .spawn_bundle(SpriteBundle {
+            sprite: Sprite {
+                color: Color::AQUAMARINE,
+                custom_size: Some(Vec2::new(70., PLATFORM_MARGIN)),
+                ..Default::default()
+            },
+            transform: Transform {
+                translation: Vec3::new(0., 80., 3.),
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .insert(Platform {
+            position: Vec3::new(0., 80., 1.),
+            size: Vec2::new(70., PLATFORM_MARGIN),
         });
 }
 
@@ -140,22 +191,18 @@ fn animate_sprite(
 
 fn movement(
     time: Res<Time>,
-    texture_atlases: Res<Assets<TextureAtlas>>,
     mut query: Query<
         (
-            &mut Grounded,
+            &Grounded,
             &mut Velocity,
             &mut Acceleration,
             &mut Transform,
-            &Handle<TextureAtlas>,
         ),
         With<Player>,
     >,
-    query_platforms: Query<&Platform>,
 ) {
     let delta = time.delta_seconds();
-    for (mut grounded, mut velocity, mut acceleration, mut transform, texture_atlas) in
-        query.iter_mut()
+    for (grounded, mut velocity, mut acceleration, mut transform) in query.iter_mut()
     {
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
@@ -163,7 +210,6 @@ fn movement(
         velocity.vy += acceleration.ay * delta;
         if grounded.0 {
             acceleration.ay = 0.;
-            velocity.vy = 0.;
         } else {
             acceleration.ay = -100.;
         }
