@@ -12,9 +12,9 @@ const JUMP_FALL_SPRITE: &str =
 const TURN_AROUND_SPRITE: &str =
     "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_TurnAround.png";
 
-const PLAYER_DIMENSIONS : (f32, f32) = (PLAYER_SCALE * 20., PLAYER_SCALE * 80.); //dimensions for idle sprite
-const PLAYER_SCALE : f32 = 1.5;
-const PLAYER_SPAWN : (f32, f32, f32) = (-356., -145. + 90., 1.); //player spawn coordinates
+const PLAYER_DIMENSIONS: (f32, f32) = (PLAYER_SCALE * 20., PLAYER_SCALE * 80.); //dimensions for idle sprite
+const PLAYER_SCALE: f32 = 1.5;
+const PLAYER_SPAWN: (f32, f32, f32) = (-356., -145. + 90., 1.); //player spawn coordinates
 
 pub struct PlayerPlugin;
 
@@ -31,7 +31,7 @@ pub struct PlayerAnimations {
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system_to_stage(StartupStage::PostStartup, player_setup)
+        app.add_startup_system(player_setup)
             .add_system(player_keyboard_event_system);
     }
 }
@@ -114,8 +114,14 @@ fn player_keyboard_event_system(
         With<Player>,
     >,
 ) {
-    if let Ok((mut grounded, mut velocity, mut acceleration, mut texture_atlas, mut transform, mut sprite)) =
-        query.get_single_mut()
+    if let Ok((
+        mut grounded,
+        mut velocity,
+        mut acceleration,
+        mut texture_atlas,
+        mut transform,
+        mut sprite,
+    )) = query.get_single_mut()
     {
         if kb.pressed(KeyCode::Q) {
             velocity.vx = -200.;
@@ -151,12 +157,15 @@ fn player_keyboard_event_system(
         if kb.pressed(KeyCode::Space) {
             respawn(velocity, transform, acceleration);
         }
-
     }
 }
 
-fn respawn(mut velocity : Mut<Velocity>, mut transform : Mut<Transform>, mut acceleration : Mut<Acceleration>){
-    *velocity = Velocity::from((0.,0.));
-    transform.translation=Vec3::new(PLAYER_SPAWN.0, PLAYER_SPAWN.1, PLAYER_SPAWN.2);
-    *acceleration = Acceleration::from((0.,0.));
+fn respawn(
+    mut velocity: Mut<Velocity>,
+    mut transform: Mut<Transform>,
+    mut acceleration: Mut<Acceleration>,
+) {
+    *velocity = Velocity::from((0., 0.));
+    transform.translation = Vec3::new(PLAYER_SPAWN.0, PLAYER_SPAWN.1, PLAYER_SPAWN.2);
+    *acceleration = Acceleration::from((0., 0.));
 }
