@@ -12,7 +12,8 @@ const JUMP_FALL_SPRITE: &str =
 const TURN_AROUND_SPRITE: &str =
     "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_TurnAround.png";
 
-const PLAYER_DIMENSIONS: (f32, f32) = (30., 80.); //dimensions for idle sprite
+const PLAYER_DIMENSIONS: (f32, f32) = (PLAYER_SCALE * 30.,PLAYER_SCALE * 80.); //dimensions for idle sprite
+const PLAYER_SCALE : f32 = 1.5;
 
 pub struct PlayerPlugin;
 
@@ -79,8 +80,8 @@ fn player_setup(
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_idle,
             transform: Transform {
-                translation: Vec3::new(0., GROUND_LEVEL + PLAYER_DIMENSIONS.1 / 2., 2.),
-                scale: Vec3::splat(1.5),
+                translation: Vec3::new(0., GROUND_LEVEL + PLAYER_DIMENSIONS.1 / 2., 1.),
+                scale: Vec3::splat(PLAYER_SCALE),
                 ..Default::default()
             },
             ..Default::default()
@@ -116,13 +117,13 @@ fn player_keyboard_event_system(
     {
         if kb.pressed(KeyCode::Q) {
             velocity.vx = -100.;
-            transform.scale.x = -1.;
+            transform.scale.x = -PLAYER_SCALE;
             if *texture_atlas != animations.run {
                 *texture_atlas = animations.run.clone();
             };
         } else if kb.pressed(KeyCode::D) {
             velocity.vx = 100.;
-            transform.scale.x = 1.;
+            transform.scale.x = PLAYER_SCALE;
             if *texture_atlas != animations.run {
                 *texture_atlas = animations.run.clone();
             };
