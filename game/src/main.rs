@@ -277,7 +277,7 @@ fn animate_sprite(
 
 fn movement(
     time: Res<Time>,
-    mut query: Query<(&Grounded, &mut Velocity, &mut Acceleration, &mut Transform), With<Player>>,
+    mut query: Query<(&Grounded, &mut Velocity, &mut Acceleration, &mut Transform), Or<(With<Player>, With<Skeleton>)>>,
 ) {
     let delta = time.delta_seconds();
     for (grounded, mut velocity, mut acceleration, mut transform) in query.iter_mut() {

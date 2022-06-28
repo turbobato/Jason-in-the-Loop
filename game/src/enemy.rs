@@ -22,12 +22,8 @@ impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system_to_stage(StartupStage::PostStartup, enemy_setup)
             .add_system(eye_movement_2)
-            .add_system(skeleton_movement)
+            .add_system(skeleton_follow_player)
             .add_system(projectile_movement)
-            // .add_system_set(
-            //     SystemSet::new()
-            //         .with_run_criteria(FixedTimestep::step(1.))
-            //         .with_system(skeleton_attack_system))
             .add_system_set(
                 SystemSet::new()
                     .with_run_criteria(FixedTimestep::step(3.))
@@ -54,9 +50,10 @@ fn enemy_attack_criteria() -> ShouldRun {
     }
 }
 
-fn skeleton_movement(
-    time: Res<Time>,
 
+// le squelette suit le player selon 
+fn skeleton_follow_player(
+    time: Res<Time>,
     mut query_monster: Query<
         (
             &mut Velocity,
@@ -71,60 +68,50 @@ fn skeleton_movement(
     query_player: Query<&Transform, With<Player>>,
     enemy_animations: Res<EnemyAnimations>,
 ) {
-    let delta = time.delta_seconds();
     const MARGIN_IN: f32 = 80.;
     const MARGIN_OUT: f32 = 300.;
+    const MARGIN_Y : f32 = 40.; // erreur en y sur l
 
     let tf_player = query_player.single();
 
     for (mut velocity, mut transform, mut texture_atlas, mut sprite, mut acceleration, mut grounded) in query_monster.iter_mut() {
-        transform.translation.x += velocity.vx * delta;
-        transform.translation.y += velocity.vy * delta;
-        velocity.vx += acceleration.ax * delta;
-        velocity.vy += acceleration.ay * delta;
-        if grounded.0 {
-            acceleration.ay = 0.;
-        } else {
-            acceleration.ay = -100.;
+        
+        if transform.translation.x <= tf_player.translation.x{
+            transform.scale.x = 1.;
+        }else{
+            transform.scale.x = -1.;
         }
 
         if transform.translation.x <= tf_player.translation.x - MARGIN_IN
             && transform.translation.x > tf_player.translation.x - MARGIN_OUT
         {
+            // on est à gauche du player
             if *texture_atlas != enemy_animations.walk_skeleton {
                 *texture_atlas = enemy_animations.walk_skeleton.clone();
                 sprite.index = 0;
             }
-
-            if velocity.vx >= 0. {
-                transform.scale.x = 1.;
-            }
-
             velocity.vx = 30.;
-            // on est à gauche
         } else if transform.translation.x >= tf_player.translation.x + MARGIN_IN
             && transform.translation.x < tf_player.translation.x + MARGIN_OUT
         {
-            // on est à droite
+            // on est à droite du player
             if *texture_atlas != enemy_animations.walk_skeleton {
                 *texture_atlas = enemy_animations.walk_skeleton.clone();
                 sprite.index = 0;
             }
-
-            if velocity.vx >= 0. {
-                transform.scale.x = -1.;
-            }
             velocity.vx = -30.;
         } else if transform.translation.x >= tf_player.translation.x - MARGIN_IN
-            && transform.translation.x <= tf_player.translation.x + MARGIN_IN
+            && transform.translation.x <= tf_player.translation.x + MARGIN_IN && (transform.translation.y -tf_player.translation.y).abs() < MARGIN_Y
         {
+            // on est à portée d'attaque
             velocity.vx = 0.;
             if *texture_atlas != enemy_animations.attack_skeleton {
                 *texture_atlas = enemy_animations.attack_skeleton.clone();
                 sprite.index = 0;
             }
-            // on est à côté
+            
         } else {
+            // on est loin du player
             velocity.vx = 0.;
             if *texture_atlas != enemy_animations.idle_skeleton {
                 *texture_atlas = enemy_animations.idle_skeleton.clone();
@@ -246,7 +233,6 @@ fn eye_movement(
     }
 }
 
-// copier-coller de sprite_sheet avec début de modif
 fn enemy_setup(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
