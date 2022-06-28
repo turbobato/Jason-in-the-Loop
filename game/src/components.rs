@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use serde::{Serialize, Deserialize};
 
 // region : general components
 
@@ -59,7 +60,7 @@ pub struct RepeatAnimation(pub bool);
 #[derive(Component, Deref, DerefMut)]
 pub struct AnimationTimer(pub Timer);
 
-#[derive(Component)]
+#[derive(Component, Serialize, Deserialize)]
 pub struct Platform {
     pub size: Vec2,
     pub position: Vec3,
