@@ -29,7 +29,7 @@ fn collision_with_platform(
                     Collision::Top => {
                         if velocity.vy <= 1. {
                             grounded.0 = true;
-                            velocity.vy= 0.;
+                            velocity.vy = 0.;
                             entity_position.y = platform_position.y + entity_size.y / 2.;
                             //set player on the platform to avoid float precision issues
                             break;
@@ -37,8 +37,7 @@ fn collision_with_platform(
                     }
                     _ => (),
                 };
-            }
-            else {
+            } else {
                 grounded.0 = false;
             }
         }

@@ -86,22 +86,19 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
         },
         ..Default::default()
     });
-    commands
-        .spawn_bundle(SpriteBundle {
-            texture: background_layer3,
-            transform: Transform {
-                translation: Vec3::new(0., 0., 1.),
-                scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
-                ..Default::default()
-            },
+    commands.spawn_bundle(SpriteBundle {
+        texture: background_layer3,
+        transform: Transform {
+            translation: Vec3::new(0., 0., 1.),
+            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
             ..Default::default()
-        });
-    commands
-        .spawn()
-        .insert(Platform {
-            size: Vec2::new(win_w, PLATFORM_MARGIN),
-            position: Vec3::new(0., GROUND_LEVEL, 0.),
-        });
+        },
+        ..Default::default()
+    });
+    commands.spawn().insert(Platform {
+        size: Vec2::new(win_w, PLATFORM_MARGIN),
+        position: Vec3::new(0., GROUND_LEVEL, 0.),
+    });
     commands
         .spawn_bundle(SpriteBundle {
             sprite: Sprite {
@@ -119,7 +116,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
             position: Vec3::new(0., 40., 1.),
             size: Vec2::new(70., PLATFORM_MARGIN),
         });
-        commands
+    commands
         .spawn_bundle(SpriteBundle {
             sprite: Sprite {
                 color: Color::AQUAMARINE,
@@ -136,7 +133,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
             position: Vec3::new(0., 120., 1.),
             size: Vec2::new(70., PLATFORM_MARGIN),
         });
-        commands
+    commands
         .spawn_bundle(SpriteBundle {
             sprite: Sprite {
                 color: Color::AQUAMARINE,
@@ -191,19 +188,10 @@ fn animate_sprite(
 
 fn movement(
     time: Res<Time>,
-    mut query: Query<
-        (
-            &Grounded,
-            &mut Velocity,
-            &mut Acceleration,
-            &mut Transform,
-        ),
-        With<Player>,
-    >,
+    mut query: Query<(&Grounded, &mut Velocity, &mut Acceleration, &mut Transform), With<Player>>,
 ) {
     let delta = time.delta_seconds();
-    for (grounded, mut velocity, mut acceleration, mut transform) in query.iter_mut()
-    {
+    for (grounded, mut velocity, mut acceleration, mut transform) in query.iter_mut() {
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
         velocity.vx += acceleration.ax * delta;
