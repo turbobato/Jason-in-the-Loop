@@ -125,7 +125,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
     commands.spawn().insert(Platform {
         size: Vec2::new(win_w, PLATFORM_MARGIN),
         position: Vec3::new(0., GROUND_LEVEL, 0.),
-    });*/
+    });
     commands
         .spawn_bundle(SpriteBundle {
             sprite: Sprite {
