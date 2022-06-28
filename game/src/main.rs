@@ -19,7 +19,7 @@ use platforms::PlatformsPlugin;
 use player::PlayerPlugin;
 
 pub const GROUND_LEVEL: f32 = 0.;
-pub const PLATFORM_MARGIN: f32 = 2.; // this is the thickness of the platforms
+pub const PLATFORM_MARGIN: f32 = 4.; // this is the thickness of the platforms
 
 const BACKGROUND: &str = "textures/forest/Free Pixel Art Forest/Preview/Background.png";
 const BACKGROUND_LAYER1: &str = "textures/oak_woods_v1.0/background/background_layer_1.png";
