@@ -25,6 +25,9 @@ pub const PLATFORM_MARGIN: f32 = 4.; // this is the thickness of the platforms
 
 const BACKGROUND_1: &str = "textures/oak_woods_v1.0/background/background_game/background_1.png";
 const BACKGROUND_2: &str = "textures/oak_woods_v1.0/background/background_game/background_2.png";
+const BACKGROUND_3: &str = "textures/oak_woods_v1.0/background/background_game/background_3.png";
+
+const SHOP_SPRITE: &str = "textures/oak_woods_v1.0/decorations/shop_anim.png";
 /*
 const BACKGROUND_LAYER1: &str = "textures/oak_woods_v1.0/background/background_layer_1.png";
 const BACKGROUND_LAYER2: &str = "textures/oak_woods_v1.0/background/background_layer_2.png";
@@ -61,13 +64,32 @@ fn main() {
         .run();
 }
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Windows>) {
+fn setup(mut commands: Commands, 
+    asset_server: Res<AssetServer>, 
+    windows: Res<Windows>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,) {
     commands
         .spawn_bundle(Camera2dBundle::default())
         .insert(Camera);
 
     let background_1: Handle<Image> = asset_server.load(BACKGROUND_1);
     let background_2: Handle<Image> = asset_server.load(BACKGROUND_2);
+    let background_3: Handle<Image> = asset_server.load(BACKGROUND_3);
+
+    let shop_sprite: Handle<Image> = asset_server.load(SHOP_SPRITE);
+    let texture_atlas_shop = TextureAtlas::from_grid(shop_sprite, Vec2::new(118., 128.), 6, 1);
+    let texture_atlas_handle_shop = texture_atlases.add(texture_atlas_shop);
+
+    commands
+        .spawn_bundle(SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle_shop,
+            transform: Transform {
+                translation: Vec3::new(2.*BACKGROUND_DIM.0 -400., -205. + 192., 1.5),
+                scale: Vec3::splat(3.),
+                ..Default::default()
+            },
+            ..Default::default()
+        }).insert(AnimationTimer(Timer::from_seconds(0.1, true)));
     /*
     let background_layer1: Handle<Image> = asset_server.load(BACKGROUND_LAYER1);
     let background_layer2: Handle<Image> = asset_server.load(BACKGROUND_LAYER2);
@@ -93,6 +115,16 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
         texture: background_2,
         transform: Transform {
             translation: Vec3::new(BACKGROUND_DIM.0, 0., 0.),
+            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+            ..Default::default()
+        },
+        ..Default::default()
+    });
+
+    commands.spawn_bundle(SpriteBundle {
+        texture: background_3,
+        transform: Transform {
+            translation: Vec3::new(2.*BACKGROUND_DIM.0, 0., 0.),
             scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
             ..Default::default()
         },
@@ -158,35 +190,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
             size: Vec2::new(283., PLATFORM_MARGIN),
         });
 
-    /*
-    commands.insert_resource(WinSize { win_h, win_w });
-    commands.spawn_bundle(SpriteBundle {
-        texture: background_layer1,
-        transform: Transform {
-            translation: Vec3::new(0., 0., 0.),
-            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
-            ..Default::default()
-        },
-        ..Default::default()
-    });
-    commands.spawn_bundle(SpriteBundle {
-        texture: background_layer2,
-        transform: Transform {
-            translation: Vec3::new(0., 0., 1.),
-            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
-            ..Default::default()
-        },
-        ..Default::default()
-    });
-    commands.spawn_bundle(SpriteBundle {
-        texture: background_layer3,
-        transform: Transform {
-            translation: Vec3::new(0., 0., 1.),
-            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
-            ..Default::default()
-        },
-        ..Default::default()
-    });*/
+   
     /*
     commands.spawn().insert(Platform {
         size: Vec2::new(win_w, PLATFORM_MARGIN),

@@ -21,10 +21,10 @@ fn flying_camera_setup(
     let (win_h, win_w) = (windows.win_h, windows.win_w);
     for (player_transform) in query_player.iter() {
         for (mut camera_transform) in query_camera.iter_mut() {
-            if player_transform.translation.x >= 150. + camera_transform.translation.x {
-                camera_transform.translation.x = -150. + player_transform.translation.x;
-            } else if player_transform.translation.x <= camera_transform.translation.x - 150. {
-                camera_transform.translation.x = 150. + player_transform.translation.x;
+            if player_transform.translation.x >= 180. + camera_transform.translation.x {
+                camera_transform.translation.x = -180. + player_transform.translation.x;
+            } else if player_transform.translation.x <= camera_transform.translation.x - 180. {
+                camera_transform.translation.x = 180. + player_transform.translation.x;
             }
         }
     }
