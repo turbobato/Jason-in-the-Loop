@@ -106,11 +106,11 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(Platform {
+        });
+        /* .insert(Platform {
             position: Vec3::new(-356., -145., 1.),
             size: Vec2::new(250., PLATFORM_MARGIN),
-        });
+        }); */
 
     commands
         .spawn_bundle(SpriteBundle {

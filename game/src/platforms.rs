@@ -1,3 +1,5 @@
+use std::{path::Path, fs::File, io::BufReader, error::Error};
+
 use crate::{components::*, WinSize, BACKGROUND_DIM};
 
 use bevy::{prelude::*, text, transform};
@@ -38,20 +40,36 @@ const DIRT_BLOCK: &str = "textures/oak_woods_v1.0/platforms/dirt_block(56x18).pn
 const DIRT_BLOCK_DIM: (f32, f32) = (97., 25.);
 const DIRT_BLOCK_SCALE: f32 = 2.;
 */
+
+const PLATFORM_JSON_PATH : &str = "platform.json";
+
 pub struct PlatformsPlugin;
 
 impl Plugin for PlatformsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system_to_stage(StartupStage::PostStartup, platform_setup);
+        app.add_startup_system(platform_setup);
     }
+}
+
+fn read_platforms_from_file<P: AsRef<Path>>(path: P) -> Result<Vec<Platform>, Box<dyn Error>> {
+    // Open the file in read-only mode with buffer.
+    let file = File::open(path)?;
+    let reader = BufReader::new(file);
+
+    // Read the JSON contents of the file as an instance of `User`.
+    let p = serde_json::from_reader(reader)?;
+
+    // Return the platform.
+    Ok(p)
 }
 
 fn platform_setup(
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    windows: Res<WinSize>,
-    texture_atlases: Res<Assets<TextureAtlas>>,
 ) {
+    let platforms : Vec<Platform> = read_platforms_from_file(PLATFORM_JSON_PATH).unwrap();
+    for platform in platforms {
+        commands.spawn().insert(platform);
+    }
     //commands.spawn_bundle(Camera2dBundle::default());
 
     /*
@@ -64,8 +82,6 @@ fn platform_setup(
     let rock_hplatform: Handle<Image> = asset_server.load(ROCK_HPLATFORM);
     let dirt_block: Handle<Image> = asset_server.load(DIRT_BLOCK);
     */
-
-    let (win_h, win_w) = (windows.win_h, windows.win_w);
 
     /*
     //earthy plat left down
