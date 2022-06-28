@@ -188,7 +188,7 @@ fn eye_movement_2(time: Res<Time>, win_size: Res<WinSize>,mut query: Query<(Enti
     
     // mouvmement circulaire des ennemis
     for (entity, velocity, mut transform) in query.iter_mut(){
-        let (x_pivot, y_pivot) = (500.,0.);
+        let (x_pivot, y_pivot) = (300.,0.);
 		let (x_radius, y_radius) = (70.,70.);
         let max_distance = frame_time * velocity.vx;
         let (x_org, y_org) = (transform.translation.x, transform.translation.y);
@@ -197,8 +197,8 @@ fn eye_movement_2(time: Res<Time>, win_size: Res<WinSize>,mut query: Query<(Enti
 
 		let angle = velocity.vx*frame_time*now%360./PI;
 
-		let x_dst = x_radius * angle.cos() + x_org;
-		let y_dst = y_radius * angle.sin() + y_org;
+		let x_dst = x_radius * angle.cos() + x_pivot;
+		let y_dst = y_radius * angle.sin() + y_pivot;
 
 		let dx = x_org - x_dst;
 		let dy = y_org - y_dst;
