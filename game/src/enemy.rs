@@ -1,7 +1,7 @@
 use crate::{components::*, WinSize};
 use bevy::{ecs::schedule::ShouldRun, prelude::*, time::FixedTimestep};
 use rand::{thread_rng, Rng};
-pub const PI: f32 = 3.141592653589793238462643f32;
+pub const PI: f32 = 3.141592653589793238462643;
 
 // Les différents chemins des png des animations
 const ATTACK_SPRITE_EYE: &str =
@@ -192,7 +192,6 @@ fn eye_movement_2(time: Res<Time>, win_size: Res<WinSize>,mut query: Query<(Enti
 		let (x_radius, y_radius) = (70.,70.);
         let max_distance = frame_time * velocity.vx;
         let (x_org, y_org) = (transform.translation.x, transform.translation.y);
-        let a = 4.*PI*x_radius/velocity.vx;
 	//On peut changer le sens
 		let dir = 1;
 
