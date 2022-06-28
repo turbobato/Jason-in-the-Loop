@@ -19,7 +19,7 @@ use platforms::PlatformsPlugin;
 use player::PlayerPlugin;
 
 pub const GROUND_LEVEL: f32 = 0.;
-pub const PLATFORM_MARGIN: f32 = 1.; // this is the thickness of the platforms
+pub const PLATFORM_MARGIN: f32 = 2.; // this is the thickness of the platforms
 
 const BACKGROUND_1: &str = "textures/oak_woods_v1.0/background/background_game/background_1.png";
 const BACKGROUND_2: &str = "textures/oak_woods_v1.0/background/background_game/background_2.png";
@@ -113,20 +113,70 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
         },
         ..Default::default()
     });
+    commands.spawn_bundle(SpriteBundle {
+        texture: background_layer3,
+        transform: Transform {
+            translation: Vec3::new(0., 0., 1.),
+            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+            ..Default::default()
+        },
+        ..Default::default()
+    });
+    commands.spawn().insert(Platform {
+        size: Vec2::new(win_w, PLATFORM_MARGIN),
+        position: Vec3::new(0., GROUND_LEVEL, 0.),
+    });
     commands
         .spawn_bundle(SpriteBundle {
-            texture: background_layer3,
+            sprite: Sprite {
+                color: Color::AQUAMARINE,
+                custom_size: Some(Vec2::new(70., PLATFORM_MARGIN)),
+                ..Default::default()
+            },
             transform: Transform {
-                translation: Vec3::new(0., 0., 1.),
-                scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+                translation: Vec3::new(0., 40., 3.),
                 ..Default::default()
             },
             ..Default::default()
         })
         .insert(Platform {
-            size: Vec2::new(win_w, PLATFORM_MARGIN),
-            position: Vec3::new(0., GROUND_LEVEL, 0.),
-        });*/
+            position: Vec3::new(0., 40., 1.),
+            size: Vec2::new(70., PLATFORM_MARGIN),
+        });
+    commands
+        .spawn_bundle(SpriteBundle {
+            sprite: Sprite {
+                color: Color::AQUAMARINE,
+                custom_size: Some(Vec2::new(70., PLATFORM_MARGIN)),
+                ..Default::default()
+            },
+            transform: Transform {
+                translation: Vec3::new(0., 120., 3.),
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .insert(Platform {
+            position: Vec3::new(0., 120., 1.),
+            size: Vec2::new(70., PLATFORM_MARGIN),
+        });
+    commands
+        .spawn_bundle(SpriteBundle {
+            sprite: Sprite {
+                color: Color::AQUAMARINE,
+                custom_size: Some(Vec2::new(70., PLATFORM_MARGIN)),
+                ..Default::default()
+            },
+            transform: Transform {
+                translation: Vec3::new(0., 80., 3.),
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .insert(Platform {
+            position: Vec3::new(0., 80., 1.),
+            size: Vec2::new(70., PLATFORM_MARGIN),
+        });
 }
 
 /*          .insert(Platform {
@@ -165,30 +215,16 @@ fn animate_sprite(
 
 fn movement(
     time: Res<Time>,
-    texture_atlases: Res<Assets<TextureAtlas>>,
-    mut query: Query<
-        (
-            &mut Grounded,
-            &mut Velocity,
-            &mut Acceleration,
-            &mut Transform,
-            &Handle<TextureAtlas>,
-        ),
-        With<Player>,
-    >,
-    query_platforms: Query<&Platform>,
+    mut query: Query<(&Grounded, &mut Velocity, &mut Acceleration, &mut Transform), With<Player>>,
 ) {
     let delta = time.delta_seconds();
-    for (mut grounded, mut velocity, mut acceleration, mut transform, texture_atlas) in
-        query.iter_mut()
-    {
+    for (grounded, mut velocity, mut acceleration, mut transform) in query.iter_mut() {
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
         velocity.vx += acceleration.ax * delta;
         velocity.vy += acceleration.ay * delta;
         if grounded.0 {
             acceleration.ay = 0.;
-            velocity.vy = 0.;
         } else {
             acceleration.ay = -100.;
         }
