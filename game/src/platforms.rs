@@ -41,7 +41,7 @@ const DIRT_BLOCK_DIM: (f32, f32) = (97., 25.);
 const DIRT_BLOCK_SCALE: f32 = 2.;
 */
 
-const PLATFORM_JSON_PATH : &str = "platform.json";
+const PLATFORM_JSON : &str = include_str!("../platform.json");
 
 pub struct PlatformsPlugin;
 
@@ -51,22 +51,10 @@ impl Plugin for PlatformsPlugin {
     }
 }
 
-fn read_platforms_from_file<P: AsRef<Path>>(path: P) -> Result<Vec<Platform>, Box<dyn Error>> {
-    // Open the file in read-only mode with buffer.
-    let file = File::open(path)?;
-    let reader = BufReader::new(file);
-
-    // Read the JSON contents of the file as an instance of `User`.
-    let p = serde_json::from_reader(reader)?;
-
-    // Return the platform.
-    Ok(p)
-}
-
 fn platform_setup(
     mut commands: Commands,
 ) {
-    let platforms : Vec<Platform> = read_platforms_from_file(PLATFORM_JSON_PATH).unwrap();
+    let platforms : Vec<Platform> = serde_json::from_str(PLATFORM_JSON).unwrap();
     for platform in platforms {
         commands.spawn().insert(platform);
     }
