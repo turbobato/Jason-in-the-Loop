@@ -56,12 +56,15 @@ fn enemy_attack_criteria() -> ShouldRun {
 
 fn skeleton_movement(
     time: Res<Time>,
+
     mut query_monster: Query<
         (
             &mut Velocity,
             &mut Transform,
             &mut Handle<TextureAtlas>,
             &mut TextureAtlasSprite,
+            &mut Acceleration,
+            &Grounded,
         ),
         (With<Skeleton>, Without<Player>),
     >,
@@ -74,9 +77,16 @@ fn skeleton_movement(
 
     let tf_player = query_player.single();
 
-    for (mut velocity, mut transform, mut texture_atlas, mut sprite) in query_monster.iter_mut() {
+    for (mut velocity, mut transform, mut texture_atlas, mut sprite, mut acceleration, mut grounded) in query_monster.iter_mut() {
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
+        velocity.vx += acceleration.ax * delta;
+        velocity.vy += acceleration.ay * delta;
+        if grounded.0 {
+            acceleration.ay = 0.;
+        } else {
+            acceleration.ay = -100.;
+        }
 
         if transform.translation.x <= tf_player.translation.x - MARGIN_IN
             && transform.translation.x > tf_player.translation.x - MARGIN_OUT
@@ -331,5 +341,8 @@ fn enemy_setup(
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
         .insert(Enemy)
         .insert(Velocity { vx: 0., vy: 0. })
-        .insert(Skeleton);
+        .insert(Skeleton)
+        .insert(Grounded(true))
+        .insert(Acceleration{..Default::default()})
+        .insert(SpriteSize(Vec2::new(27.,60.)));
 }
