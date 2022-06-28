@@ -19,12 +19,15 @@ use platforms::PlatformsPlugin;
 use player::PlayerPlugin;
 
 pub const GROUND_LEVEL: f32 = 0.;
-pub const PLATFORM_MARGIN: f32 = 1.; // this is the thickness of the platforms
+pub const PLATFORM_MARGIN: f32 = 2.; // this is the thickness of the platforms
 
-const BACKGROUND: &str = "textures/forest/Free Pixel Art Forest/Preview/Background.png";
+const BACKGROUND_1: &str = "textures/oak_woods_v1.0/background/background_game/background_1.png";
+const BACKGROUND_2: &str = "textures/oak_woods_v1.0/background/background_game/background_2.png";
+/*
 const BACKGROUND_LAYER1: &str = "textures/oak_woods_v1.0/background/background_layer_1.png";
 const BACKGROUND_LAYER2: &str = "textures/oak_woods_v1.0/background/background_layer_2.png";
 const BACKGROUND_LAYER3: &str = "textures/oak_woods_v1.0/background/background_layer_3.png";
+*/
 const BACKGROUND_DIM: (f32, f32) = (960., 540.);
 const SPRITE_SCALE: f32 = 3.;
 
@@ -40,7 +43,7 @@ fn main() {
             title: "ProjetX".to_string(),
             width: 960.0,
             height: 540.0,
-            resizable: false,
+            resizable: true,
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)
@@ -58,15 +61,39 @@ fn main() {
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Windows>) {
     commands.spawn_bundle(Camera2dBundle::default());
 
-    let background: Handle<Image> = asset_server.load(BACKGROUND);
+    let background_1: Handle<Image> = asset_server.load(BACKGROUND_1);
+    let background_2: Handle<Image> = asset_server.load(BACKGROUND_2);
+    /*
     let background_layer1: Handle<Image> = asset_server.load(BACKGROUND_LAYER1);
     let background_layer2: Handle<Image> = asset_server.load(BACKGROUND_LAYER2);
     let background_layer3: Handle<Image> = asset_server.load(BACKGROUND_LAYER3);
-
+    */
     // capture window size
     let window = windows.get_primary().unwrap();
     let (win_h, win_w) = (window.height(), window.width());
 
+    commands.insert_resource(WinSize { win_h, win_w });
+
+    commands.spawn_bundle(SpriteBundle {
+        texture: background_1,
+        transform: Transform {
+            translation: Vec3::new(0., 0., 0.),
+            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+            ..Default::default()
+        },
+        ..Default::default()
+    });
+
+    commands.spawn_bundle(SpriteBundle {
+        texture: background_2,
+        transform: Transform {
+            translation: Vec3::new(BACKGROUND_DIM.0, 0., 0.),
+            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+            ..Default::default()
+        },
+        ..Default::default()
+    });
+    /*
     commands.insert_resource(WinSize { win_h, win_w });
     commands.spawn_bundle(SpriteBundle {
         texture: background_layer1,
@@ -86,19 +113,69 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
         },
         ..Default::default()
     });
+    commands.spawn_bundle(SpriteBundle {
+        texture: background_layer3,
+        transform: Transform {
+            translation: Vec3::new(0., 0., 1.),
+            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+            ..Default::default()
+        },
+        ..Default::default()
+    });
+    commands.spawn().insert(Platform {
+        size: Vec2::new(win_w, PLATFORM_MARGIN),
+        position: Vec3::new(0., GROUND_LEVEL, 0.),
+    });
     commands
         .spawn_bundle(SpriteBundle {
-            texture: background_layer3,
+            sprite: Sprite {
+                color: Color::AQUAMARINE,
+                custom_size: Some(Vec2::new(70., PLATFORM_MARGIN)),
+                ..Default::default()
+            },
             transform: Transform {
-                translation: Vec3::new(0., 0., 1.),
-                scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+                translation: Vec3::new(0., 40., 3.),
                 ..Default::default()
             },
             ..Default::default()
         })
         .insert(Platform {
-            size: Vec2::new(win_w, PLATFORM_MARGIN),
-            position: Vec3::new(0., GROUND_LEVEL, 0.),
+            position: Vec3::new(0., 40., 1.),
+            size: Vec2::new(70., PLATFORM_MARGIN),
+        });
+    commands
+        .spawn_bundle(SpriteBundle {
+            sprite: Sprite {
+                color: Color::AQUAMARINE,
+                custom_size: Some(Vec2::new(70., PLATFORM_MARGIN)),
+                ..Default::default()
+            },
+            transform: Transform {
+                translation: Vec3::new(0., 120., 3.),
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .insert(Platform {
+            position: Vec3::new(0., 120., 1.),
+            size: Vec2::new(70., PLATFORM_MARGIN),
+        });
+    commands
+        .spawn_bundle(SpriteBundle {
+            sprite: Sprite {
+                color: Color::AQUAMARINE,
+                custom_size: Some(Vec2::new(70., PLATFORM_MARGIN)),
+                ..Default::default()
+            },
+            transform: Transform {
+                translation: Vec3::new(0., 80., 3.),
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .insert(Platform {
+            position: Vec3::new(0., 80., 1.),
+            size: Vec2::new(70., PLATFORM_MARGIN),
         });
 }
 
@@ -138,30 +215,16 @@ fn animate_sprite(
 
 fn movement(
     time: Res<Time>,
-    texture_atlases: Res<Assets<TextureAtlas>>,
-    mut query: Query<
-        (
-            &mut Grounded,
-            &mut Velocity,
-            &mut Acceleration,
-            &mut Transform,
-            &Handle<TextureAtlas>,
-        ),
-        With<Player>,
-    >,
-    query_platforms: Query<&Platform>,
+    mut query: Query<(&Grounded, &mut Velocity, &mut Acceleration, &mut Transform), With<Player>>,
 ) {
     let delta = time.delta_seconds();
-    for (mut grounded, mut velocity, mut acceleration, mut transform, texture_atlas) in
-        query.iter_mut()
-    {
+    for (grounded, mut velocity, mut acceleration, mut transform) in query.iter_mut() {
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
         velocity.vx += acceleration.ax * delta;
         velocity.vy += acceleration.ay * delta;
         if grounded.0 {
             acceleration.ay = 0.;
-            velocity.vy = 0.;
         } else {
             acceleration.ay = -100.;
         }

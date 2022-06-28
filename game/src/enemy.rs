@@ -134,7 +134,7 @@ fn eye_attack_system(
             .spawn_bundle(SpriteSheetBundle {
                 texture_atlas: animations.projectile_eye.clone(),
                 transform: Transform {
-                    translation: Vec3::new(x + 50. * velocity.vx.signum(), y - 10., 10.),
+                    translation: Vec3::new(x + 50. * velocity.vx.signum(), y - 10., 2.),
                     ..Default::default()
                 },
                 ..Default::default()
