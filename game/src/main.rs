@@ -93,10 +93,11 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
         },
         ..Default::default()
     });
+    /*
     commands.spawn().insert(Platform {
         size: Vec2::new(win_w, PLATFORM_MARGIN),
         position: Vec3::new(0., GROUND_LEVEL, 0.),
-    });
+    });*/
 
     commands
         .spawn_bundle(SpriteBundle {
@@ -112,7 +113,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
             ..Default::default()
         })
         .insert(Platform {
-            position: Vec3::new(-342., -145., 1.),
+            position: Vec3::new(-356., -145., 1.),
             size: Vec2::new(250., PLATFORM_MARGIN),
         });
 
@@ -148,7 +149,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
             ..Default::default()
         })
         .insert(Platform {
-            position: Vec3::new(-248., -205., 1.),
+            position: Vec3::new(150., -205., 1.),
             size: Vec2::new(283., PLATFORM_MARGIN),
         });
 
@@ -181,6 +182,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
         },
         ..Default::default()
     });*/
+    /*
     commands.spawn().insert(Platform {
         size: Vec2::new(win_w, PLATFORM_MARGIN),
         position: Vec3::new(0., GROUND_LEVEL, 0.),

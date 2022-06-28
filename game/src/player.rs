@@ -12,8 +12,8 @@ const JUMP_FALL_SPRITE: &str =
 const TURN_AROUND_SPRITE: &str =
     "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_TurnAround.png";
 
-const PLAYER_DIMENSIONS: (f32, f32) = (PLAYER_SCALE * 30.,PLAYER_SCALE * 80.); //dimensions for idle sprite
-const PLAYER_SCALE : f32 = 1.5;
+const PLAYER_DIMENSIONS: (f32, f32) = (PLAYER_SCALE * 30., PLAYER_SCALE * 80.); //dimensions for idle sprite
+const PLAYER_SCALE: f32 = 1.5;
 
 pub struct PlayerPlugin;
 
@@ -80,7 +80,7 @@ fn player_setup(
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_idle,
             transform: Transform {
-                translation: Vec3::new(0., GROUND_LEVEL + PLAYER_DIMENSIONS.1 / 2., 1.),
+                translation: Vec3::new(-356., -145. + 90., 1.),
                 scale: Vec3::splat(PLAYER_SCALE),
                 ..Default::default()
             },
@@ -141,7 +141,7 @@ fn player_keyboard_event_system(
         }
 
         if kb.pressed(KeyCode::Z) && grounded.0 {
-            velocity.vy = 100.;
+            velocity.vy = 110.;
             transform.translation.y += PLATFORM_MARGIN; //this line is to be sure the player gets out of the platform
             grounded.0 = false;
         }
