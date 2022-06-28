@@ -56,10 +56,10 @@ pub struct Player;
 pub struct Enemy;
 
 #[derive(Component)]
-pub struct Eye;
+pub struct Skeleton;
 
 #[derive(Component)]
-pub struct Skeleton;
+pub struct Eye;
 
 #[derive(Component)]
 pub struct Projectile;

@@ -77,7 +77,9 @@ fn skeleton_movement(
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
 
-        if transform.translation.x <= tf_player.translation.x - MARGIN_IN && transform.translation.x > tf_player.translation.x - MARGIN_OUT {
+        if transform.translation.x <= tf_player.translation.x - MARGIN_IN
+            && transform.translation.x > tf_player.translation.x - MARGIN_OUT
+        {
             if *texture_atlas != enemy_animations.walk_skeleton {
                 *texture_atlas = enemy_animations.walk_skeleton.clone();
                 sprite.index = 0;
@@ -89,7 +91,9 @@ fn skeleton_movement(
 
             velocity.vx = 30.;
             // on est à gauche
-        } else if transform.translation.x >= tf_player.translation.x + MARGIN_IN && transform.translation.x < tf_player.translation.x + MARGIN_OUT {
+        } else if transform.translation.x >= tf_player.translation.x + MARGIN_IN
+            && transform.translation.x < tf_player.translation.x + MARGIN_OUT
+        {
             // on est à droite
             if *texture_atlas != enemy_animations.walk_skeleton {
                 *texture_atlas = enemy_animations.walk_skeleton.clone();
@@ -100,15 +104,16 @@ fn skeleton_movement(
                 transform.scale.x = -1.;
             }
             velocity.vx = -30.;
-        } else if transform.translation.x >= tf_player.translation.x - MARGIN_IN && transform.translation.x <= tf_player.translation.x + MARGIN_IN{
+        } else if transform.translation.x >= tf_player.translation.x - MARGIN_IN
+            && transform.translation.x <= tf_player.translation.x + MARGIN_IN
+        {
             velocity.vx = 0.;
             if *texture_atlas != enemy_animations.attack_skeleton {
                 *texture_atlas = enemy_animations.attack_skeleton.clone();
                 sprite.index = 0;
             }
             // on est à côté
-        }
-        else {
+        } else {
             velocity.vx = 0.;
             if *texture_atlas != enemy_animations.idle_skeleton {
                 *texture_atlas = enemy_animations.idle_skeleton.clone();
