@@ -64,10 +64,12 @@ fn main() {
         .run();
 }
 
-fn setup(mut commands: Commands, 
-    asset_server: Res<AssetServer>, 
+fn setup(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
     windows: Res<Windows>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,) {
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+) {
     commands
         .spawn_bundle(Camera2dBundle::default())
         .insert(Camera);
@@ -84,12 +86,13 @@ fn setup(mut commands: Commands,
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_shop,
             transform: Transform {
-                translation: Vec3::new(2.*BACKGROUND_DIM.0 -400., -205. + 192., 1.5),
+                translation: Vec3::new(2. * BACKGROUND_DIM.0 - 395., -203. + 192., 1.),
                 scale: Vec3::splat(3.),
                 ..Default::default()
             },
             ..Default::default()
-        }).insert(AnimationTimer(Timer::from_seconds(0.1, true)));
+        })
+        .insert(AnimationTimer(Timer::from_seconds(0.1, true)));
     /*
     let background_layer1: Handle<Image> = asset_server.load(BACKGROUND_LAYER1);
     let background_layer2: Handle<Image> = asset_server.load(BACKGROUND_LAYER2);
@@ -124,7 +127,7 @@ fn setup(mut commands: Commands,
     commands.spawn_bundle(SpriteBundle {
         texture: background_3,
         transform: Transform {
-            translation: Vec3::new(2.*BACKGROUND_DIM.0, 0., 0.),
+            translation: Vec3::new(2. * BACKGROUND_DIM.0, 0., 0.),
             scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
             ..Default::default()
         },
@@ -135,25 +138,24 @@ fn setup(mut commands: Commands,
         size: Vec2::new(win_w, PLATFORM_MARGIN),
         position: Vec3::new(0., GROUND_LEVEL, 0.),
     });*/
-
-    commands
-        .spawn_bundle(SpriteBundle {
-            sprite: Sprite {
-                color: Color::AQUAMARINE,
-                custom_size: Some(Vec2::new(250., PLATFORM_MARGIN)),
-                ..Default::default()
-            },
-            transform: Transform {
-                translation: Vec3::new(-356., -145., 3.),
-                ..Default::default()
-            },
+    /*
+    commands.spawn_bundle(SpriteBundle {
+        sprite: Sprite {
+            color: Color::AQUAMARINE,
+            custom_size: Some(Vec2::new(250., PLATFORM_MARGIN)),
             ..Default::default()
-        });
-        /* .insert(Platform {
-            position: Vec3::new(-356., -145., 1.),
-            size: Vec2::new(250., PLATFORM_MARGIN),
-        }); */
-
+        },
+        transform: Transform {
+            translation: Vec3::new(-356., -145., 3.),
+            ..Default::default()
+        },
+        ..Default::default()
+    });*/
+    /* .insert(Platform {
+        position: Vec3::new(-356., -145., 1.),
+        size: Vec2::new(250., PLATFORM_MARGIN),
+    }); */
+    /*
     commands
         .spawn_bundle(SpriteBundle {
             sprite: Sprite {
@@ -188,7 +190,7 @@ fn setup(mut commands: Commands,
         .insert(Platform {
             position: Vec3::new(150., -205., 1.),
             size: Vec2::new(283., PLATFORM_MARGIN),
-        });
+        });*/
 }
 
 fn animate_sprite(

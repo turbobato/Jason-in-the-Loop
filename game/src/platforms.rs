@@ -1,4 +1,4 @@
-use std::{path::Path, fs::File, io::BufReader, error::Error};
+use std::{error::Error, fs::File, io::BufReader, path::Path};
 
 use crate::{components::*, WinSize, BACKGROUND_DIM};
 
@@ -41,7 +41,7 @@ const DIRT_BLOCK_DIM: (f32, f32) = (97., 25.);
 const DIRT_BLOCK_SCALE: f32 = 2.;
 */
 
-const PLATFORM_JSON : &str = include_str!("../platform.json");
+const PLATFORM_JSON: &str = include_str!("../platform.json");
 
 pub struct PlatformsPlugin;
 
@@ -51,10 +51,8 @@ impl Plugin for PlatformsPlugin {
     }
 }
 
-fn platform_setup(
-    mut commands: Commands,
-) {
-    let platforms : Vec<Platform> = serde_json::from_str(PLATFORM_JSON).unwrap();
+fn platform_setup(mut commands: Commands) {
+    let platforms: Vec<Platform> = serde_json::from_str(PLATFORM_JSON).unwrap();
     for platform in platforms {
         commands.spawn().insert(platform);
     }
