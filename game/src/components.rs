@@ -22,12 +22,17 @@ pub struct Velocity {
     pub vx: f32,
     pub vy: f32,
 }
-
 #[derive(Component, Default)]
 pub struct Acceleration {
     pub ax: f32,
     pub ay: f32,
 }
+
+#[derive(Component)]
+pub struct Grounded(pub bool);
+
+#[derive(Component)]
+pub struct RepeatAnimation(pub bool);
 
 #[derive(Component, Deref, DerefMut)]
 pub struct AnimationTimer(pub Timer);
@@ -44,13 +49,15 @@ pub struct Platform {
 #[derive(Component)]
 pub struct Player;
 
-#[derive(Component)]
-pub struct Grounded(pub bool);
-
 //endregion : player components
 
 //region : enemy components
 #[derive(Component)]
 pub struct Enemy;
 
+#[derive(Component)]
+pub struct Projectile;
+
+#[derive(Component)]
+pub struct FromEnemy;
 //endregion : enemy components
