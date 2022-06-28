@@ -36,7 +36,6 @@ impl Plugin for PlayerPlugin {
 
 fn player_setup(
     mut commands: Commands,
-    win_size: Res<WinSize>,
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
@@ -80,7 +79,7 @@ fn player_setup(
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_idle,
             transform: Transform {
-                translation: Vec3::new(0., GROUND_LEVEL + PLAYER_DIMENSIONS.1 / 2., 1.),
+                translation: Vec3::new(0., GROUND_LEVEL + PLAYER_DIMENSIONS.1 / 2., 2.),
                 scale: Vec3::splat(1.5),
                 ..Default::default()
             },
@@ -94,7 +93,7 @@ fn player_setup(
         .insert(Acceleration {
             ..Default::default()
         })
-        .insert(Grounded(true))
+        .insert(Grounded(false))
         .insert(SpriteSize::from(PLAYER_DIMENSIONS));
 }
 
@@ -107,7 +106,7 @@ fn player_keyboard_event_system(
             &mut Velocity,
             &mut Handle<TextureAtlas>,
             &mut Transform,
-            &mut TextureAtlasSprite
+            &mut TextureAtlasSprite,
         ),
         With<Player>,
     >,
@@ -117,18 +116,18 @@ fn player_keyboard_event_system(
     {
         if kb.pressed(KeyCode::Q) {
             velocity.vx = -100.;
-            transform.scale.x = -1.5;
+            transform.scale.x = -1.;
             if *texture_atlas != animations.run {
                 *texture_atlas = animations.run.clone();
             };
         } else if kb.pressed(KeyCode::D) {
             velocity.vx = 100.;
-            transform.scale.x = 1.5;
+            transform.scale.x = 1.;
             if *texture_atlas != animations.run {
                 *texture_atlas = animations.run.clone();
             };
         } else if kb.pressed(KeyCode::J) {
-            //velocity.vx = 0.;
+            velocity.vx = 0.;
             if *texture_atlas != animations.attack_combo {
                 *texture_atlas = animations.attack_combo.clone();
                 sprite.index = 0;
@@ -142,7 +141,7 @@ fn player_keyboard_event_system(
 
         if kb.pressed(KeyCode::Z) && grounded.0 {
             velocity.vy = 100.;
-            transform.translation.x += PLATFORM_MARGIN; //this line is to be sure the player gets out of the platform
+            transform.translation.y += PLATFORM_MARGIN; //this line is to be sure the player gets out of the platform
             grounded.0 = false;
         }
     }
