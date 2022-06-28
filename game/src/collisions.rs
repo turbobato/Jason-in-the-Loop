@@ -33,7 +33,7 @@ fn collision_with_platform(
                         if velocity.vy <= 1. {
                             grounded.0 = true;
                             velocity.vy = 0.;
-                            entity_position.y = platform_position.y + entity_size.y / 2.;
+                            entity_position.y = platform_position.y + platform_size.y /2. + entity_size.y / 2.;
                             //set player on the platform to avoid float precision issues
                             break;
                         }

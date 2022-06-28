@@ -98,11 +98,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
         },
         ..Default::default()
     });
-    /*
-    commands.spawn().insert(Platform {
-        size: Vec2::new(win_w, PLATFORM_MARGIN),
-        position: Vec3::new(0., GROUND_LEVEL, 0.),
-    });*/
 
     commands
         .spawn_bundle(SpriteBundle {
@@ -116,11 +111,11 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(Platform {
+        });
+        /* .insert(Platform {
             position: Vec3::new(-356., -145., 1.),
             size: Vec2::new(250., PLATFORM_MARGIN),
-        });
+        }); */
 
     commands
         .spawn_bundle(SpriteBundle {
@@ -157,110 +152,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
             position: Vec3::new(150., -205., 1.),
             size: Vec2::new(283., PLATFORM_MARGIN),
         });
-
-    /*
-    commands.insert_resource(WinSize { win_h, win_w });
-    commands.spawn_bundle(SpriteBundle {
-        texture: background_layer1,
-        transform: Transform {
-            translation: Vec3::new(0., 0., 0.),
-            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
-            ..Default::default()
-        },
-        ..Default::default()
-    });
-    commands.spawn_bundle(SpriteBundle {
-        texture: background_layer2,
-        transform: Transform {
-            translation: Vec3::new(0., 0., 1.),
-            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
-            ..Default::default()
-        },
-        ..Default::default()
-    });
-    commands.spawn_bundle(SpriteBundle {
-        texture: background_layer3,
-        transform: Transform {
-            translation: Vec3::new(0., 0., 1.),
-            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
-            ..Default::default()
-        },
-        ..Default::default()
-    });*/
-    /*
-    commands.spawn().insert(Platform {
-        size: Vec2::new(win_w, PLATFORM_MARGIN),
-        position: Vec3::new(0., GROUND_LEVEL, 0.),
-    });*/
-    /*
-    commands
-        .spawn_bundle(SpriteBundle {
-            sprite: Sprite {
-                color: Color::AQUAMARINE,
-                custom_size: Some(Vec2::new(70., PLATFORM_MARGIN)),
-                ..Default::default()
-            },
-            transform: Transform {
-                translation: Vec3::new(0., 40., 3.),
-                ..Default::default()
-            },
-            ..Default::default()
-        })
-        .insert(Platform {
-            position: Vec3::new(0., 40., 1.),
-            size: Vec2::new(70., PLATFORM_MARGIN),
-        });
-    commands
-        .spawn_bundle(SpriteBundle {
-            sprite: Sprite {
-                color: Color::AQUAMARINE,
-                custom_size: Some(Vec2::new(70., PLATFORM_MARGIN)),
-                ..Default::default()
-            },
-            transform: Transform {
-                translation: Vec3::new(0., 120., 3.),
-                ..Default::default()
-            },
-            ..Default::default()
-        })
-        .insert(Platform {
-            position: Vec3::new(0., 120., 1.),
-            size: Vec2::new(70., PLATFORM_MARGIN),
-        });
-    commands
-        .spawn_bundle(SpriteBundle {
-            sprite: Sprite {
-                color: Color::AQUAMARINE,
-                custom_size: Some(Vec2::new(70., PLATFORM_MARGIN)),
-                ..Default::default()
-            },
-            transform: Transform {
-                translation: Vec3::new(0., 80., 3.),
-                ..Default::default()
-            },
-            ..Default::default()
-        })
-        .insert(Platform {
-            position: Vec3::new(0., 80., 1.),
-            size: Vec2::new(70., PLATFORM_MARGIN),
-        });*/
 }
-
-/*          .insert(Platform {
-    ground_level: ground_lvl + 50.,
-    left_bound: 100. / 2.,
-    right_bound: 150.,
-})*/
-/* let player_sprite = asset_server.load(CROUCH_SPRITE);
-commands.spawn_bundle(SpriteBundle{
-    texture : player_sprite,
-    transform : Transform {
-        translation : Vec3::new(0.,ground_lvl,1.),
-        //scale : Vec3::new(2.,2.,1.),
-        ..Default::default()
-    },
-    ..Default::default()
-}); */
 
 fn animate_sprite(
     time: Res<Time>,
@@ -295,26 +187,5 @@ fn movement(
         } else {
             acceleration.ay = -400.;
         }
-        /* let sprite_height = texture_atlases.get(texture_atlas).unwrap().size.y /2.;
-        for platform in query_platforms.iter(){
-            let ground_level = platform.ground_level;
-            let left_bound = platform.left_bound;
-            let right_bound = platform.right_bound;
-            //println!("ground_level {ground_level}, left_bound {left_bound}, right_bound {right_bound}, y_level : {}", transform.translation.y);
-            if grounded.0 == false {
-                if ground_level + sprite_height + MARGIN >= transform.translation.y
-                && ground_level + sprite_height - MARGIN <= transform.translation.y
-                && transform.translation.x >= left_bound
-                && transform.translation.x <= right_bound
-                {
-                    acceleration.ay = 0.;
-                    velocity.vy = 0.;
-                    grounded.0 = true;
-                }
-                else {
-                    acceleration.ay = -100.
-                }
-            }
-        } */
     }
 }
