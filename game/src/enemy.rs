@@ -21,7 +21,7 @@ pub struct EnemyPlugin;
 impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system_to_stage(StartupStage::PostStartup, enemy_setup)
-            .add_system(eye_movement)
+            .add_system(eye_movement_2)
             .add_system(skeleton_movement)
             .add_system(projectile_movement)
             // .add_system_set(
