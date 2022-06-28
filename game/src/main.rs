@@ -288,7 +288,7 @@ fn movement(
         if grounded.0 {
             acceleration.ay = 0.;
         } else {
-            acceleration.ay = -100.;
+            acceleration.ay = -400.;
         }
         /* let sprite_height = texture_atlases.get(texture_atlas).unwrap().size.y /2.;
         for platform in query_platforms.iter(){
