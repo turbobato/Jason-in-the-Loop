@@ -84,10 +84,10 @@ fn skeleton_follow_player(
     const MARGIN_WALK: f32 = 30.;
     const MARGIN_IN: f32 = 80.; // portée de l'attaque
     const MARGIN_OUT: f32 = 400.; // portée de poursuite
-    const MARGIN_Y : f32 = 30.;// erreur en y 
+    const MARGIN_Y : f32 = 31.;// erreur en y 
 
     let tf_player = query_player.single();
-    let x_player = tf_player.translation.x;
+    let (x_player, y_player) = (tf_player.translation.x, tf_player.translation.y);
 
     for (mut velocity, mut tf_monster, mut texture_atlas, mut sprite, mut acceleration, mut grounded) in query_monster.iter_mut() {
         
@@ -110,80 +110,55 @@ fn skeleton_follow_player(
 
                 if x_monster > x_player {
                     // Monstre à droite du player
+                    if is_on_plat(x1, x2, y, x_monster, y_monster) && x1 <= x_monster - MARGIN_WALK {
+                        println!("{}", x1);
+                        if *texture_atlas != enemy_animations.walk_skeleton {
+                            *texture_atlas = enemy_animations.walk_skeleton.clone();
+                            sprite.index = 0;
+                        }
+                        velocity.vx = -30.;
+                    } 
+    
+                    // si on est sur le bord
+                    else if is_on_plat(x1, x2, y, x_monster, y_monster) && x1 > x_monster - MARGIN_WALK {
+                        println!("Test1");
+                        velocity.vx = 0.;
+                        if *texture_atlas != enemy_animations.idle_skeleton {
+                            *texture_atlas = enemy_animations.idle_skeleton.clone();
+                            sprite.index = 0;
+                        }
+                    }
                 }
                 else{
-                  // Monstre à gauche du player
+                  
+                    if is_on_plat(x1, x2, y, x_monster, y_monster) && x_monster + MARGIN_WALK <= x2 {
+                        println!("{}", x1);
+                        if *texture_atlas != enemy_animations.walk_skeleton {
+                            *texture_atlas = enemy_animations.walk_skeleton.clone();
+                            sprite.index = 0;
+                        }
+                        velocity.vx = 30.;
+                    } 
+    
+                    // si on est sur la plateforme mais au bord
+                    else if is_on_plat(x1, x2, y, x_monster, y_monster) && x_monster + MARGIN_WALK > x2 {
+                        velocity.vx = 0.;
+                        println!("Test2");
+                        if *texture_atlas != enemy_animations.idle_skeleton {
+                            *texture_atlas = enemy_animations.idle_skeleton.clone();
+                            sprite.index = 0;
+                        }
+                    }
                 }
 
             }
         } 
-
-        if x_monster <= x_player - MARGIN_IN
-            && (x_monster - x_player).abs() < MARGIN_OUT
-        {
-            //println!("Gauche");
-            // SI ON EST A GAUCHE DU PLAYER ET PAS DANS LA PORTEE DU MONSTRE
-            for platform in query_plat.iter(){
-                let x1 = platform.position.x - platform.size.x/2.;
-                let x2 = platform.position.x + platform.size.x/2.;
-                let y = platform.position.y + platform.size.y/2.;
-                
-                if is_on_plat(x1, x2, y, x_monster, y_monster) && x_monster + MARGIN_WALK <= x2 {
-                    println!("{}", x1);
-                    if *texture_atlas != enemy_animations.walk_skeleton {
-                        *texture_atlas = enemy_animations.walk_skeleton.clone();
-                        sprite.index = 0;
-                    }
-                    velocity.vx = 30.;
-                } 
-
-                // si on est sur la plateforme mais au bord
-                else if is_on_plat(x1, x2, y, x_monster, y_monster) && x_monster + MARGIN_WALK > x2 {
-                    velocity.vx = 0.;
-                    println!("Test2");
-                    if *texture_atlas != enemy_animations.idle_skeleton {
-                        *texture_atlas = enemy_animations.idle_skeleton.clone();
-                        sprite.index = 0;
-                    }
-                }
-            }
-            
-        } else if x_monster >= x_player + MARGIN_IN
-            && (x_monster - x_player).abs() < MARGIN_OUT
-        {
-            //println!("Droite");
-            // SI ON EST A DROITE DU PLAYER DANS LA PORTEE MAIS PAS DANS LA PORTEE D'ATTAQUE
-            for platform in query_plat.iter(){
-                let x1 = platform.position.x - platform.size.x/2.;
-                let x2 = platform.position.x + platform.size.x/2.;
-                let y = platform.position.y + platform.size.y/2.;
-                //println!("x1 : {} / y_top : {} / y_perso : {} ", x1, y, y_monster);
-
-                // si on n'est pas sur le bord
-                if is_on_plat(x1, x2, y, x_monster, y_monster) && x1 <= x_monster - MARGIN_WALK {
-                    println!("{}", x1);
-                    if *texture_atlas != enemy_animations.walk_skeleton {
-                        *texture_atlas = enemy_animations.walk_skeleton.clone();
-                        sprite.index = 0;
-                    }
-                    velocity.vx = -30.;
-                } 
-
-                // si on est sur le bord
-                else if is_on_plat(x1, x2, y, x_monster, y_monster) && x1 > x_monster - MARGIN_WALK {
-                    println!("Test1");
-                    velocity.vx = 0.;
-                    if *texture_atlas != enemy_animations.idle_skeleton {
-                        *texture_atlas = enemy_animations.idle_skeleton.clone();
-                        sprite.index = 0;
-                    }
-                }
-            }
-        } else if (x_monster - x_player).abs() <= MARGIN_IN // rajouter la condition sur y ?
+        
+        else if (x_monster - x_player).abs() <= MARGIN_IN && (y_monster - y_player).abs() < MARGIN_Y// rajouter la condition sur y ?
         {
             // SI ON EST A PORTEE D'ATTAQUE
-            //println!("!");
             velocity.vx = 0.;
+
             if *texture_atlas != enemy_animations.attack_skeleton {
                 *texture_atlas = enemy_animations.attack_skeleton.clone();
                 sprite.index = 0;
