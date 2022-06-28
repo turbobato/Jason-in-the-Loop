@@ -22,10 +22,23 @@ pub struct Velocity {
     pub vx: f32,
     pub vy: f32,
 }
+
+impl From<(f32, f32)> for Velocity {
+    fn from(val: (f32, f32)) -> Self {
+        Velocity { vx: val.0, vy: val.1 }
+    }
+}
+
 #[derive(Component, Default)]
 pub struct Acceleration {
     pub ax: f32,
     pub ay: f32,
+}
+
+impl From<(f32, f32)> for Acceleration {
+    fn from(val: (f32, f32)) -> Self {
+        Acceleration { ax: val.0, ay : val.1 }
+    }
 }
 
 #[derive(Component)]

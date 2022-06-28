@@ -1,7 +1,7 @@
 use crate::{components::*, WinSize};
 use bevy::{ecs::schedule::ShouldRun, prelude::*, time::FixedTimestep};
 use rand::{thread_rng, Rng};
-pub const PI: f32 = 3.141592653589793238462643f32;
+pub const PI: f32 = 3.141592653589793238462643;
 
 // Les différents chemins des png des animations
 const ATTACK_SPRITE_EYE: &str =
@@ -52,12 +52,15 @@ fn enemy_attack_criteria() -> ShouldRun {
 
 fn skeleton_movement(
     time: Res<Time>,
+
     mut query_monster: Query<
         (
             &mut Velocity,
             &mut Transform,
             &mut Handle<TextureAtlas>,
             &mut TextureAtlasSprite,
+            &mut Acceleration,
+            &Grounded,
         ),
         (With<Skeleton>, Without<Player>),
     >,
@@ -70,9 +73,16 @@ fn skeleton_movement(
 
     let tf_player = query_player.single();
 
-    for (mut velocity, mut transform, mut texture_atlas, mut sprite) in query_monster.iter_mut() {
+    for (mut velocity, mut transform, mut texture_atlas, mut sprite, mut acceleration, mut grounded) in query_monster.iter_mut() {
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
+        velocity.vx += acceleration.ax * delta;
+        velocity.vy += acceleration.ay * delta;
+        if grounded.0 {
+            acceleration.ay = 0.;
+        } else {
+            acceleration.ay = -100.;
+        }
 
         if transform.translation.x <= tf_player.translation.x - MARGIN_IN
             && transform.translation.x > tf_player.translation.x - MARGIN_OUT
@@ -184,18 +194,17 @@ fn eye_movement_2(time: Res<Time>, win_size: Res<WinSize>,mut query: Query<(Enti
     
     // mouvmement circulaire des ennemis
     for (entity, velocity, mut transform) in query.iter_mut(){
-        let (x_pivot, y_pivot) = (500.,0.);
+        let (x_pivot, y_pivot) = (300.,0.);
 		let (x_radius, y_radius) = (70.,70.);
         let max_distance = frame_time * velocity.vx;
         let (x_org, y_org) = (transform.translation.x, transform.translation.y);
-        let a = 4.*PI*x_radius/velocity.vx;
 	//On peut changer le sens
 		let dir = 1;
 
 		let angle = velocity.vx*frame_time*now%360./PI;
 
-		let x_dst = x_radius * angle.cos() + x_org;
-		let y_dst = y_radius * angle.sin() + y_org;
+		let x_dst = x_radius * angle.cos() + x_pivot;
+		let y_dst = y_radius * angle.sin() + y_pivot;
 
 		let dx = x_org - x_dst;
 		let dy = y_org - y_dst;
@@ -328,5 +337,8 @@ fn enemy_setup(
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
         .insert(Enemy)
         .insert(Velocity { vx: 0., vy: 0. })
-        .insert(Skeleton);
+        .insert(Skeleton)
+        .insert(Grounded(true))
+        .insert(Acceleration{..Default::default()})
+        .insert(SpriteSize(Vec2::new(27.,60.)));
 }
