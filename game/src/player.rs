@@ -117,7 +117,7 @@ fn player_keyboard_event_system(
     if let Ok((
         mut grounded,
         mut velocity,
-        mut acceleration,
+        acceleration,
         mut texture_atlas,
         mut transform,
         mut sprite,
