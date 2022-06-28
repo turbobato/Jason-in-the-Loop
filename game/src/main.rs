@@ -137,8 +137,7 @@ fn setup(
     commands.spawn().insert(Platform {
         size: Vec2::new(win_w, PLATFORM_MARGIN),
         position: Vec3::new(0., GROUND_LEVEL, 0.),
-    });*/
-    /*
+    });
     commands.spawn_bundle(SpriteBundle {
         sprite: Sprite {
             color: Color::AQUAMARINE,
@@ -150,7 +149,7 @@ fn setup(
             ..Default::default()
         },
         ..Default::default()
-    });*/
+    }); */
     /* .insert(Platform {
         position: Vec3::new(-356., -145., 1.),
         size: Vec2::new(250., PLATFORM_MARGIN),
@@ -172,7 +171,7 @@ fn setup(
         .insert(Platform {
             position: Vec3::new(-248., -205., 1.),
             size: Vec2::new(283., PLATFORM_MARGIN),
-        });
+        });*/
 
     commands
         .spawn_bundle(SpriteBundle {
@@ -190,7 +189,7 @@ fn setup(
         .insert(Platform {
             position: Vec3::new(150., -205., 1.),
             size: Vec2::new(283., PLATFORM_MARGIN),
-        });*/
+        });
 }
 
 fn animate_sprite(
