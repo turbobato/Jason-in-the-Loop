@@ -14,7 +14,7 @@ const TURN_AROUND_SPRITE: &str =
 
 const PLAYER_DIMENSIONS: (f32, f32) = (PLAYER_SCALE * 20., PLAYER_SCALE * 80.); //dimensions for idle sprite
 const PLAYER_SCALE: f32 = 1.5;
-const PLAYER_SPAWN: (f32, f32, f32) = (-356., -145. + 90., 1.); //player spawn coordinates
+const PLAYER_SPAWN: (f32, f32, f32) = (-356., -145. + 90., 1.1); //player spawn coordinates
 
 pub struct PlayerPlugin;
 
@@ -148,10 +148,23 @@ fn player_keyboard_event_system(
             };
         }
 
-        if kb.pressed(KeyCode::Z) && grounded.0 {
-            velocity.vy = 250.;
-            transform.translation.y += PLATFORM_MARGIN; //this line is to be sure the player gets out of the platform
-            grounded.0 = false;
+        if kb.pressed(KeyCode::Z) {
+            if *texture_atlas != animations.jump {
+                *texture_atlas = animations.jump.clone();
+                sprite.index = 0;
+                if grounded.0 {
+                    velocity.vy = 250.;
+                    transform.translation.y += PLATFORM_MARGIN; //this line is to be sure the player gets out of the platform
+                    grounded.0 = false;
+                }
+            };
+        }
+
+        if velocity.vy < -20. {
+            if *texture_atlas != animations.jump_fall {
+                *texture_atlas = animations.jump_fall.clone();
+                sprite.index = 0;
+            }
         }
 
         if kb.pressed(KeyCode::Space) {
