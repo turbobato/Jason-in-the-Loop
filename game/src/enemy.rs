@@ -177,15 +177,15 @@ fn projectile_movement(
     }
 }
 // mouvement des ennemis
-fn eye_movement_2(time: Res<Time>, win_size: Res<WinSize>,mut query: Query<(Entity, &mut Velocity, &mut Transform), With<Enemy>>){
+fn eye_movement_2(time: Res<Time>, win_size: Res<WinSize>,mut query: Query<(Entity, &mut Velocity, &mut Transform), With<Eye>>){
     let frame_time = 1./60.;
     let now = time.seconds_since_startup() as f32; 
     const MARGIN : f32 = 50.;
     
     // mouvmement circulaire des ennemis
     for (entity, velocity, mut transform) in query.iter_mut(){
-        let (x_pivot, y_pivot) = (0.,0.);
-		let (x_radius, y_radius) = (150.,150.);
+        let (x_pivot, y_pivot) = (500.,0.);
+		let (x_radius, y_radius) = (70.,70.);
         let max_distance = frame_time * velocity.vx;
         let (x_org, y_org) = (transform.translation.x, transform.translation.y);
         let a = 4.*PI*x_radius/velocity.vx;
@@ -312,7 +312,7 @@ fn enemy_setup(
         })
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
         .insert(Enemy)
-        .insert(Velocity { vx: 50., vy: 0. })
+        .insert(Velocity { vx: 100., vy: 0. })
         .insert(Eye);
 
     // squelette spawn avec la sheet walk
