@@ -2,9 +2,7 @@ use crate::{components::*, WinSize, BACKGROUND_DIM};
 
 use bevy::{prelude::*, text, transform};
 
-
-
-/* 
+/*
 const EARTHY_PLATFORM: &str = "textures/oak_woods_v1.0/platforms/earthy_platform(74x26).png";
 const EARTHY_PLAT_DIM: (f32, f32) = (74., 26.);
 const EARTHY_PLATFORM_SCALE: f32 = 2.;
@@ -56,7 +54,7 @@ fn platform_setup(
 ) {
     //commands.spawn_bundle(Camera2dBundle::default());
 
-    /* 
+    /*
     let earthy_platform: Handle<Image> = asset_server.load(EARTHY_SPLATFORM);
     let earthy_small_platform: Handle<Image> = asset_server.load(EARTHY_PLATFORM);
     let earthy_hblock: Handle<Image> = asset_server.load(HUGE_EARTHY_BLOCK);
@@ -69,7 +67,7 @@ fn platform_setup(
 
     let (win_h, win_w) = (windows.win_h, windows.win_w);
 
-    /* 
+    /*
     //earthy plat left down
     commands.spawn_bundle(SpriteBundle {
         texture: earthy_hblock.clone(),
@@ -144,7 +142,7 @@ fn platform_setup(
         },
         ..Default::default()
     });
-    // transition middle left plat 
+    // transition middle left plat
     commands.spawn_bundle(SpriteBundle {
         texture: transition_plat_earth_rock.clone(),
         transform: Transform {
@@ -171,7 +169,7 @@ fn platform_setup(
         },
         ..Default::default()
     });*/
-    
+
     /*
     commands.spawn_bundle(SpriteBundle{
         texture: earthy_small_platform.clone(),

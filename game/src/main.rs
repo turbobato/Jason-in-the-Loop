@@ -1,8 +1,8 @@
 mod collisions;
 mod components;
 mod enemy;
-mod player;
 mod platforms;
+mod player;
 
 use bevy::{
     log::LogSettings,
@@ -12,8 +12,8 @@ use bevy::{
     sprite::collide_aabb::{collide, Collision},
 };
 
-use components::*;
 use collisions::CollisionsPlugin;
+use components::*;
 use enemy::EnemyPlugin;
 use platforms::PlatformsPlugin;
 use player::PlayerPlugin;
@@ -23,14 +23,13 @@ pub const PLATFORM_MARGIN: f32 = 1.; // this is the thickness of the platforms
 
 const BACKGROUND_1: &str = "textures/oak_woods_v1.0/background/background_game/background_1.png";
 const BACKGROUND_2: &str = "textures/oak_woods_v1.0/background/background_game/background_2.png";
-/* 
+/*
 const BACKGROUND_LAYER1: &str = "textures/oak_woods_v1.0/background/background_layer_1.png";
 const BACKGROUND_LAYER2: &str = "textures/oak_woods_v1.0/background/background_layer_2.png";
 const BACKGROUND_LAYER3: &str = "textures/oak_woods_v1.0/background/background_layer_3.png";
 */
 const BACKGROUND_DIM: (f32, f32) = (960., 540.);
 const SPRITE_SCALE: f32 = 3.;
-
 
 struct WinSize {
     win_h: f32,
@@ -64,7 +63,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
 
     let background_1: Handle<Image> = asset_server.load(BACKGROUND_1);
     let background_2: Handle<Image> = asset_server.load(BACKGROUND_2);
-    /* 
+    /*
     let background_layer1: Handle<Image> = asset_server.load(BACKGROUND_LAYER1);
     let background_layer2: Handle<Image> = asset_server.load(BACKGROUND_LAYER2);
     let background_layer3: Handle<Image> = asset_server.load(BACKGROUND_LAYER3);
@@ -94,7 +93,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
         },
         ..Default::default()
     });
-    /* 
+    /*
     commands.insert_resource(WinSize { win_h, win_w });
     commands.spawn_bundle(SpriteBundle {
         texture: background_layer1,
