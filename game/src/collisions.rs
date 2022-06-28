@@ -11,7 +11,10 @@ impl Plugin for CollisionsPlugin {
 
 fn collision_with_platform(
     query_platforms: Query<&Platform>,
-    mut query: Query<(&mut Grounded, &mut Transform, &SpriteSize, &mut Velocity), Or<(With<Player>, With<Skeleton>)>>,
+    mut query: Query<
+        (&mut Grounded, &mut Transform, &SpriteSize, &mut Velocity),
+        Or<(With<Player>, With<Skeleton>)>,
+    >,
 ) {
     for (mut grounded, mut transform, sprite_size, mut velocity) in query.iter_mut() {
         for platform in query_platforms.iter() {

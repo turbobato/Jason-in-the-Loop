@@ -25,7 +25,10 @@ pub struct Velocity {
 
 impl From<(f32, f32)> for Velocity {
     fn from(val: (f32, f32)) -> Self {
-        Velocity { vx: val.0, vy: val.1 }
+        Velocity {
+            vx: val.0,
+            vy: val.1,
+        }
     }
 }
 
@@ -37,7 +40,10 @@ pub struct Acceleration {
 
 impl From<(f32, f32)> for Acceleration {
     fn from(val: (f32, f32)) -> Self {
-        Acceleration { ax: val.0, ay : val.1 }
+        Acceleration {
+            ax: val.0,
+            ay: val.1,
+        }
     }
 }
 

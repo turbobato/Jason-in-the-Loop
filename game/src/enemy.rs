@@ -77,7 +77,15 @@ fn skeleton_movement(
 
     let tf_player = query_player.single();
 
-    for (mut velocity, mut transform, mut texture_atlas, mut sprite, mut acceleration, mut grounded) in query_monster.iter_mut() {
+    for (
+        mut velocity,
+        mut transform,
+        mut texture_atlas,
+        mut sprite,
+        mut acceleration,
+        mut grounded,
+    ) in query_monster.iter_mut()
+    {
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
         velocity.vx += acceleration.ax * delta;
@@ -191,39 +199,47 @@ fn projectile_movement(
     }
 }
 // mouvement des ennemis
-fn eye_movement_2(time: Res<Time>, win_size: Res<WinSize>,mut query: Query<(Entity, &mut Velocity, &mut Transform), With<Eye>>){
-    let frame_time = 1./60.;
-    let now = time.seconds_since_startup() as f32; 
-    const MARGIN : f32 = 50.;
-    
+fn eye_movement_2(
+    time: Res<Time>,
+    win_size: Res<WinSize>,
+    mut query: Query<(Entity, &mut Velocity, &mut Transform), With<Eye>>,
+) {
+    let frame_time = 1. / 60.;
+    let now = time.seconds_since_startup() as f32;
+    const MARGIN: f32 = 50.;
+
     // mouvmement circulaire des ennemis
-    for (entity, velocity, mut transform) in query.iter_mut(){
-        let (x_pivot, y_pivot) = (300.,0.);
-		let (x_radius, y_radius) = (70.,70.);
+    for (entity, velocity, mut transform) in query.iter_mut() {
+        let (x_pivot, y_pivot) = (300., 0.);
+        let (x_radius, y_radius) = (70., 70.);
         let max_distance = frame_time * velocity.vx;
         let (x_org, y_org) = (transform.translation.x, transform.translation.y);
-	//On peut changer le sens
-		let dir = 1;
+        //On peut changer le sens
+        let dir = 1;
 
-		let angle = velocity.vx*frame_time*now%360./PI;
+        let angle = velocity.vx * frame_time * now % 360. / PI;
 
-		let x_dst = x_radius * angle.cos() + x_pivot;
-		let y_dst = y_radius * angle.sin() + y_pivot;
+        let x_dst = x_radius * angle.cos() + x_pivot;
+        let y_dst = y_radius * angle.sin() + y_pivot;
 
-		let dx = x_org - x_dst;
-		let dy = y_org - y_dst;
-		let distance = (dx * dx + dy * dy).sqrt();
-		let distance_ratio = if distance != 0. { max_distance / distance } else { 0. };
+        let dx = x_org - x_dst;
+        let dy = y_org - y_dst;
+        let distance = (dx * dx + dy * dy).sqrt();
+        let distance_ratio = if distance != 0. {
+            max_distance / distance
+        } else {
+            0.
+        };
 
-		let x = x_org - dx * distance_ratio;
-		let x = if dx > 0. { x.max(x_dst) } else { x.min(x_dst) };
-		let y = y_org - dy * distance_ratio;
-		let y = if dy > 0. { y.max(y_dst) } else { y.min(y_dst) };
+        let x = x_org - dx * distance_ratio;
+        let x = if dx > 0. { x.max(x_dst) } else { x.min(x_dst) };
+        let y = y_org - dy * distance_ratio;
+        let y = if dy > 0. { y.max(y_dst) } else { y.min(y_dst) };
 
-            let translation = &mut transform.translation;
-		(translation.x, translation.y) = (x, y);
-        }    
+        let translation = &mut transform.translation;
+        (translation.x, translation.y) = (x, y);
     }
+}
 
 // mouvement des ennemis
 fn eye_movement(
@@ -343,6 +359,8 @@ fn enemy_setup(
         .insert(Velocity { vx: 0., vy: 0. })
         .insert(Skeleton)
         .insert(Grounded(true))
-        .insert(Acceleration{..Default::default()})
-        .insert(SpriteSize(Vec2::new(27.,60.)));
+        .insert(Acceleration {
+            ..Default::default()
+        })
+        .insert(SpriteSize(Vec2::new(27., 60.)));
 }
