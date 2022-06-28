@@ -1,3 +1,4 @@
+mod camera;
 mod collisions;
 mod components;
 mod enemy;
@@ -12,6 +13,7 @@ use bevy::{
     sprite::collide_aabb::{collide, Collision},
 };
 
+use camera::CameraPlugin;
 use collisions::CollisionsPlugin;
 use components::*;
 use enemy::EnemyPlugin;
@@ -51,6 +53,7 @@ fn main() {
         .add_plugin(EnemyPlugin)
         .add_plugin(CollisionsPlugin)
         .add_plugin(PlatformsPlugin)
+        .add_plugin(CameraPlugin)
         .add_startup_system(setup)
         .add_system(animate_sprite)
         .add_system(movement)
@@ -59,7 +62,9 @@ fn main() {
 }
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Windows>) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands
+        .spawn_bundle(Camera2dBundle::default())
+        .insert(Camera);
 
     let background_1: Handle<Image> = asset_server.load(BACKGROUND_1);
     let background_2: Handle<Image> = asset_server.load(BACKGROUND_2);
@@ -68,7 +73,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
     let background_layer2: Handle<Image> = asset_server.load(BACKGROUND_LAYER2);
     let background_layer3: Handle<Image> = asset_server.load(BACKGROUND_LAYER3);
     */
-    // capture window size
+
     let window = windows.get_primary().unwrap();
     let (win_h, win_w) = (window.height(), window.width());
 

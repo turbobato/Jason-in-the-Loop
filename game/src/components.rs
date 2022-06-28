@@ -10,6 +10,9 @@ pub enum Movement {
 }
 
 #[derive(Component)]
+pub struct Camera;
+
+#[derive(Component)]
 pub struct SpriteSize(pub Vec2);
 
 impl From<(f32, f32)> for SpriteSize {

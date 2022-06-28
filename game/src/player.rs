@@ -31,7 +31,7 @@ pub struct PlayerAnimations {
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system_to_stage(StartupStage::PostStartup, player_setup)
+        app.add_startup_system(player_setup)
             .add_system(player_keyboard_event_system);
     }
 }
