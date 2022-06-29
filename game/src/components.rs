@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use serde::{Deserialize, Serialize};
 
 // region : general components
 
@@ -7,6 +8,9 @@ pub enum Movement {
     Idle,
     Running,
 }
+
+#[derive(Component)]
+pub struct Camera;
 
 #[derive(Component)]
 pub struct SpriteSize(pub Vec2);
@@ -56,7 +60,7 @@ pub struct RepeatAnimation(pub bool);
 #[derive(Component, Deref, DerefMut)]
 pub struct AnimationTimer(pub Timer);
 
-#[derive(Component)]
+#[derive(Component, Serialize, Deserialize)]
 pub struct Platform {
     pub size: Vec2,
     pub position: Vec3,
