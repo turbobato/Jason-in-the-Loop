@@ -26,6 +26,10 @@ pub const PLATFORM_MARGIN: f32 = 4.; // this is the thickness of the platforms
 const BACKGROUND_1: &str = "textures/oak_woods_v1.0/background/background_game/background_1.png";
 const BACKGROUND_2: &str = "textures/oak_woods_v1.0/background/background_game/background_2.png";
 const BACKGROUND_3: &str = "textures/oak_woods_v1.0/background/background_game/background_3.png";
+const BACKGROUND_4: &str = "textures/oak_woods_v1.0/background/background_game/background_4.png";
+const BACKGROUND_5: &str =
+    "textures/oak_woods_v1.0/background/background_game/background_layer_5.png";
+const BACKGROUND_6: &str = "textures/oak_woods_v1.0/background/background_game/background_6.png";
 
 const SHOP_SPRITE: &str = "textures/oak_woods_v1.0/decorations/shop_anim.png";
 /*
@@ -77,6 +81,9 @@ fn setup(
     let background_1: Handle<Image> = asset_server.load(BACKGROUND_1);
     let background_2: Handle<Image> = asset_server.load(BACKGROUND_2);
     let background_3: Handle<Image> = asset_server.load(BACKGROUND_3);
+    let background_4: Handle<Image> = asset_server.load(BACKGROUND_4);
+    let background_5: Handle<Image> = asset_server.load(BACKGROUND_5);
+    let background_6: Handle<Image> = asset_server.load(BACKGROUND_6);
 
     let shop_sprite: Handle<Image> = asset_server.load(SHOP_SPRITE);
     let texture_atlas_shop = TextureAtlas::from_grid(shop_sprite, Vec2::new(118., 128.), 6, 1);
@@ -93,11 +100,6 @@ fn setup(
             ..Default::default()
         })
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)));
-    /*
-    let background_layer1: Handle<Image> = asset_server.load(BACKGROUND_LAYER1);
-    let background_layer2: Handle<Image> = asset_server.load(BACKGROUND_LAYER2);
-    let background_layer3: Handle<Image> = asset_server.load(BACKGROUND_LAYER3);
-    */
 
     let window = windows.get_primary().unwrap();
     let (win_h, win_w) = (window.height(), window.width());
@@ -133,63 +135,36 @@ fn setup(
         },
         ..Default::default()
     });
-    /*
-    commands.spawn().insert(Platform {
-        size: Vec2::new(win_w, PLATFORM_MARGIN),
-        position: Vec3::new(0., GROUND_LEVEL, 0.),
-    });
+
     commands.spawn_bundle(SpriteBundle {
-        sprite: Sprite {
-            color: Color::AQUAMARINE,
-            custom_size: Some(Vec2::new(250., PLATFORM_MARGIN)),
-            ..Default::default()
-        },
+        texture: background_4,
         transform: Transform {
-            translation: Vec3::new(-356., -145., 3.),
+            translation: Vec3::new(3. * BACKGROUND_DIM.0, 0., 0.),
+            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
             ..Default::default()
         },
         ..Default::default()
-    }); */
-    /* .insert(Platform {
-        position: Vec3::new(-356., -145., 1.),
-        size: Vec2::new(250., PLATFORM_MARGIN),
-    }); */
-    /*
-    commands
-        .spawn_bundle(SpriteBundle {
-            sprite: Sprite {
-                color: Color::AQUAMARINE,
-                custom_size: Some(Vec2::new(283., PLATFORM_MARGIN)),
-                ..Default::default()
-            },
-            transform: Transform {
-                translation: Vec3::new(-248., -205., 3.),
-                ..Default::default()
-            },
-            ..Default::default()
-        })
-        .insert(Platform {
-            position: Vec3::new(-248., -205., 1.),
-            size: Vec2::new(283., PLATFORM_MARGIN),
-        });*/
+    });
 
-    commands
-        .spawn_bundle(SpriteBundle {
-            sprite: Sprite {
-                color: Color::AQUAMARINE,
-                custom_size: Some(Vec2::new(283., PLATFORM_MARGIN)),
-                ..Default::default()
-            },
-            transform: Transform {
-                translation: Vec3::new(150., -205., 3.),
-                ..Default::default()
-            },
+    commands.spawn_bundle(SpriteBundle {
+        texture: background_5,
+        transform: Transform {
+            translation: Vec3::new(4. * BACKGROUND_DIM.0, 0., 0.),
+            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
             ..Default::default()
-        })
-        .insert(Platform {
-            position: Vec3::new(150., -205., 1.),
-            size: Vec2::new(283., PLATFORM_MARGIN),
-        });
+        },
+        ..Default::default()
+    });
+
+    commands.spawn_bundle(SpriteBundle {
+        texture: background_6,
+        transform: Transform {
+            translation: Vec3::new(5. * BACKGROUND_DIM.0, 0., 0.),
+            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+            ..Default::default()
+        },
+        ..Default::default()
+    });
 }
 
 fn animate_sprite(
