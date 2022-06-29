@@ -42,15 +42,22 @@ pub struct EnemyAnimations {
 }
 
 // renvoie vrai si le perso est sur la plateforme (bon intervalle de x et de y)
-fn is_on_plat(x1_plat : f32, x2_plat: f32, y_plat: f32, x_perso: f32, y_perso:f32) -> bool {
-    const MARGIN_MIN : f32 = 0.; // on est bien sur la plat si y_monster > y_plat + MARGIN8MIN
-    const MARGIN_MAX : f32 = 50.; // on est bien sur cette plateforme et pas celle du haut si y_monster < y_plat + MARGIN_MAX  
-    if y_perso - y_plat > MARGIN_MIN && (y_perso - y_plat).abs() < MARGIN_MAX && x1_plat <= x_perso && x_perso <= x2_plat {
-        return true;
-    }
-    else{
-        return false;
-    }
+fn is_on_plat(platform: &Platform, x_perso: f32, y_perso: f32) -> bool {
+    const MARGIN_MIN: f32 = 0.; // on est bien sur la plat si y_monster > y_plat + MARGIN8MIN
+    const MARGIN_MAX: f32 = 80.; // on est bien sur cette plateforme et pas celle du haut si y_monster < y_plat + MARGIN_MAX
+    let x1_plat = platform.position.x - platform.size.x / 2.;
+    let x2_plat = platform.position.x + platform.size.x / 2.;
+    let y_plat = platform.position.y + platform.size.y / 2.;
+
+    return y_perso - y_plat > MARGIN_MIN
+        && (y_perso - y_plat).abs() < MARGIN_MAX
+        && x1_plat <= x_perso
+        && x_perso <= x2_plat;
+}
+
+fn is_plat_below(x1_plat: f32, x2_plat: f32, y_plat: f32, x_perso: f32, y_perso: f32) -> bool {
+    const MARGIN_MIN: f32 = 0.;
+    return y_perso - y_plat > MARGIN_MIN && x1_plat <= x_perso && x_perso <= x2_plat;
 }
 
 // attaque aléatoire
@@ -62,8 +69,7 @@ fn enemy_attack_criteria() -> ShouldRun {
     }
 }
 
-
-// le squelette suit le player selon 
+// le squelette suit le player selon
 fn skeleton_follow_player(
     time: Res<Time>,
     mut query_monster: Query<
@@ -80,90 +86,102 @@ fn skeleton_follow_player(
     query_player: Query<&Transform, With<Player>>,
     query_plat: Query<&Platform>,
     enemy_animations: Res<EnemyAnimations>,
-){
+) {
     const MARGIN_WALK: f32 = 30.;
     const MARGIN_IN: f32 = 80.; // portée de l'attaque
     const MARGIN_OUT: f32 = 400.; // portée de poursuite
-    const MARGIN_Y : f32 = 31.;// erreur en y 
+    const MARGIN_Y: f32 = 31.; // erreur en y
 
     let tf_player = query_player.single();
     let (x_player, y_player) = (tf_player.translation.x, tf_player.translation.y);
 
-    for (mut velocity, mut tf_monster, mut texture_atlas, mut sprite, mut acceleration, mut grounded) in query_monster.iter_mut() {
-        
+    for (
+        mut velocity,
+        mut tf_monster,
+        mut texture_atlas,
+        mut sprite,
+        mut acceleration,
+        mut grounded,
+    ) in query_monster.iter_mut()
+    {
         let (x_monster, y_monster) = (tf_monster.translation.x, tf_monster.translation.y);
-        
+
         // se tourne vers le personnage
         if x_monster <= x_player {
             tf_monster.scale.x = 1.;
-        } else{
+        } else {
             tf_monster.scale.x = -1.;
         }
 
-        if (x_monster - x_player).abs() < MARGIN_OUT && (x_player - x_monster).abs() > MARGIN_IN{
+        if (x_monster - x_player).abs() < MARGIN_OUT && (x_player - x_monster).abs() > MARGIN_IN {
+            let mut can_walk = false;
 
-            for platform in query_plat.iter(){
-
-                let x1 = platform.position.x - platform.size.x/2.;
-                let x2 = platform.position.x + platform.size.x/2.;
-                let y = platform.position.y + platform.size.y/2.;
+            for platform in query_plat.iter() {
+                let x1 = platform.position.x - platform.size.x / 2.;
+                let x2 = platform.position.x + platform.size.x / 2.;
+                let y = platform.position.y + platform.size.y / 2.;
 
                 if x_monster > x_player {
                     // Monstre à droite du player
-                    if is_on_plat(x1, x2, y, x_monster, y_monster) && x1 <= x_monster - MARGIN_WALK {
-                        println!("{}", x1);
-                        if *texture_atlas != enemy_animations.walk_skeleton {
-                            *texture_atlas = enemy_animations.walk_skeleton.clone();
-                            sprite.index = 0;
-                        }
-                        velocity.vx = -30.;
-                    } 
-    
-                    // si on est sur le bord
-                    else if is_on_plat(x1, x2, y, x_monster, y_monster) && x1 > x_monster - MARGIN_WALK {
-                        println!("Test1");
-                        velocity.vx = 0.;
-                        if *texture_atlas != enemy_animations.idle_skeleton {
-                            *texture_atlas = enemy_animations.idle_skeleton.clone();
-                            sprite.index = 0;
-                        }
+                    if is_plat_below(x1, x2, y, x_monster, y_monster)
+                        && (x1 - x_monster).abs() >= MARGIN_WALK
+                    {
+                        can_walk = true;
+                    }
+                } else {
+                    if is_plat_below(x1, x2, y, x_monster, y_monster)
+                        && x_monster + MARGIN_WALK <= x2
+                    {
+                        can_walk = true;
                     }
                 }
-                else{
-                  
-                    if is_on_plat(x1, x2, y, x_monster, y_monster) && x_monster + MARGIN_WALK <= x2 {
-                        println!("{}", x1);
-                        if *texture_atlas != enemy_animations.walk_skeleton {
-                            *texture_atlas = enemy_animations.walk_skeleton.clone();
-                            sprite.index = 0;
-                        }
-                        velocity.vx = 30.;
-                    } 
-    
-                    // si on est sur la plateforme mais au bord
-                    else if is_on_plat(x1, x2, y, x_monster, y_monster) && x_monster + MARGIN_WALK > x2 {
-                        velocity.vx = 0.;
-                        println!("Test2");
-                        if *texture_atlas != enemy_animations.idle_skeleton {
-                            *texture_atlas = enemy_animations.idle_skeleton.clone();
-                            sprite.index = 0;
-                        }
-                    }
+            }
+
+            if can_walk {
+                if *texture_atlas != enemy_animations.walk_skeleton {
+                    *texture_atlas = enemy_animations.walk_skeleton.clone();
+                    sprite.index = 0;
                 }
 
+                if x_monster > x_player {
+                    velocity.vx = -30.;
+                } else {
+                    velocity.vx = 30.;
+                }
+            } else {
+                velocity.vx = 0.;
+                if *texture_atlas != enemy_animations.idle_skeleton {
+                    *texture_atlas = enemy_animations.idle_skeleton.clone();
+                    sprite.index = 0;
+                }
             }
-        } 
-        
-        else if (x_monster - x_player).abs() <= MARGIN_IN && (y_monster - y_player).abs() < MARGIN_Y// rajouter la condition sur y ?
+        } else if (x_monster - x_player).abs() <= MARGIN_IN
+        // rajouter la condition sur y ?
         {
             // SI ON EST A PORTEE D'ATTAQUE
             velocity.vx = 0.;
 
-            if *texture_atlas != enemy_animations.attack_skeleton {
-                *texture_atlas = enemy_animations.attack_skeleton.clone();
-                sprite.index = 0;
+            let mut can_attack = false;
+
+            for platform in query_plat.iter() {
+                if is_on_plat(platform, x_player, y_player)
+                    && is_on_plat(platform, x_monster, y_monster)
+                {
+                    println!("y plat {} / y player {} / y perso {}", platform.position.y + platform.size.y/2., y_player, y_monster);
+                    can_attack = true;
+                }
             }
-            
+            if can_attack {
+                if *texture_atlas != enemy_animations.attack_skeleton {
+                    *texture_atlas = enemy_animations.attack_skeleton.clone();
+                    sprite.index = 0;
+                }
+            } else {
+                if *texture_atlas != enemy_animations.idle_skeleton {
+                    *texture_atlas = enemy_animations.idle_skeleton.clone();
+                    sprite.index = 0;
+                }
+            }
         } else {
             // SI ON EST LOIN DU PLAYER
             velocity.vx = 0.;
@@ -232,39 +250,47 @@ fn projectile_movement(
     }
 }
 // mouvement des ennemis
-fn eye_movement_2(time: Res<Time>, win_size: Res<WinSize>,mut query: Query<(Entity, &mut Velocity, &mut Transform), With<Eye>>){
-    let frame_time = 1./60.;
-    let now = time.seconds_since_startup() as f32; 
-    const MARGIN : f32 = 50.;
-    
+fn eye_movement_2(
+    time: Res<Time>,
+    win_size: Res<WinSize>,
+    mut query: Query<(Entity, &mut Velocity, &mut Transform), With<Eye>>,
+) {
+    let frame_time = 1. / 60.;
+    let now = time.seconds_since_startup() as f32;
+    const MARGIN: f32 = 50.;
+
     // mouvmement circulaire des ennemis
-    for (entity, velocity, mut transform) in query.iter_mut(){
-        let (x_pivot, y_pivot) = (300.,0.);
-		let (x_radius, y_radius) = (70.,70.);
+    for (entity, velocity, mut transform) in query.iter_mut() {
+        let (x_pivot, y_pivot) = (300., 0.);
+        let (x_radius, y_radius) = (70., 70.);
         let max_distance = frame_time * velocity.vx;
         let (x_org, y_org) = (transform.translation.x, transform.translation.y);
-	//On peut changer le sens
-		let dir = 1;
+        //On peut changer le sens
+        let dir = 1;
 
-		let angle = velocity.vx*frame_time*now%360./PI;
+        let angle = velocity.vx * frame_time * now % 360. / PI;
 
-		let x_dst = x_radius * angle.cos() + x_pivot;
-		let y_dst = y_radius * angle.sin() + y_pivot;
+        let x_dst = x_radius * angle.cos() + x_pivot;
+        let y_dst = y_radius * angle.sin() + y_pivot;
 
-		let dx = x_org - x_dst;
-		let dy = y_org - y_dst;
-		let distance = (dx * dx + dy * dy).sqrt();
-		let distance_ratio = if distance != 0. { max_distance / distance } else { 0. };
+        let dx = x_org - x_dst;
+        let dy = y_org - y_dst;
+        let distance = (dx * dx + dy * dy).sqrt();
+        let distance_ratio = if distance != 0. {
+            max_distance / distance
+        } else {
+            0.
+        };
 
-		let x = x_org - dx * distance_ratio;
-		let x = if dx > 0. { x.max(x_dst) } else { x.min(x_dst) };
-		let y = y_org - dy * distance_ratio;
-		let y = if dy > 0. { y.max(y_dst) } else { y.min(y_dst) };
+        let x = x_org - dx * distance_ratio;
+        let x = if dx > 0. { x.max(x_dst) } else { x.min(x_dst) };
+        let y = y_org - dy * distance_ratio;
+        let y = if dy > 0. { y.max(y_dst) } else { y.min(y_dst) };
 
-            let translation = &mut transform.translation;
-		(translation.x, translation.y) = (x, y);
-        }    
+        let translation = &mut transform.translation;
+        (translation.x, translation.y) = (x, y);
     }
+}
 
 // mouvement des ennemis
 fn eye_movement(
@@ -373,7 +399,7 @@ fn enemy_setup(
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_skeleton_idle,
             transform: Transform {
-                translation: Vec3::new(-200., 0., 10.),
+                translation: Vec3::new(-300., 0., 10.),
                 ..Default::default()
             },
             ..default()
@@ -383,6 +409,8 @@ fn enemy_setup(
         .insert(Velocity { vx: 0., vy: 0. })
         .insert(Skeleton)
         .insert(Grounded(true))
-        .insert(Acceleration{..Default::default()})
-        .insert(SpriteSize(Vec2::new(27.,60.)));
+        .insert(Acceleration {
+            ..Default::default()
+        })
+        .insert(SpriteSize(Vec2::new(27., 60.)));
 }
