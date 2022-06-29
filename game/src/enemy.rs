@@ -167,7 +167,6 @@ fn skeleton_follow_player(
                 if is_on_plat(platform, x_player, y_player)
                     && is_on_plat(platform, x_monster, y_monster)
                 {
-                    println!("y plat {} / y player {} / y perso {}", platform.position.y + platform.size.y/2., y_player, y_monster);
                     can_attack = true;
                 }
             }
