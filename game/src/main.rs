@@ -65,8 +65,7 @@ fn setup(
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
     commands
-        .spawn_bundle(Camera2dBundle::default())
-        .insert(Camera);
+        .spawn_bundle(Camera2dBundle::default());
 
     let background_1: Handle<Image> = asset_server.load(BACKGROUND_1);
     let background_2: Handle<Image> = asset_server.load(BACKGROUND_2);

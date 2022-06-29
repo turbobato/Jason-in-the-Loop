@@ -399,7 +399,7 @@ fn enemy_setup(
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_skeleton_idle,
             transform: Transform {
-                translation: Vec3::new(-300., 0., 10.),
+                translation: Vec3::new(-400., 0., 10.),
                 ..Default::default()
             },
             ..default()
