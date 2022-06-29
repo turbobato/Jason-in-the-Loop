@@ -26,13 +26,7 @@ pub const PLATFORM_MARGIN: f32 = 4.; // this is the thickness of the platforms
 const BACKGROUND_1: &str = "textures/oak_woods_v1.0/background/background_game/background_1.png";
 const BACKGROUND_2: &str = "textures/oak_woods_v1.0/background/background_game/background_2.png";
 const BACKGROUND_3: &str = "textures/oak_woods_v1.0/background/background_game/background_3.png";
-
 const SHOP_SPRITE: &str = "textures/oak_woods_v1.0/decorations/shop_anim.png";
-/*
-const BACKGROUND_LAYER1: &str = "textures/oak_woods_v1.0/background/background_layer_1.png";
-const BACKGROUND_LAYER2: &str = "textures/oak_woods_v1.0/background/background_layer_2.png";
-const BACKGROUND_LAYER3: &str = "textures/oak_woods_v1.0/background/background_layer_3.png";
-*/
 const BACKGROUND_DIM: (f32, f32) = (960., 540.);
 const SPRITE_SCALE: f32 = 3.;
 
@@ -93,11 +87,6 @@ fn setup(
             ..Default::default()
         })
         .insert(AnimationTimer(Timer::from_seconds(0.1, true)));
-    /*
-    let background_layer1: Handle<Image> = asset_server.load(BACKGROUND_LAYER1);
-    let background_layer2: Handle<Image> = asset_server.load(BACKGROUND_LAYER2);
-    let background_layer3: Handle<Image> = asset_server.load(BACKGROUND_LAYER3);
-    */
 
     let window = windows.get_primary().unwrap();
     let (win_h, win_w) = (window.height(), window.width());
@@ -133,63 +122,6 @@ fn setup(
         },
         ..Default::default()
     });
-    /*
-    commands.spawn().insert(Platform {
-        size: Vec2::new(win_w, PLATFORM_MARGIN),
-        position: Vec3::new(0., GROUND_LEVEL, 0.),
-    });
-    commands.spawn_bundle(SpriteBundle {
-        sprite: Sprite {
-            color: Color::AQUAMARINE,
-            custom_size: Some(Vec2::new(250., PLATFORM_MARGIN)),
-            ..Default::default()
-        },
-        transform: Transform {
-            translation: Vec3::new(-356., -145., 3.),
-            ..Default::default()
-        },
-        ..Default::default()
-    }); */
-    /* .insert(Platform {
-        position: Vec3::new(-356., -145., 1.),
-        size: Vec2::new(250., PLATFORM_MARGIN),
-    }); */
-    /*
-    commands
-        .spawn_bundle(SpriteBundle {
-            sprite: Sprite {
-                color: Color::AQUAMARINE,
-                custom_size: Some(Vec2::new(283., PLATFORM_MARGIN)),
-                ..Default::default()
-            },
-            transform: Transform {
-                translation: Vec3::new(-248., -205., 3.),
-                ..Default::default()
-            },
-            ..Default::default()
-        })
-        .insert(Platform {
-            position: Vec3::new(-248., -205., 1.),
-            size: Vec2::new(283., PLATFORM_MARGIN),
-        });*/
-
-    commands
-        .spawn_bundle(SpriteBundle {
-            sprite: Sprite {
-                color: Color::AQUAMARINE,
-                custom_size: Some(Vec2::new(283., PLATFORM_MARGIN)),
-                ..Default::default()
-            },
-            transform: Transform {
-                translation: Vec3::new(150., -205., 3.),
-                ..Default::default()
-            },
-            ..Default::default()
-        })
-        .insert(Platform {
-            position: Vec3::new(150., -205., 1.),
-            size: Vec2::new(283., PLATFORM_MARGIN),
-        });
 }
 
 fn animate_sprite(

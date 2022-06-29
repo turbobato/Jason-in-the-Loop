@@ -1,5 +1,5 @@
-use crate::{components::*, WinSize, GROUND_LEVEL, PLATFORM_MARGIN};
-use bevy::{prelude::*, transform};
+use crate::components::*;
+use bevy::prelude::*;
 
 const RUN_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Run.png";
 const IDLE_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Idle.png";
@@ -7,8 +7,7 @@ const IDLE_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_I
 const ATTACK_COMBO_SPRITE: &str =
     "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_AttackCombo.png";
 const JUMP_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Jump.png";
-const JUMP_FALL_SPRITE: &str =
-    "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_JumpFallInbetween.png";
+const JUMP_FALL_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Fall.png";
 const TURN_AROUND_SPRITE: &str =
     "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_TurnAround.png";
 
@@ -60,7 +59,7 @@ fn player_setup(
     let texture_atlas_jump = texture_atlases.add(texture_atlas_j);
 
     let jump_fall_sprite: Handle<Image> = asset_server.load(JUMP_FALL_SPRITE);
-    let texture_atlas_jf = TextureAtlas::from_grid(jump_fall_sprite, Vec2::new(120.0, 80.0), 2, 1);
+    let texture_atlas_jf = TextureAtlas::from_grid(jump_fall_sprite, Vec2::new(120.0, 80.0), 3, 1);
     let texture_atlas_jump_fall = texture_atlases.add(texture_atlas_jf);
 
     let turn_around_sprite: Handle<Image> = asset_server.load(TURN_AROUND_SPRITE);
@@ -149,21 +148,23 @@ fn player_keyboard_event_system(
         }
 
         if kb.pressed(KeyCode::Z) {
-            if *texture_atlas != animations.jump {
-                *texture_atlas = animations.jump.clone();
-                sprite.index = 0;
-                if grounded.0 {
-                    velocity.vy = 250.;
-                    transform.translation.y += PLATFORM_MARGIN; //this line is to be sure the player gets out of the platform
-                    grounded.0 = false;
-                }
-            };
+            if grounded.0 {
+                velocity.vy = 250.;
+                grounded.0 = false;
+            }
         }
 
-        if velocity.vy < -20. {
-            if *texture_atlas != animations.jump_fall {
-                *texture_atlas = animations.jump_fall.clone();
-                sprite.index = 0;
+        if !grounded.0 {
+            if velocity.vy < -1. {
+                if *texture_atlas != animations.jump_fall {
+                    *texture_atlas = animations.jump_fall.clone();
+                    sprite.index = 0;
+                }
+            } else if velocity.vy > 1. {
+                if *texture_atlas != animations.jump {
+                    *texture_atlas = animations.jump.clone();
+                    sprite.index = 0;
+                }
             }
         }
 
