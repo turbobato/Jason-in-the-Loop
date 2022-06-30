@@ -148,7 +148,7 @@ fn movement(
     time: Res<Time>,
     mut query: Query<
         (&Grounded, &mut Velocity, &mut Acceleration, &mut Transform),
-        Or<(With<Player>, With<Skeleton>)>,
+        Or<(With<Player>, With<Skeleton>, With<TemporalGhost>)>,
     >,
 ) {
     let delta = time.delta_seconds();

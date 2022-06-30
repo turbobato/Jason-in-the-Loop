@@ -15,7 +15,7 @@ fn collision_with_platform(
     query_platforms: Query<&Platform>,
     mut query: Query<
         (&mut Grounded, &mut Transform, &SpriteSize, &mut Velocity),
-        Or<(With<Player>, With<Skeleton>)>,
+        Or<(With<Player>, With<Skeleton>, With<TemporalGhost>)>,
     >,
 ) {
     for (mut grounded, mut transform, sprite_size, mut velocity) in query.iter_mut() {
