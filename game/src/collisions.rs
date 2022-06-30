@@ -42,17 +42,19 @@ fn collision_with_platform(
                         }
                     }
                     Collision::Left => {
-                        if velocity.vx > 0.{
+                        if velocity.vx > 0. {
                             velocity.vx = 0.;
-                            entity_position.x = platform_position.x - platform_size.x /2. - entity_size.x /2.;
+                            entity_position.x =
+                                platform_position.x - platform_size.x / 2. - entity_size.x / 2.;
                         }
-                    },
+                    }
                     Collision::Right => {
-                        if velocity.vx < 0.{
+                        if velocity.vx < 0. {
                             velocity.vx = 0.;
-                            entity_position.x = platform_position.x + platform_size.x /2. + entity_size.x /2.;
+                            entity_position.x =
+                                platform_position.x + platform_size.x / 2. + entity_size.x / 2.;
                         }
-                    },
+                    }
                     _ => (),
                 };
             } else {
