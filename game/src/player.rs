@@ -178,7 +178,7 @@ fn respawn(
     mut transform: Mut<Transform>,
     mut acceleration: Mut<Acceleration>,
 ) {
-    *velocity = Velocity::from((0., 0.));
+    (velocity.vx, velocity.vy) = (0., 0.);
     transform.translation = Vec3::new(PLAYER_SPAWN.0, PLAYER_SPAWN.1, PLAYER_SPAWN.2);
-    *acceleration = Acceleration::from((0., 0.));
+    (acceleration.ax, acceleration.ay) = (0., 0.);
 }

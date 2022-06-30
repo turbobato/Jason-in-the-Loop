@@ -32,11 +32,6 @@ const BACKGROUND_5: &str =
 const BACKGROUND_6: &str = "textures/oak_woods_v1.0/background/background_game/background_6.png";
 
 const SHOP_SPRITE: &str = "textures/oak_woods_v1.0/decorations/shop_anim.png";
-/*
-const BACKGROUND_LAYER1: &str = "textures/oak_woods_v1.0/background/background_layer_1.png";
-const BACKGROUND_LAYER2: &str = "textures/oak_woods_v1.0/background/background_layer_2.png";
-const BACKGROUND_LAYER3: &str = "textures/oak_woods_v1.0/background/background_layer_3.png";
-*/
 const BACKGROUND_DIM: (f32, f32) = (960., 540.);
 const SPRITE_SCALE: f32 = 3.;
 
@@ -75,8 +70,7 @@ fn setup(
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
     commands
-        .spawn_bundle(Camera2dBundle::default())
-        .insert(Camera);
+        .spawn_bundle(Camera2dBundle::default());
 
     let background_1: Handle<Image> = asset_server.load(BACKGROUND_1);
     let background_2: Handle<Image> = asset_server.load(BACKGROUND_2);
@@ -187,7 +181,10 @@ fn animate_sprite(
 
 fn movement(
     time: Res<Time>,
-    mut query: Query<(&Grounded, &mut Velocity, &mut Acceleration, &mut Transform), With<Player>>,
+    mut query: Query<
+        (&Grounded, &mut Velocity, &mut Acceleration, &mut Transform),
+        Or<(With<Player>, With<Skeleton>)>,
+    >,
 ) {
     let delta = time.delta_seconds();
     for (grounded, mut velocity, mut acceleration, mut transform) in query.iter_mut() {

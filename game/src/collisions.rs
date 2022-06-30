@@ -1,6 +1,8 @@
 use crate::*;
 use bevy::prelude::*;
 
+pub const COLLISION_MARGIN: f32 = 4.; //margin for collisions
+
 pub struct CollisionsPlugin;
 
 impl Plugin for CollisionsPlugin {
@@ -24,19 +26,33 @@ fn collision_with_platform(
             let platform_size = platform.size;
             if let Some(collision) = collide(
                 *entity_position,
-                entity_size,
+                entity_size + COLLISION_MARGIN, //add margin to make sure that when player is on ground, there is collision
                 platform_position,
-                platform_size,
+                platform_size + COLLISION_MARGIN,
             ) {
                 match collision {
                     Collision::Top => {
-                        if velocity.vy <= 1. {
+                        if velocity.vy < 1. {
                             grounded.0 = true;
                             velocity.vy = 0.;
                             entity_position.y =
                                 platform_position.y + platform_size.y / 2. + entity_size.y / 2.;
                             //set player on the platform to avoid float precision issues
                             break;
+                        }
+                    }
+                    Collision::Left => {
+                        if velocity.vx > 0. {
+                            velocity.vx = 0.;
+                            entity_position.x =
+                                platform_position.x - platform_size.x / 2. - entity_size.x / 2.;
+                        }
+                    }
+                    Collision::Right => {
+                        if velocity.vx < 0. {
+                            velocity.vx = 0.;
+                            entity_position.x =
+                                platform_position.x + platform_size.x / 2. + entity_size.x / 2.;
                         }
                     }
                     _ => (),

@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 // region : general components
 
@@ -8,9 +8,6 @@ pub enum Movement {
     Idle,
     Running,
 }
-
-#[derive(Component)]
-pub struct Camera;
 
 #[derive(Component)]
 pub struct SpriteSize(pub Vec2);
@@ -27,28 +24,10 @@ pub struct Velocity {
     pub vy: f32,
 }
 
-impl From<(f32, f32)> for Velocity {
-    fn from(val: (f32, f32)) -> Self {
-        Velocity {
-            vx: val.0,
-            vy: val.1,
-        }
-    }
-}
-
 #[derive(Component, Default)]
 pub struct Acceleration {
     pub ax: f32,
     pub ay: f32,
-}
-
-impl From<(f32, f32)> for Acceleration {
-    fn from(val: (f32, f32)) -> Self {
-        Acceleration {
-            ax: val.0,
-            ay: val.1,
-        }
-    }
 }
 
 #[derive(Component)]
@@ -60,7 +39,7 @@ pub struct RepeatAnimation(pub bool);
 #[derive(Component, Deref, DerefMut)]
 pub struct AnimationTimer(pub Timer);
 
-#[derive(Component, Serialize, Deserialize)]
+#[derive(Component, Deserialize)]
 pub struct Platform {
     pub size: Vec2,
     pub position: Vec3,
