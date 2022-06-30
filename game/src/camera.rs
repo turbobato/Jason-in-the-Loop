@@ -4,7 +4,7 @@ use crate::{components::Player, WinSize};
 
 pub struct CameraPlugin;
 
-const CAMERA_LIMITS: (f32, f32) = (0., 5280.);
+const CAMERA_LIMITS: (f32, f32) = (-195., 4950.);
 
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
