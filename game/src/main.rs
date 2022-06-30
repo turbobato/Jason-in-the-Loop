@@ -26,6 +26,11 @@ pub const PLATFORM_MARGIN: f32 = 4.; // this is the thickness of the platforms
 const BACKGROUND_1: &str = "textures/oak_woods_v1.0/background/background_game/background_1.png";
 const BACKGROUND_2: &str = "textures/oak_woods_v1.0/background/background_game/background_2.png";
 const BACKGROUND_3: &str = "textures/oak_woods_v1.0/background/background_game/background_3.png";
+const BACKGROUND_4: &str = "textures/oak_woods_v1.0/background/background_game/background_4.png";
+const BACKGROUND_5: &str =
+    "textures/oak_woods_v1.0/background/background_game/background_layer_5.png";
+const BACKGROUND_6: &str = "textures/oak_woods_v1.0/background/background_game/background_6.png";
+
 const SHOP_SPRITE: &str = "textures/oak_woods_v1.0/decorations/shop_anim.png";
 const BACKGROUND_DIM: (f32, f32) = (960., 540.);
 const SPRITE_SCALE: f32 = 3.;
@@ -70,6 +75,9 @@ fn setup(
     let background_1: Handle<Image> = asset_server.load(BACKGROUND_1);
     let background_2: Handle<Image> = asset_server.load(BACKGROUND_2);
     let background_3: Handle<Image> = asset_server.load(BACKGROUND_3);
+    let background_4: Handle<Image> = asset_server.load(BACKGROUND_4);
+    let background_5: Handle<Image> = asset_server.load(BACKGROUND_5);
+    let background_6: Handle<Image> = asset_server.load(BACKGROUND_6);
 
     let shop_sprite: Handle<Image> = asset_server.load(SHOP_SPRITE);
     let texture_atlas_shop = TextureAtlas::from_grid(shop_sprite, Vec2::new(118., 128.), 6, 1);
@@ -116,6 +124,36 @@ fn setup(
         texture: background_3,
         transform: Transform {
             translation: Vec3::new(2. * BACKGROUND_DIM.0, 0., 0.),
+            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+            ..Default::default()
+        },
+        ..Default::default()
+    });
+
+    commands.spawn_bundle(SpriteBundle {
+        texture: background_4,
+        transform: Transform {
+            translation: Vec3::new(3. * BACKGROUND_DIM.0, 0., 0.),
+            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+            ..Default::default()
+        },
+        ..Default::default()
+    });
+
+    commands.spawn_bundle(SpriteBundle {
+        texture: background_5,
+        transform: Transform {
+            translation: Vec3::new(4. * BACKGROUND_DIM.0, 0., 0.),
+            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+            ..Default::default()
+        },
+        ..Default::default()
+    });
+
+    commands.spawn_bundle(SpriteBundle {
+        texture: background_6,
+        transform: Transform {
+            translation: Vec3::new(5. * BACKGROUND_DIM.0, 0., 0.),
             scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
             ..Default::default()
         },
