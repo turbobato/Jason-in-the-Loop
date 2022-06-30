@@ -58,7 +58,7 @@ pub struct RecordingOn(pub bool);
 
 #[derive(Component, Clone)]
 pub struct Recording {
-    pub index : f32,
+    pub index : usize,
     pub initial_pos : Vec3,
     pub recorded_actions : Vec<Vec<Actions>>,
 }
