@@ -1,20 +1,20 @@
 use crate::{components::*, WinSize, GROUND_LEVEL, PLATFORM_MARGIN};
 use bevy::{prelude::*, transform};
 
-const RUN_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Run.png";
-const IDLE_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Idle.png";
+pub const RUN_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Run.png";
+pub const IDLE_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Idle.png";
 
-const ATTACK_COMBO_SPRITE: &str =
+pub const ATTACK_COMBO_SPRITE: &str =
     "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_AttackCombo.png";
-const JUMP_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Jump.png";
-const JUMP_FALL_SPRITE: &str =
+pub const JUMP_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Jump.png";
+pub const JUMP_FALL_SPRITE: &str =
     "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_JumpFallInbetween.png";
-const TURN_AROUND_SPRITE: &str =
+pub const TURN_AROUND_SPRITE: &str =
     "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_TurnAround.png";
 
-const PLAYER_DIMENSIONS: (f32, f32) = (PLAYER_SCALE * 20., PLAYER_SCALE * 80.); //dimensions for idle sprite
-const PLAYER_SCALE: f32 = 1.5;
-const PLAYER_SPAWN: (f32, f32, f32) = (-356., -145. + 90., 1.1); //player spawn coordinates
+pub const PLAYER_DIMENSIONS: (f32, f32) = (PLAYER_SCALE * 20., PLAYER_SCALE * 80.); //dimensions for idle sprite
+pub const PLAYER_SCALE: f32 = 1.5;
+pub const PLAYER_SPAWN: (f32, f32, f32) = (-356., -145. + 90., 1.1); //player spawn coordinates
 
 pub struct PlayerPlugin;
 
@@ -96,7 +96,8 @@ fn player_setup(
             ..Default::default()
         })
         .insert(Grounded(false))
-        .insert(SpriteSize::from(PLAYER_DIMENSIONS));
+        .insert(SpriteSize::from(PLAYER_DIMENSIONS))
+        .insert(RecordingOn(false));
 }
 
 fn player_keyboard_event_system(
