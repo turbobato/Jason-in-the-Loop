@@ -104,6 +104,7 @@ fn loop_movement_system(
         (
             &mut Grounded,
             &mut Velocity,
+            &mut Acceleration,
             &mut Handle<TextureAtlas>,
             &mut Transform,
             &mut TextureAtlasSprite,
@@ -114,12 +115,17 @@ fn loop_movement_system(
 ) {
     for (mut grounded,
         mut velocity,
+        mut acceleration,
         mut texture_atlas,
         mut transform,
         mut sprite, 
         mut recording) in query.iter_mut() {
             if recording.index == 0 {
                 transform.translation = recording.initial_pos.clone();
+                acceleration.ax = 0.;
+                acceleration.ay = 0.;
+                velocity.vx = 0.;
+                velocity.vy = 0.;
             }
             for action in &recording.recorded_actions[recording.index] {
                 match action {
@@ -163,6 +169,11 @@ fn loop_movement_system(
                 if *texture_atlas != animations.jump {
                     *texture_atlas = animations.jump.clone();
                     sprite.index = 0;
+                }
+            }
+            else if velocity.vy == 0. && velocity.vx == 0. { 
+                if *texture_atlas != animations.idle {
+                *texture_atlas = animations.idle.clone();
                 }
             }
             recording.index = recording.index + 1;
