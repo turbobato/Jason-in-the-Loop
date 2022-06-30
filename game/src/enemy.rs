@@ -42,13 +42,10 @@ pub struct EnemyAnimations {
 }
 
 // renvoie vrai si le perso est sur la plateforme (bon intervalle de x et de y)
-fn is_on_plat(platform: &Platform, x_perso: f32, y_perso: f32) -> bool {
+fn is_on_plat(x1_plat:f32, x2_plat:f32, y_plat:f32, x_perso: f32, y_perso: f32) -> bool {
     const MARGIN_MIN: f32 = 0.; // on est bien sur la plat si y_monster > y_plat + MARGIN8MIN
     const MARGIN_MAX: f32 = 80.; // on est bien sur cette plateforme et pas celle du haut si y_monster < y_plat + MARGIN_MAX
-    let x1_plat = platform.position.x - platform.size.x / 2.;
-    let x2_plat = platform.position.x + platform.size.x / 2.;
-    let y_plat = platform.position.y + platform.size.y / 2.;
-
+    
     return y_perso - y_plat > MARGIN_MIN
         && (y_perso - y_plat).abs() < MARGIN_MAX
         && x1_plat <= x_perso
@@ -87,7 +84,7 @@ fn skeleton_follow_player(
     query_plat: Query<&Platform>,
     enemy_animations: Res<EnemyAnimations>,
 ) {
-    const MARGIN_WALK: f32 = 30.;
+    const MARGIN_WALK: f32 = 40.;
     const MARGIN_IN: f32 = 80.; // portée de l'attaque
     const MARGIN_OUT: f32 = 400.; // portée de poursuite
     const MARGIN_Y: f32 = 31.; // erreur en y
@@ -105,6 +102,14 @@ fn skeleton_follow_player(
     ) in query_monster.iter_mut()
     {
         let (x_monster, y_monster) = (tf_monster.translation.x, tf_monster.translation.y);
+       
+        let mut x2_plat_monster = 0.;
+        let mut x1_plat_monster = 0.;
+        let mut y_plat_monster= 0;
+
+        let mut x2_plat_player = 0.;
+        let mut x1_plat_player = 0.;
+        let mut y_plat_player = 0.;
 
         // se tourne vers le personnage
         if x_monster <= x_player {
@@ -113,84 +118,105 @@ fn skeleton_follow_player(
             tf_monster.scale.x = -1.;
         }
 
-        if (x_monster - x_player).abs() < MARGIN_OUT && (x_player - x_monster).abs() > MARGIN_IN {
-            let mut can_walk = false;
+        let mut same_plat = false;
+        let mut is_on_a_plat_up = false;
 
-            for platform in query_plat.iter() {
-                let x1 = platform.position.x - platform.size.x / 2.;
-                let x2 = platform.position.x + platform.size.x / 2.;
-                let y = platform.position.y + platform.size.y / 2.;
+        for platform in query_plat.iter() {
+            let x1 = platform.position.x - platform.size.x / 2.;
+            let x2 = platform.position.x + platform.size.x / 2.;
+            let y = platform.position.y + platform.size.y / 2.;
 
-                if x_monster > x_player {
-                    // Monstre à droite du player
-                    if is_plat_below(x1, x2, y, x_monster, y_monster)
-                        && (x1 - x_monster).abs() >= MARGIN_WALK
-                    {
-                        can_walk = true;
+             // on prend les coordonnées de la platforme du monstre
+            if is_on_plat(x1, x2, y, x_player, y_player){
+                x1_plat_player = x1;
+                x2_plat_player = x2;
+                y_plat_player = y;
+            }
+        
+             if is_on_plat(x1, x2, y, x_monster, y_monster){
+               x1_plat_monster = x1;
+                x2_plat_monster = x2;
+              //  y_plat_monster = y;
+              //let platform_monster = platform;
+            }
+    
+            if is_on_plat(x1, x2, y, x_player, y_player) && is_on_plat(x1, x2, y, x_monster, y_monster){
+                same_plat = true;
+                if (x_monster - x_player).abs() < MARGIN_IN {
+                    velocity.vx = 0.;
+                    if *texture_atlas != enemy_animations.attack_skeleton {
+                        *texture_atlas = enemy_animations.attack_skeleton.clone();
+                        sprite.index = 0;
+                  } // attaque
+                }
+                else if (x_monster - x_player).abs() > MARGIN_IN && (x_monster - x_player).abs() < MARGIN_OUT{
+                    if x_monster > x_player {
+                        velocity.vx = -30.;
+                    } else {
+                        velocity.vx = 30.;
                     }
-                } else {
-                    if is_plat_below(x1, x2, y, x_monster, y_monster)
-                        && x_monster + MARGIN_WALK <= x2
-                    {
-                        can_walk = true;
+                
+                    if *texture_atlas != enemy_animations.walk_skeleton {
+                        *texture_atlas = enemy_animations.walk_skeleton.clone();
+                        sprite.index = 0;
                     }
+                // walk
+                }
+                else{
+                    velocity.vx = 0.;
+                    if *texture_atlas != enemy_animations.idle_skeleton {
+                        *texture_atlas = enemy_animations.idle_skeleton.clone();
+                        sprite.index = 0;
+                    }
+                // idle si meme plat mais loin
                 }
             }
+        } // fin de la boucle des plat
+    
+    // On peut descendre si on est juste au dessus de la plateforme player
+    if !same_plat {
+        if is_plat_below(x1_plat_player, x2_plat_player, y_plat_player, x_monster, y_monster){
+           is_on_a_plat_up = true;
+        }
 
-            if can_walk {
+        if x_player > x_monster && (x_player-x_monster).abs() < MARGIN_OUT {
+            // si il y a une plateforme en dessous ou si on n'est pas au bord on marche
+            
+            if is_on_a_plat_up || (x_monster - x2_plat_monster).abs() > MARGIN_WALK{
+                velocity.vx = 30.;
                 if *texture_atlas != enemy_animations.walk_skeleton {
                     *texture_atlas = enemy_animations.walk_skeleton.clone();
                     sprite.index = 0;
                 }
-
-                if x_monster > x_player {
-                    velocity.vx = -30.;
-                } else {
-                    velocity.vx = 30.;
-                }
-            } else {
+            }
+            else{
                 velocity.vx = 0.;
                 if *texture_atlas != enemy_animations.idle_skeleton {
                     *texture_atlas = enemy_animations.idle_skeleton.clone();
                     sprite.index = 0;
                 }
             }
-        } else if (x_monster - x_player).abs() <= MARGIN_IN
-        // rajouter la condition sur y ?
-        {
-            // SI ON EST A PORTEE D'ATTAQUE
-            velocity.vx = 0.;
-
-            let mut can_attack = false;
-
-            for platform in query_plat.iter() {
-                if is_on_plat(platform, x_player, y_player)
-                    && is_on_plat(platform, x_monster, y_monster)
-                {
-                    can_attack = true;
-                }
-            }
-            if can_attack {
-                if *texture_atlas != enemy_animations.attack_skeleton {
-                    *texture_atlas = enemy_animations.attack_skeleton.clone();
+        }
+        else if x_player < x_monster && (x_player-x_monster).abs() < MARGIN_OUT{
+            if is_on_a_plat_up || (x_monster - x1_plat_monster).abs() > MARGIN_WALK {
+                velocity.vx = -30.;
+                if *texture_atlas != enemy_animations.walk_skeleton {
+                    *texture_atlas = enemy_animations.walk_skeleton.clone();
                     sprite.index = 0;
                 }
-            } else {
+            }
+            else{
+                velocity.vx = 0.;
                 if *texture_atlas != enemy_animations.idle_skeleton {
                     *texture_atlas = enemy_animations.idle_skeleton.clone();
                     sprite.index = 0;
                 }
             }
-        } else {
-            // SI ON EST LOIN DU PLAYER
-            velocity.vx = 0.;
-            if *texture_atlas != enemy_animations.idle_skeleton {
-                *texture_atlas = enemy_animations.idle_skeleton.clone();
-                sprite.index = 0;
-            }
         }
     }
 }
+}
+
 
 fn eye_attack_system(
     mut commands: Commands,
@@ -411,5 +437,5 @@ fn enemy_setup(
         .insert(Acceleration {
             ..Default::default()
         })
-        .insert(SpriteSize(Vec2::new(27., 60.)));
+        .insert(SpriteSize(Vec2::new(5., 60.)));
 }
