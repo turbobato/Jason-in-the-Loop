@@ -1,20 +1,20 @@
 use crate::{components::*, WinSize, GROUND_LEVEL, PLATFORM_MARGIN};
 use bevy::{prelude::*, transform};
 
-const RUN_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Run.png";
-const IDLE_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Idle.png";
+pub const RUN_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Run.png";
+pub const IDLE_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Idle.png";
 
-const ATTACK_COMBO_SPRITE: &str =
+pub const ATTACK_COMBO_SPRITE: &str =
     "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_AttackCombo.png";
-const JUMP_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Jump.png";
-const JUMP_FALL_SPRITE: &str =
-    "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_JumpFallInbetween.png";
-const TURN_AROUND_SPRITE: &str =
+pub const JUMP_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Jump.png";
+pub const JUMP_FALL_SPRITE: &str =
+    "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Fall.png";
+pub const TURN_AROUND_SPRITE: &str =
     "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_TurnAround.png";
 
-const PLAYER_DIMENSIONS: (f32, f32) = (PLAYER_SCALE * 20., PLAYER_SCALE * 80.); //dimensions for idle sprite
-const PLAYER_SCALE: f32 = 1.5;
-const PLAYER_SPAWN: (f32, f32, f32) = (-356., -145. + 90., 1.1); //player spawn coordinates
+pub const PLAYER_DIMENSIONS: (f32, f32) = (PLAYER_SCALE * 20., PLAYER_SCALE * 80.); //dimensions for idle sprite
+pub const PLAYER_SCALE: f32 = 1.5;
+pub const PLAYER_SPAWN: (f32, f32, f32) = (-356., -145. + 90., 1.1); //player spawn coordinates
 
 pub struct PlayerPlugin;
 
@@ -60,7 +60,7 @@ fn player_setup(
     let texture_atlas_jump = texture_atlases.add(texture_atlas_j);
 
     let jump_fall_sprite: Handle<Image> = asset_server.load(JUMP_FALL_SPRITE);
-    let texture_atlas_jf = TextureAtlas::from_grid(jump_fall_sprite, Vec2::new(120.0, 80.0), 2, 1);
+    let texture_atlas_jf = TextureAtlas::from_grid(jump_fall_sprite, Vec2::new(120.0, 80.0), 3, 1);
     let texture_atlas_jump_fall = texture_atlases.add(texture_atlas_jf);
 
     let turn_around_sprite: Handle<Image> = asset_server.load(TURN_AROUND_SPRITE);
@@ -96,7 +96,8 @@ fn player_setup(
             ..Default::default()
         })
         .insert(Grounded(false))
-        .insert(SpriteSize::from(PLAYER_DIMENSIONS));
+        .insert(SpriteSize::from(PLAYER_DIMENSIONS))
+        .insert(RecordingOn(false));
 }
 
 fn player_keyboard_event_system(
@@ -149,20 +150,22 @@ fn player_keyboard_event_system(
         }
 
         if kb.pressed(KeyCode::Z) {
-            if *texture_atlas != animations.jump {
-                *texture_atlas = animations.jump.clone();
-                sprite.index = 0;
-                if grounded.0 {
-                    velocity.vy = 250.;
-                    transform.translation.y += PLATFORM_MARGIN; //this line is to be sure the player gets out of the platform
-                    grounded.0 = false;
-                }
-            };
+            if grounded.0 {
+                velocity.vy = 250.;
+                transform.translation.y += PLATFORM_MARGIN; //this line is to be sure the player gets out of the platform
+                grounded.0 = false;
+            }
         }
 
-        if velocity.vy < -20. {
+        if velocity.vy < -1. {
             if *texture_atlas != animations.jump_fall {
                 *texture_atlas = animations.jump_fall.clone();
+                sprite.index = 0;
+            }
+        }
+        else if velocity.vy > 1. {
+            if *texture_atlas != animations.jump {
+                *texture_atlas = animations.jump.clone();
                 sprite.index = 0;
             }
         }

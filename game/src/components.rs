@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 use serde::Deserialize;
 
+use crate::player_loop::Actions;
+
 // region : general components
 
 #[derive(Component)]
@@ -50,6 +52,19 @@ pub struct Platform {
 
 #[derive(Component)]
 pub struct Player;
+
+#[derive(Component)]
+pub struct RecordingOn(pub bool);
+
+#[derive(Component, Clone)]
+pub struct Recording {
+    pub index : usize,
+    pub initial_pos : Vec3,
+    pub recorded_actions : Vec<Vec<Actions>>,
+}
+
+#[derive(Component)]
+pub struct TemporalGhost;
 
 //endregion : player components
 

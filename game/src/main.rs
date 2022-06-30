@@ -4,6 +4,7 @@ mod components;
 mod enemy;
 mod platforms;
 mod player;
+mod player_loop;
 
 use bevy::{
     log::LogSettings,
@@ -19,6 +20,7 @@ use components::*;
 use enemy::EnemyPlugin;
 use platforms::PlatformsPlugin;
 use player::PlayerPlugin;
+use player_loop::PlayerLoopPlugin;
 
 pub const GROUND_LEVEL: f32 = 0.;
 pub const PLATFORM_MARGIN: f32 = 4.; // this is the thickness of the platforms
@@ -56,6 +58,7 @@ fn main() {
         .add_plugin(CollisionsPlugin)
         .add_plugin(PlatformsPlugin)
         .add_plugin(CameraPlugin)
+        .add_plugin(PlayerLoopPlugin)
         .add_startup_system(setup)
         .add_system(animate_sprite)
         .add_system(movement)
@@ -183,7 +186,7 @@ fn movement(
     time: Res<Time>,
     mut query: Query<
         (&Grounded, &mut Velocity, &mut Acceleration, &mut Transform),
-        Or<(With<Player>, With<Skeleton>)>,
+        Or<(With<Player>, With<Skeleton>, With<TemporalGhost>)>,
     >,
 ) {
     let delta = time.delta_seconds();
