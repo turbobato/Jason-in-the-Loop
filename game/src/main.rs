@@ -65,8 +65,7 @@ fn setup(
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
     commands
-        .spawn_bundle(Camera2dBundle::default())
-        .insert(Camera);
+        .spawn_bundle(Camera2dBundle::default());
 
     let background_1: Handle<Image> = asset_server.load(BACKGROUND_1);
     let background_2: Handle<Image> = asset_server.load(BACKGROUND_2);
@@ -144,7 +143,10 @@ fn animate_sprite(
 
 fn movement(
     time: Res<Time>,
-    mut query: Query<(&Grounded, &mut Velocity, &mut Acceleration, &mut Transform), With<Player>>,
+    mut query: Query<
+        (&Grounded, &mut Velocity, &mut Acceleration, &mut Transform),
+        Or<(With<Player>, With<Skeleton>)>,
+    >,
 ) {
     let delta = time.delta_seconds();
     for (grounded, mut velocity, mut acceleration, mut transform) in query.iter_mut() {
