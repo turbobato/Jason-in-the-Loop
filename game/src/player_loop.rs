@@ -10,6 +10,7 @@ pub enum Actions {
     Left,
     Right,
     Attack,
+    Idle,
 }
 pub struct PlayerLoopPlugin;
 
@@ -43,6 +44,9 @@ fn player_loop_record_system(
             buff.push(Actions::Right);
         } else if kb.pressed(KeyCode::J) {
             buff.push(Actions::Attack);
+        }
+        else {
+            buff.push(Actions::Idle);
         }
         if kb.pressed(KeyCode::Z) {
             buff.push(Actions::Jump);
@@ -156,6 +160,12 @@ fn loop_movement_system(
                             transform.translation.y += PLATFORM_MARGIN; //this line is to be sure the player gets out of the platform
                             grounded.0 = false;
                         }
+                    }
+                    Actions::Idle => {
+                        velocity.vx = 0.;
+                        if *texture_atlas != animations.idle {
+                            *texture_atlas = animations.idle.clone();
+                        };
                     }
                 }
             }
