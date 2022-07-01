@@ -26,8 +26,7 @@ const BACKGROUND_1: &str = "textures/oak_woods_v1.0/background/background_game/b
 const BACKGROUND_2: &str = "textures/oak_woods_v1.0/background/background_game/background_2.png";
 const BACKGROUND_3: &str = "textures/oak_woods_v1.0/background/background_game/background_3.png";
 const BACKGROUND_4: &str = "textures/oak_woods_v1.0/background/background_game/background_4.png";
-const BACKGROUND_5: &str =
-    "textures/oak_woods_v1.0/background/background_game/background_layer_5.png";
+const BACKGROUND_5: &str = "textures/oak_woods_v1.0/background/background_game/background_layer_5.png";
 const BACKGROUND_6: &str = "textures/oak_woods_v1.0/background/background_game/background_6.png";
 
 const SHOP_SPRITE: &str = "textures/oak_woods_v1.0/decorations/shop_anim.png";
@@ -72,7 +71,7 @@ fn setup(
 ) {
     //Music
     let music = asset_server.load("sounds/Music_Accueil.ogg");
-    audio.play_with_settings(music, PlaybackSettings::LOOP.with_volume(1.));
+    audio.play_with_settings(music, PlaybackSettings::LOOP.with_volume(0.5));
 
     commands.spawn_bundle(Camera2dBundle::default());
 

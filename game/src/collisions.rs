@@ -99,7 +99,6 @@ fn collision_attack(
                     Collision::Left => {
                         //println!("Gauche");
                         if attack_player.is_attacking {
-                            println!("Le player attaque depuis la gauche");
                             commands.entity(entity).despawn();
                         }
                         break;
