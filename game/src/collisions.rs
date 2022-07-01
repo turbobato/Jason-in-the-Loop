@@ -1,7 +1,7 @@
 use crate::*;
 use bevy::prelude::*;
 
-pub const COLLISION_MARGIN: f32 = 4.; //margin for collisions
+pub const COLLISION_MARGIN: f32 = 10.; //margin for collisions
 
 pub struct CollisionsPlugin;
 
