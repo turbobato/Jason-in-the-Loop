@@ -3,9 +3,7 @@ use crate::{
     player::{PlayerAnimations, PLAYER_DIMENSIONS, PLAYER_SCALE},
     PLATFORM_MARGIN,
 };
-use bevy::{
-    prelude::*,
-};
+use bevy::prelude::*;
 
 #[derive(Clone)]
 pub enum Actions {
