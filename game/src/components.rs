@@ -6,12 +6,6 @@ use crate::player_loop::Actions;
 // region : general components
 
 #[derive(Component)]
-pub enum Movement {
-    Idle,
-    Running,
-}
-
-#[derive(Component)]
 pub struct SpriteSize(pub Vec2);
 
 impl From<(f32, f32)> for SpriteSize {

@@ -1,13 +1,10 @@
 use crate::{
-    collisions::COLLISION_MARGIN,
     components::*,
     player::{PlayerAnimations, PLAYER_DIMENSIONS, PLAYER_SCALE},
     PLATFORM_MARGIN,
 };
 use bevy::{
     prelude::*,
-    render::render_resource::Texture,
-    sprite::collide_aabb::{collide, Collision},
 };
 
 #[derive(Clone)]
