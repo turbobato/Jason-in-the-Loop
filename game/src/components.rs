@@ -58,6 +58,8 @@ pub struct Platform {
     pub size: Vec2,
     pub position: Vec3,
 }
+#[derive(Component, Clone)]
+pub struct MovingPlatform;
 //endregion : general components
 
 //region : player components

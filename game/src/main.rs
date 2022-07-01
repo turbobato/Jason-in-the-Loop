@@ -22,8 +22,7 @@ use platforms::PlatformsPlugin;
 use player::PlayerPlugin;
 use player_loop::PlayerLoopPlugin;
 
-pub const GROUND_LEVEL: f32 = 0.;
-pub const PLATFORM_MARGIN: f32 = 4.; // this is the thickness of the platforms
+pub const PLATFORM_MARGIN: f32 = 10.; // this is the thickness of the platforms
 
 const BACKGROUND_1: &str = "textures/oak_woods_v1.0/background/background_game/background_1.png";
 const BACKGROUND_2: &str = "textures/oak_woods_v1.0/background/background_game/background_2.png";

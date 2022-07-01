@@ -1,9 +1,14 @@
 use crate::{
+    collisions::COLLISION_MARGIN,
     components::*,
     player::{PlayerAnimations, PLAYER_DIMENSIONS, PLAYER_SCALE},
     PLATFORM_MARGIN,
 };
-use bevy::{prelude::*, render::render_resource::Texture};
+use bevy::{
+    prelude::*,
+    render::render_resource::Texture,
+    sprite::collide_aabb::{collide, Collision},
+};
 
 #[derive(Clone)]
 pub enum Actions {
@@ -82,6 +87,11 @@ fn player_loop_record_system(
                 .insert(Grounded(false))
                 .insert(SpriteSize::from(PLAYER_DIMENSIONS))
                 .insert(recording.clone())
+                .insert(MovingPlatform)
+                .insert(Platform {
+                    position: recording.initial_pos.clone(),
+                    size: Vec2::new(10., PLATFORM_MARGIN),
+                })
                 .id();
             clones.push(clone_id);
         }
@@ -198,10 +208,6 @@ fn loop_movement_system(
             if *texture_atlas != animations.jump {
                 *texture_atlas = animations.jump.clone();
                 sprite.index = 0;
-            }
-        } else if velocity.vy == 0. && velocity.vx == 0. {
-            if *texture_atlas != animations.idle {
-                *texture_atlas = animations.idle.clone();
             }
         }
         recording.index = recording.index + 1;
