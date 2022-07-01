@@ -20,18 +20,17 @@ impl From<(f32, f32)> for SpriteSize {
     }
 }
 
-#[derive(Component,Default)]
-pub struct SpriteSizeAttack{
+#[derive(Component, Default)]
+pub struct SpriteSizeAttack {
     pub size: Vec2,
-    pub position: Vec3
+    pub position: Vec3,
 }
 
 #[derive(Component)]
-pub struct Attack{
+pub struct Attack {
     pub is_attacking: bool,
-    pub is_attacked:bool,
+    pub is_attacked: bool,
 }
-
 
 #[derive(Component, Default, Clone)]
 pub struct Velocity {
@@ -71,11 +70,11 @@ pub struct RecordingOn(pub bool);
 
 #[derive(Component, Clone)]
 pub struct Recording {
-    pub index : usize,
-    pub initial_pos : Vec3,
-    pub initial_speed : Velocity,
-    pub initial_acceleration : Acceleration,
-    pub recorded_actions : Vec<Vec<Actions>>,
+    pub index: usize,
+    pub initial_pos: Vec3,
+    pub initial_speed: Velocity,
+    pub initial_acceleration: Acceleration,
+    pub recorded_actions: Vec<Vec<Actions>>,
 }
 
 #[derive(Component)]
