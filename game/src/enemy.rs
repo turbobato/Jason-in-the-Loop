@@ -437,5 +437,7 @@ fn enemy_setup(
         .insert(Acceleration {
             ..Default::default()
         })
-        .insert(SpriteSize(Vec2::new(5., 60.)));
+        .insert(SpriteSize(Vec2::new(5., 60.)))
+        .insert(SpriteSizeAttack{..Default::default()})
+        .insert(Attack{is_attacked:false, is_attacking:false});
 }

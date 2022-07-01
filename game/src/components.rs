@@ -20,6 +20,19 @@ impl From<(f32, f32)> for SpriteSize {
     }
 }
 
+#[derive(Component,Default)]
+pub struct SpriteSizeAttack{
+    pub size: Vec2,
+    pub position: Vec3
+}
+
+#[derive(Component)]
+pub struct Attack{
+    pub is_attacking: bool,
+    pub is_attacked:bool,
+}
+
+
 #[derive(Component, Default, Clone)]
 pub struct Velocity {
     pub vx: f32,
