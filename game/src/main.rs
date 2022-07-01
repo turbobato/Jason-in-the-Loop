@@ -34,6 +34,11 @@ const SHOP_SPRITE: &str = "textures/oak_woods_v1.0/decorations/shop_anim.png";
 const BACKGROUND_DIM: (f32, f32) = (960., 540.);
 const SPRITE_SCALE: f32 = 3.;
 
+struct WinSize {
+    win_h: f32,
+    win_w: f32,
+}
+
 fn main() {
     App::new()
         .insert_resource(ImageSettings::default_nearest()) //prevent blurry sprites
