@@ -412,9 +412,9 @@ fn enemy_setup(
     // squelette spawn avec la sheet walk
     commands
         .spawn_bundle(SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle_skeleton_idle,
+            texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
             transform: Transform {
-                translation: Vec3::new(-400., 0., 10.),
+                translation: Vec3::new(345., 0., 10.),
                 ..Default::default()
             },
             ..default()
@@ -435,6 +435,266 @@ fn enemy_setup(
             is_attacked: false,
             is_attacking: false,
         });
+
+        commands
+        .spawn_bundle(SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
+            transform: Transform {
+                translation: Vec3::new(370., 0., 10.),
+                ..Default::default()
+            },
+            ..default()
+        })
+        .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
+        .insert(Enemy)
+        .insert(Velocity { vx: 0., vy: 0. })
+        .insert(Skeleton)
+        .insert(Grounded(true))
+        .insert(Acceleration {
+            ..Default::default()
+        })
+        .insert(SpriteSize(Vec2::new(5., 60.)))
+        .insert(SpriteSizeAttack {
+            ..Default::default()
+        })
+        .insert(Attack {
+            is_attacked: false,
+            is_attacking: false,
+        });
+
+        commands
+        .spawn_bundle(SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
+            transform: Transform {
+                translation: Vec3::new(405., 0., 10.),
+                ..Default::default()
+            },
+            ..default()
+        })
+        .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
+        .insert(Enemy)
+        .insert(Velocity { vx: 0., vy: 0. })
+        .insert(Skeleton)
+        .insert(Grounded(true))
+        .insert(Acceleration {
+            ..Default::default()
+        })
+        .insert(SpriteSize(Vec2::new(5., 60.)))
+        .insert(SpriteSizeAttack {
+            ..Default::default()
+        })
+        .insert(Attack {
+            is_attacked: false,
+            is_attacking: false,
+        });
+
+        commands
+        .spawn_bundle(SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
+            transform: Transform {
+                translation: Vec3::new(455., 0., 10.),
+                ..Default::default()
+            },
+            ..default()
+        })
+        .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
+        .insert(Enemy)
+        .insert(Velocity { vx: 0., vy: 0. })
+        .insert(Skeleton)
+        .insert(Grounded(true))
+        .insert(Acceleration {
+            ..Default::default()
+        })
+        .insert(SpriteSize(Vec2::new(5., 60.)))
+        .insert(SpriteSizeAttack {
+            ..Default::default()
+        })
+        .insert(Attack {
+            is_attacked: false,
+            is_attacking: false,
+        });
+
+        commands
+        .spawn_bundle(SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
+            transform: Transform {
+                translation: Vec3::new(510., 0., 10.),
+                ..Default::default()
+            },
+            ..default()
+        })
+        .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
+        .insert(Enemy)
+        .insert(Velocity { vx: 0., vy: 0. })
+        .insert(Skeleton)
+        .insert(Grounded(true))
+        .insert(Acceleration {
+            ..Default::default()
+        })
+        .insert(SpriteSize(Vec2::new(5., 60.)))
+        .insert(SpriteSizeAttack {
+            ..Default::default()
+        })
+        .insert(Attack {
+            is_attacked: false,
+            is_attacking: false,
+        });
+
+        commands
+        .spawn_bundle(SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
+            transform: Transform {
+                translation: Vec3::new(700., 0., 10.),
+                ..Default::default()
+            },
+            ..default()
+        })
+        .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
+        .insert(Enemy)
+        .insert(Velocity { vx: 0., vy: 0. })
+        .insert(Skeleton)
+        .insert(Grounded(true))
+        .insert(Acceleration {
+            ..Default::default()
+        })
+        .insert(SpriteSize(Vec2::new(5., 60.)))
+        .insert(SpriteSizeAttack {
+            ..Default::default()
+        })
+        .insert(Attack {
+            is_attacked: false,
+            is_attacking: false,
+        });
+
+        commands
+        .spawn_bundle(SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
+            transform: Transform {
+                translation: Vec3::new(2950., 50., 10.),
+                ..Default::default()
+            },
+            ..default()
+        })
+        .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
+        .insert(Enemy)
+        .insert(Velocity { vx: 0., vy: 0. })
+        .insert(Skeleton)
+        .insert(Grounded(true))
+        .insert(Acceleration {
+            ..Default::default()
+        })
+        .insert(SpriteSize(Vec2::new(5., 60.)))
+        .insert(SpriteSizeAttack {
+            ..Default::default()
+        })
+        .insert(Attack {
+            is_attacked: false,
+            is_attacking: false,
+        });
+        commands
+        .spawn_bundle(SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
+            transform: Transform {
+                translation: Vec3::new(3000., 50., 10.),
+                ..Default::default()
+            },
+            ..default()
+        })
+        .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
+        .insert(Enemy)
+        .insert(Velocity { vx: 0., vy: 0. })
+        .insert(Skeleton)
+        .insert(Grounded(true))
+        .insert(Acceleration {
+            ..Default::default()
+        })
+        .insert(SpriteSize(Vec2::new(5., 60.)))
+        .insert(SpriteSizeAttack {
+            ..Default::default()
+        })
+        .insert(Attack {
+            is_attacked: false,
+            is_attacking: false,
+        });
+
+        commands
+        .spawn_bundle(SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
+            transform: Transform {
+                translation: Vec3::new(3380., 50., 10.),
+                ..Default::default()
+            },
+            ..default()
+        })
+        .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
+        .insert(Enemy)
+        .insert(Velocity { vx: 0., vy: 0. })
+        .insert(Skeleton)
+        .insert(Grounded(true))
+        .insert(Acceleration {
+            ..Default::default()
+        })
+        .insert(SpriteSize(Vec2::new(5., 60.)))
+        .insert(SpriteSizeAttack {
+            ..Default::default()
+        })
+        .insert(Attack {
+            is_attacked: false,
+            is_attacking: false,
+        });
+
+        commands
+        .spawn_bundle(SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
+            transform: Transform {
+                translation: Vec3::new(3700., 50., 10.),
+                ..Default::default()
+            },
+            ..default()
+        })
+        .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
+        .insert(Enemy)
+        .insert(Velocity { vx: 0., vy: 0. })
+        .insert(Skeleton)
+        .insert(Grounded(true))
+        .insert(Acceleration {
+            ..Default::default()
+        })
+        .insert(SpriteSize(Vec2::new(5., 60.)))
+        .insert(SpriteSizeAttack {
+            ..Default::default()
+        })
+        .insert(Attack {
+            is_attacked: false,
+            is_attacking: false,
+        });
+
+        commands
+        .spawn_bundle(SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
+            transform: Transform {
+                translation: Vec3::new(3700., -30., 10.),
+                ..Default::default()
+            },
+            ..default()
+        })
+        .insert(AnimationTimer(Timer::from_seconds(0.1, true)))
+        .insert(Enemy)
+        .insert(Velocity { vx: 0., vy: 0. })
+        .insert(Skeleton)
+        .insert(Grounded(true))
+        .insert(Acceleration {
+            ..Default::default()
+        })
+        .insert(SpriteSize(Vec2::new(5., 60.)))
+        .insert(SpriteSizeAttack {
+            ..Default::default()
+        })
+        .insert(Attack {
+            is_attacked: false,
+            is_attacking: false,
+        });
+        
 }
 
 fn resize_attack(
