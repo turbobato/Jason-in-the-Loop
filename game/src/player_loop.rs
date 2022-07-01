@@ -23,16 +23,18 @@ impl Plugin for PlayerLoopPlugin {
     }
 }
 
+// add record of initial speed and velocity
+
 fn player_loop_record_system(
     animations: Res<PlayerAnimations>,
     mut commands: Commands,
     mut clones: ResMut<Vec<Entity>>,
     kb: Res<Input<KeyCode>>,
-    mut query: Query<(Entity, &Transform, &mut RecordingOn, Option<&mut Recording>), With<Player>>,
+    mut query: Query<(Entity, &Transform, &Velocity, &Acceleration, &mut RecordingOn, Option<&mut Recording>), With<Player>>,
 ) {
-    let (entity_id, transform, mut recording_on, recording_option) =
+    let (entity_id, transform, velocity, acceleration, mut recording_on, recording_option) =
         query.get_single_mut().unwrap();
-    if kb.just_pressed(KeyCode::R) {
+    if kb.just_pressed(KeyCode::K) {
         recording_on.0 = !recording_on.0;
     }
 
@@ -59,10 +61,12 @@ fn player_loop_record_system(
             commands.entity(entity_id).insert(Recording {
                 index: 0,
                 initial_pos: transform.translation.clone(),
+                initial_acceleration : acceleration.clone(),
+                initial_speed : velocity.clone(),
                 recorded_actions,
             });
         }
-    } else if !recording_on.0 && kb.just_pressed(KeyCode::T) {
+    } else if !recording_on.0 && kb.just_pressed(KeyCode::L) {
         if let Some(recording) = recording_option {
             commands.entity(entity_id).remove::<Recording>();
             let clone_id = commands
@@ -95,7 +99,7 @@ fn player_loop_record_system(
         }
     }
 
-    if kb.just_pressed(KeyCode::A) {
+    if kb.just_pressed(KeyCode::I) {
         if let Some(entity_id) = clones.pop() {
             commands.entity(entity_id).despawn();
         }
@@ -126,10 +130,8 @@ fn loop_movement_system(
         mut recording) in query.iter_mut() {
             if recording.index == 0 {
                 transform.translation = recording.initial_pos.clone();
-                acceleration.ax = 0.;
-                acceleration.ay = 0.;
-                velocity.vx = 0.;
-                velocity.vy = 0.;
+                *acceleration = recording.initial_acceleration.clone();
+                *velocity = recording.initial_speed.clone();
             }
             for action in &recording.recorded_actions[recording.index] {
                 match action {

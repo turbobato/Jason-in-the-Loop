@@ -20,13 +20,13 @@ impl From<(f32, f32)> for SpriteSize {
     }
 }
 
-#[derive(Component, Default)]
+#[derive(Component, Default, Clone)]
 pub struct Velocity {
     pub vx: f32,
     pub vy: f32,
 }
 
-#[derive(Component, Default)]
+#[derive(Component, Default, Clone)]
 pub struct Acceleration {
     pub ax: f32,
     pub ay: f32,
@@ -60,6 +60,8 @@ pub struct RecordingOn(pub bool);
 pub struct Recording {
     pub index : usize,
     pub initial_pos : Vec3,
+    pub initial_speed : Velocity,
+    pub initial_acceleration : Acceleration,
     pub recorded_actions : Vec<Vec<Actions>>,
 }
 
