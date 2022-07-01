@@ -81,52 +81,52 @@ fn collision_attack(
         {
             // Si le player attacking entre en collision avec le squelette normal
             // DANS LE CAS OUU LE PLAUER REGARDE A DROITE
-                // println!("test");
-                let player_position = sprite_size_attack_player.position;
-                let player_size = sprite_size_attack_player.size;
+            // println!("test");
+            let player_position = sprite_size_attack_player.position;
+            let player_size = sprite_size_attack_player.size;
 
-                let enemy_position = tf_enemy.translation;
-                let enemy_size = sprite_size_enemy.0;
+            let enemy_position = tf_enemy.translation;
+            let enemy_size = sprite_size_enemy.0;
 
-                if let Some(collision) =
-                    collide(player_position, player_size, enemy_position, enemy_size)
-                {
-                    // si il y a eu une collision : que faire ?
-                    match collision {
-                        Collision::Top => {
-                            break;
+            if let Some(collision) =
+                collide(player_position, player_size, enemy_position, enemy_size)
+            {
+                // si il y a eu une collision : que faire ?
+                match collision {
+                    Collision::Top => {
+                        break;
+                    }
+                    Collision::Left => {
+                        //println!("Gauche");
+                        if attack_player.is_attacking {
+                            println!("Le player attaque depuis la gauche");
+                            commands.entity(entity).despawn();
                         }
-                        Collision::Left => {
-                            //println!("Gauche");
-                            if attack_player.is_attacking {
-                                println!("Le player attaque depuis la gauche");
-                                commands.entity(entity).despawn();
-                            }
-                            break;
+                        break;
+                    }
+                    Collision::Right => {
+                        //println!("Droite");
+                        if attack_player.is_attacking {
+                            println!("Le player attaque depuis la droite");
+                            commands.entity(entity).despawn();
                         }
-                        Collision::Right => {
-                            //println!("Droite");
-                            if attack_player.is_attacking {
-                                println!("Le player attaque depuis la droite");
-                                commands.entity(entity).despawn();
-                            }
-                            break;
+                        break;
+                    }
+                    Collision::Bottom => {
+                        break;
+                    }
+                    Collision::Inside => {
+                        //println!("Inside");
+                        // il y a un pb quand le player est à gauche mais dans l'intérieur
+                        if attack_player.is_attacking {
+                            println!("Intérieur");
+                            println!("Le player attaque depuis l'intérieur");
+                            commands.entity(entity).despawn();
                         }
-                        Collision::Bottom => {
-                            break;
-                        }
-                        Collision::Inside => {
-                            //println!("Inside");
-                            // il y a un pb quand le player est à gauche mais dans l'intérieur
-                            if attack_player.is_attacking {
-                                println!("Intérieur");
-                                println!("Le player attaque depuis l'intérieur");
-                                commands.entity(entity).despawn();
-                            }
-                            break;
-                        }
+                        break;
                     }
                 }
+            }
 
             // si on regarde vers la droite
             if tf_enemy.scale.x == 1. {

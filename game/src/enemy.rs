@@ -75,7 +75,6 @@ fn skeleton_follow_player(
             &mut Transform,
             &mut Handle<TextureAtlas>,
             &mut TextureAtlasSprite,
-
         ),
         (With<Skeleton>, Without<Player>),
     >,
@@ -90,18 +89,11 @@ fn skeleton_follow_player(
     let tf_player = query_player.single();
     let (x_player, y_player) = (tf_player.translation.x, tf_player.translation.y);
 
-    for (
-        mut velocity,
-        mut tf_monster,
-        mut texture_atlas,
-        mut sprite,
-    ) in query_monster.iter_mut()
-    {
+    for (mut velocity, mut tf_monster, mut texture_atlas, mut sprite) in query_monster.iter_mut() {
         let (x_monster, y_monster) = (tf_monster.translation.x, tf_monster.translation.y);
 
         let mut x2_plat_monster = 0.;
         let mut x1_plat_monster = 0.;
-
 
         let mut x2_plat_player = 0.;
         let mut x1_plat_player = 0.;
@@ -445,61 +437,59 @@ fn enemy_setup(
         });
 }
 
-
-fn resize_attack (
+fn resize_attack(
     mut query_skeleton: Query<
-    ( &Transform, &mut Attack,&TextureAtlasSprite, &mut SpriteSizeAttack),
-     With<Skeleton>>,){
-        for (transform, mut attack, sprite, mut sprite_size_attack) in query_skeleton.iter_mut(){
-            if sprite.index==7{ 
-                sprite_size_attack.size[0] = 50.;
-                sprite_size_attack.size[1] = 32.;
-                sprite_size_attack.position[0] = transform.translation.x + 48.;
-                sprite_size_attack.position[1] = transform.translation.y + 2.;
-                attack.is_attacking = false;
-            }
-            else if sprite.index==6{
-                sprite_size_attack.size[0] = 48.;
-                sprite_size_attack.size[1] = 42.;
-                sprite_size_attack.position[0] = transform.translation.x + 49.;
-                sprite_size_attack.position[1] = transform.translation.y + 22.;
-            }
-            else if sprite.index==5{ 
-                sprite_size_attack.size[0] = 0.;
-                sprite_size_attack.size[1] = 0.;
-                sprite_size_attack.position[0] = transform.translation.x;
-                sprite_size_attack.position[1] = transform.translation.y;  
-            }
-            else if sprite.index==4{
-                sprite_size_attack.size[0] = 0.;
-                sprite_size_attack.size[1] = 0.;
-                sprite_size_attack.position[0] = transform.translation.x;
-                sprite_size_attack.position[1] = transform.translation.y;     
-            }
-            else if sprite.index==3{
-                sprite_size_attack.size[0] = 0.;
-                sprite_size_attack.size[1] = 0.;
-                sprite_size_attack.position[0] = transform.translation.x;
-                sprite_size_attack.position[1] = transform.translation.y;
-            }
-            else if sprite.index==2{ 
-                sprite_size_attack.size[0] = 0.;
-                sprite_size_attack.size[1] = 0.;
-                sprite_size_attack.position[0] = transform.translation.x;
-                sprite_size_attack.position[1] = transform.translation.y; 
-            }
-            else if sprite.index==1{
-                sprite_size_attack.size[0] = 0.;
-                sprite_size_attack.size[1] = 0.;
-                sprite_size_attack.position[0] = transform.translation.x;
-                sprite_size_attack.position[1] = transform.translation.y;
-            }
-            else if sprite.index==0{
-                sprite_size_attack.size[0] = 0.;
-                sprite_size_attack.size[1] = 0.;
-                sprite_size_attack.position[0] = transform.translation.x;
-                sprite_size_attack.position[1] = transform.translation.y;
-            }
+        (
+            &Transform,
+            &mut Attack,
+            &TextureAtlasSprite,
+            &mut SpriteSizeAttack,
+        ),
+        With<Skeleton>,
+    >,
+) {
+    for (transform, mut attack, sprite, mut sprite_size_attack) in query_skeleton.iter_mut() {
+        if sprite.index == 7 {
+            sprite_size_attack.size[0] = 50.;
+            sprite_size_attack.size[1] = 32.;
+            sprite_size_attack.position[0] = transform.translation.x + 48.;
+            sprite_size_attack.position[1] = transform.translation.y + 2.;
+            attack.is_attacking = false;
+        } else if sprite.index == 6 {
+            sprite_size_attack.size[0] = 48.;
+            sprite_size_attack.size[1] = 42.;
+            sprite_size_attack.position[0] = transform.translation.x + 49.;
+            sprite_size_attack.position[1] = transform.translation.y + 22.;
+        } else if sprite.index == 5 {
+            sprite_size_attack.size[0] = 0.;
+            sprite_size_attack.size[1] = 0.;
+            sprite_size_attack.position[0] = transform.translation.x;
+            sprite_size_attack.position[1] = transform.translation.y;
+        } else if sprite.index == 4 {
+            sprite_size_attack.size[0] = 0.;
+            sprite_size_attack.size[1] = 0.;
+            sprite_size_attack.position[0] = transform.translation.x;
+            sprite_size_attack.position[1] = transform.translation.y;
+        } else if sprite.index == 3 {
+            sprite_size_attack.size[0] = 0.;
+            sprite_size_attack.size[1] = 0.;
+            sprite_size_attack.position[0] = transform.translation.x;
+            sprite_size_attack.position[1] = transform.translation.y;
+        } else if sprite.index == 2 {
+            sprite_size_attack.size[0] = 0.;
+            sprite_size_attack.size[1] = 0.;
+            sprite_size_attack.position[0] = transform.translation.x;
+            sprite_size_attack.position[1] = transform.translation.y;
+        } else if sprite.index == 1 {
+            sprite_size_attack.size[0] = 0.;
+            sprite_size_attack.size[1] = 0.;
+            sprite_size_attack.position[0] = transform.translation.x;
+            sprite_size_attack.position[1] = transform.translation.y;
+        } else if sprite.index == 0 {
+            sprite_size_attack.size[0] = 0.;
+            sprite_size_attack.size[1] = 0.;
+            sprite_size_attack.position[0] = transform.translation.x;
+            sprite_size_attack.position[1] = transform.translation.y;
         }
+    }
 }
-

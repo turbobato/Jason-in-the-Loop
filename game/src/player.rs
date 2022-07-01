@@ -1,5 +1,5 @@
 use crate::{components::*, PLATFORM_MARGIN};
-use bevy::{prelude::*,};
+use bevy::prelude::*;
 
 pub const RUN_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Run.png";
 pub const IDLE_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Idle.png";
@@ -226,20 +226,20 @@ fn resize_attack(
             } else if sprite.index == 8 {
                 sprite_size_attack.size[0] = 29.;
                 sprite_size_attack.size[1] = 15.;
-                if transform.scale.x == PLAYER_SCALE{
-                sprite_size_attack.position[0] = transform.translation.x - (15. * PLAYER_SCALE);
-                sprite_size_attack.position[1] = transform.translation.y - (33. * PLAYER_SCALE);}
-                else {
+                if transform.scale.x == PLAYER_SCALE {
+                    sprite_size_attack.position[0] = transform.translation.x - (15. * PLAYER_SCALE);
+                    sprite_size_attack.position[1] = transform.translation.y - (33. * PLAYER_SCALE);
+                } else {
                     sprite_size_attack.position[0] = transform.translation.x + (15. * PLAYER_SCALE);
                     sprite_size_attack.position[1] = transform.translation.y - (33. * PLAYER_SCALE);
                 }
             } else if sprite.index == 7 {
                 sprite_size_attack.size[0] = 59.;
                 sprite_size_attack.size[1] = 64.;
-                if transform.scale.x == PLAYER_SCALE{
-                sprite_size_attack.position[0] = transform.translation.x + (3. * PLAYER_SCALE);
-                sprite_size_attack.position[1] = transform.translation.y - (32. * PLAYER_SCALE);}
-                else {
+                if transform.scale.x == PLAYER_SCALE {
+                    sprite_size_attack.position[0] = transform.translation.x + (3. * PLAYER_SCALE);
+                    sprite_size_attack.position[1] = transform.translation.y - (32. * PLAYER_SCALE);
+                } else {
                     sprite_size_attack.position[0] = transform.translation.x - (3. * PLAYER_SCALE);
                     sprite_size_attack.position[1] = transform.translation.y - (32. * PLAYER_SCALE)
                 }
@@ -248,7 +248,6 @@ fn resize_attack(
                 sprite_size_attack.size[1] = 0.;
                 sprite_size_attack.position[0] = transform.translation.x;
                 sprite_size_attack.position[1] = transform.translation.y;
-                
             } else if sprite.index == 5 {
                 sprite_size_attack.size[0] = 0.;
                 sprite_size_attack.size[1] = 0.;
@@ -257,39 +256,40 @@ fn resize_attack(
             } else if sprite.index == 4 {
                 sprite_size_attack.size[0] = 63.;
                 sprite_size_attack.size[1] = 40.;
-                if transform.scale.x == PLAYER_SCALE{
-                sprite_size_attack.position[0] = transform.translation.x + (18. * PLAYER_SCALE);
-                sprite_size_attack.position[1] = transform.translation.y - (20. * PLAYER_SCALE);}
-                else{
+                if transform.scale.x == PLAYER_SCALE {
+                    sprite_size_attack.position[0] = transform.translation.x + (18. * PLAYER_SCALE);
+                    sprite_size_attack.position[1] = transform.translation.y - (20. * PLAYER_SCALE);
+                } else {
                     sprite_size_attack.position[0] = transform.translation.x - (18. * PLAYER_SCALE);
-                    sprite_size_attack.position[1] = transform.translation.y - (20. * PLAYER_SCALE);}
-                
+                    sprite_size_attack.position[1] = transform.translation.y - (20. * PLAYER_SCALE);
+                }
             } else if sprite.index == 3 {
                 sprite_size_attack.size[0] = 26.;
                 sprite_size_attack.size[1] = 12.;
-                if transform.scale.x == PLAYER_SCALE{
-                sprite_size_attack.position[0] = transform.translation.x + (38. * PLAYER_SCALE);
-                sprite_size_attack.position[1] = transform.translation.y - (34. * PLAYER_SCALE);}
-                else{
+                if transform.scale.x == PLAYER_SCALE {
+                    sprite_size_attack.position[0] = transform.translation.x + (38. * PLAYER_SCALE);
+                    sprite_size_attack.position[1] = transform.translation.y - (34. * PLAYER_SCALE);
+                } else {
                     sprite_size_attack.position[0] = transform.translation.x - (38. * PLAYER_SCALE);
-                    sprite_size_attack.position[1] = transform.translation.y - (34. * PLAYER_SCALE);}
+                    sprite_size_attack.position[1] = transform.translation.y - (34. * PLAYER_SCALE);
+                }
             } else if sprite.index == 2 {
                 sprite_size_attack.size[0] = 30.;
                 sprite_size_attack.size[1] = 45.;
-                if transform.scale.x == PLAYER_SCALE{
-                sprite_size_attack.position[0] = transform.translation.x + (41. * PLAYER_SCALE);
-                sprite_size_attack.position[1] = transform.translation.y - (18. * PLAYER_SCALE);}
-                else{
+                if transform.scale.x == PLAYER_SCALE {
+                    sprite_size_attack.position[0] = transform.translation.x + (41. * PLAYER_SCALE);
+                    sprite_size_attack.position[1] = transform.translation.y - (18. * PLAYER_SCALE);
+                } else {
                     sprite_size_attack.position[0] = transform.translation.x - (41. * PLAYER_SCALE);
                     sprite_size_attack.position[1] = transform.translation.y - (18. * PLAYER_SCALE);
                 }
             } else if sprite.index == 1 {
                 sprite_size_attack.size[0] = 38.;
                 sprite_size_attack.size[1] = 38.;
-                if transform.scale.x == PLAYER_SCALE{
-                sprite_size_attack.position[0] = transform.translation.x + (37. * PLAYER_SCALE);
-                sprite_size_attack.position[1] = transform.translation.y - (21. * PLAYER_SCALE);}
-                else{
+                if transform.scale.x == PLAYER_SCALE {
+                    sprite_size_attack.position[0] = transform.translation.x + (37. * PLAYER_SCALE);
+                    sprite_size_attack.position[1] = transform.translation.y - (21. * PLAYER_SCALE);
+                } else {
                     sprite_size_attack.position[0] = transform.translation.x - (37. * PLAYER_SCALE);
                     sprite_size_attack.position[1] = transform.translation.y - (21. * PLAYER_SCALE);
                 }
