@@ -72,7 +72,7 @@ fn setup(
 ) {
     //Music
     let music = asset_server.load("sounds/Music_Accueil.ogg");
-    audio.play(music);
+    audio.play_with_settings(music, PlaybackSettings::LOOP.with_volume(1.));
 
     commands.spawn_bundle(Camera2dBundle::default());
 

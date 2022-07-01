@@ -107,7 +107,6 @@ fn collision_attack(
                     Collision::Right => {
                         //println!("Droite");
                         if attack_player.is_attacking {
-                            println!("Le player attaque depuis la droite");
                             commands.entity(entity).despawn();
                         }
                         break;
@@ -119,8 +118,6 @@ fn collision_attack(
                         //println!("Inside");
                         // il y a un pb quand le player est à gauche mais dans l'intérieur
                         if attack_player.is_attacking {
-                            println!("Intérieur");
-                            println!("Le player attaque depuis l'intérieur");
                             commands.entity(entity).despawn();
                         }
                         break;
