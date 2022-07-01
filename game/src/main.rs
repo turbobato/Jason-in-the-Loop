@@ -7,8 +7,6 @@ mod player;
 mod player_loop;
 
 use bevy::{
-    log::LogSettings,
-    math::{const_vec3, Vec3Swizzles},
     prelude::*,
     render::texture::ImageSettings,
     sprite::collide_aabb::{collide, Collision},

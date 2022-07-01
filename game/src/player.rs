@@ -1,5 +1,5 @@
-use crate::{components::*, WinSize, PLATFORM_MARGIN};
-use bevy::{prelude::*, transform};
+use crate::{components::*, PLATFORM_MARGIN};
+use bevy::{prelude::*,};
 
 pub const RUN_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Run.png";
 pub const IDLE_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Idle.png";
