@@ -67,8 +67,13 @@ fn setup(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     windows: Res<Windows>,
+    audio: Res<Audio>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
+    //Music
+    let music = asset_server.load("sounds/Music_Accueil.ogg");
+    audio.play(music);
+
     commands.spawn_bundle(Camera2dBundle::default());
 
     let background_1: Handle<Image> = asset_server.load(BACKGROUND_1);
