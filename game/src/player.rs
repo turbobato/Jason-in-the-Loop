@@ -1,4 +1,4 @@
-use crate::{components::*, WinSize, GROUND_LEVEL, PLATFORM_MARGIN};
+use crate::{components::*, WinSize, PLATFORM_MARGIN};
 use bevy::{prelude::*, transform};
 
 pub const RUN_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Run.png";
@@ -7,8 +7,7 @@ pub const IDLE_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheet
 pub const ATTACK_COMBO_SPRITE: &str =
     "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_AttackCombo.png";
 pub const JUMP_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Jump.png";
-pub const JUMP_FALL_SPRITE: &str =
-    "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Fall.png";
+pub const JUMP_FALL_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Fall.png";
 pub const TURN_AROUND_SPRITE: &str =
     "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_TurnAround.png";
 
@@ -97,7 +96,12 @@ fn player_setup(
         })
         .insert(Grounded(false))
         .insert(SpriteSize::from(PLAYER_DIMENSIONS))
-        .insert(RecordingOn(false));
+        .insert(RecordingOn(false))
+        .insert(Platform {
+            position: Vec3::new(4250., 100. + PLAYER_SPAWN.1, PLAYER_SPAWN.2),
+            size: Vec2::new(10., PLATFORM_MARGIN),
+        })
+        .insert(MovingPlatform);
 }
 
 fn player_keyboard_event_system(
@@ -162,8 +166,7 @@ fn player_keyboard_event_system(
                 *texture_atlas = animations.jump_fall.clone();
                 sprite.index = 0;
             }
-        }
-        else if velocity.vy > 1. {
+        } else if velocity.vy > 1. {
             if *texture_atlas != animations.jump {
                 *texture_atlas = animations.jump.clone();
                 sprite.index = 0;

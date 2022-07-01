@@ -1,8 +1,14 @@
 use crate::{
+    collisions::COLLISION_MARGIN,
     components::*,
-    player::{PlayerAnimations, PLAYER_DIMENSIONS, PLAYER_SCALE}, PLATFORM_MARGIN,
+    player::{PlayerAnimations, PLAYER_DIMENSIONS, PLAYER_SCALE},
+    PLATFORM_MARGIN,
 };
-use bevy::{prelude::*, render::render_resource::Texture};
+use bevy::{
+    prelude::*,
+    render::render_resource::Texture,
+    sprite::collide_aabb::{collide, Collision},
+};
 
 #[derive(Clone)]
 pub enum Actions {
@@ -28,13 +34,24 @@ fn player_loop_record_system(
     mut commands: Commands,
     mut clones: ResMut<Vec<Entity>>,
     kb: Res<Input<KeyCode>>,
-    mut query: Query<(Entity, &Transform, &Velocity, &Acceleration, &mut RecordingOn, Option<&mut Recording>), With<Player>>,
+    mut query: Query<
+        (
+            Entity,
+            &Transform,
+            &Velocity,
+            &Acceleration,
+            &mut RecordingOn,
+            Option<&mut Recording>,
+        ),
+        With<Player>,
+    >,
 ) {
     let (entity_id, transform, velocity, acceleration, mut recording_on, recording_option) =
         query.get_single_mut().unwrap();
     if kb.just_pressed(KeyCode::K) {
         recording_on.0 = !recording_on.0;
-        if !recording_on.0 { //remove recording if we pressed K without spawning a clone
+        if !recording_on.0 {
+            //remove recording if we pressed K without spawning a clone
             if let Some(ref _recording) = recording_option {
                 commands.entity(entity_id).remove::<Recording>();
             }
@@ -70,11 +87,15 @@ fn player_loop_record_system(
                 .insert(Grounded(false))
                 .insert(SpriteSize::from(PLAYER_DIMENSIONS))
                 .insert(recording.clone())
+                .insert(MovingPlatform)
+                .insert(Platform {
+                    position: recording.initial_pos.clone(),
+                    size: Vec2::new(10., PLATFORM_MARGIN),
+                })
                 .id();
             clones.push(clone_id);
         }
-    }
-    else if recording_on.0 {
+    } else if recording_on.0 {
         let mut buff: Vec<Actions> = Vec::new();
         if kb.pressed(KeyCode::Q) {
             buff.push(Actions::Left);
@@ -82,8 +103,7 @@ fn player_loop_record_system(
             buff.push(Actions::Right);
         } else if kb.pressed(KeyCode::J) {
             buff.push(Actions::Attack);
-        }
-        else {
+        } else {
             buff.push(Actions::Idle);
         }
         if kb.pressed(KeyCode::Z) {
@@ -97,8 +117,8 @@ fn player_loop_record_system(
             commands.entity(entity_id).insert(Recording {
                 index: 0,
                 initial_pos: transform.translation.clone(),
-                initial_acceleration : acceleration.clone(),
-                initial_speed : velocity.clone(),
+                initial_acceleration: acceleration.clone(),
+                initial_speed: velocity.clone(),
                 recorded_actions,
             });
         }
@@ -110,7 +130,6 @@ fn player_loop_record_system(
         }
     }
 }
-
 
 fn loop_movement_system(
     animations: Res<PlayerAnimations>,
@@ -127,74 +146,71 @@ fn loop_movement_system(
         With<TemporalGhost>,
     >,
 ) {
-    for (mut grounded,
+    for (
+        mut grounded,
         mut velocity,
         mut acceleration,
         mut texture_atlas,
         mut transform,
-        mut sprite, 
-        mut recording) in query.iter_mut() {
-            if recording.index == 0 {
-                transform.translation = recording.initial_pos.clone();
-                *acceleration = recording.initial_acceleration.clone();
-                *velocity = recording.initial_speed.clone();
-            }
-            for action in &recording.recorded_actions[recording.index] {
-                match action {
-                    Actions::Left => {
-                        velocity.vx = -200.;
-                        transform.scale.x = -PLAYER_SCALE;
-                        if *texture_atlas != animations.run {
-                            *texture_atlas = animations.run.clone();
-                        };
-                    }
-                    Actions::Right => {
-                        velocity.vx = 200.;
-                        transform.scale.x = PLAYER_SCALE;
-                        if *texture_atlas != animations.run {
-                            *texture_atlas = animations.run.clone();
-                        };
-                    }
-                    Actions::Attack => {
-                        velocity.vx = 0.;
-                        if *texture_atlas != animations.attack_combo {
-                            *texture_atlas = animations.attack_combo.clone();
-                            sprite.index = 0;
-                        };
-                    }
-                    Actions::Jump => {
-                        if grounded.0 {
-                            velocity.vy = 250.;
-                            transform.translation.y += PLATFORM_MARGIN; //this line is to be sure the player gets out of the platform
-                            grounded.0 = false;
-                        }
-                    }
-                    Actions::Idle => {
-                        velocity.vx = 0.;
-                        if *texture_atlas != animations.idle {
-                            *texture_atlas = animations.idle.clone();
-                        };
-                    }
-                }
-            }
-            if velocity.vy < -1. {
-                if *texture_atlas != animations.jump_fall {
-                    *texture_atlas = animations.jump_fall.clone();
-                    sprite.index = 0;
-                }
-            }
-            else if velocity.vy > 1. {
-                if *texture_atlas != animations.jump {
-                    *texture_atlas = animations.jump.clone();
-                    sprite.index = 0;
-                }
-            }
-            else if velocity.vy == 0. && velocity.vx == 0. { 
-                if *texture_atlas != animations.idle {
-                *texture_atlas = animations.idle.clone();
-                }
-            }
-            recording.index = recording.index + 1;
-            recording.index = recording.index % recording.recorded_actions.len();
+        mut sprite,
+        mut recording,
+    ) in query.iter_mut()
+    {
+        if recording.index == 0 {
+            transform.translation = recording.initial_pos.clone();
+            *acceleration = recording.initial_acceleration.clone();
+            *velocity = recording.initial_speed.clone();
         }
+        for action in &recording.recorded_actions[recording.index] {
+            match action {
+                Actions::Left => {
+                    velocity.vx = -200.;
+                    transform.scale.x = -PLAYER_SCALE;
+                    if *texture_atlas != animations.run {
+                        *texture_atlas = animations.run.clone();
+                    };
+                }
+                Actions::Right => {
+                    velocity.vx = 200.;
+                    transform.scale.x = PLAYER_SCALE;
+                    if *texture_atlas != animations.run {
+                        *texture_atlas = animations.run.clone();
+                    };
+                }
+                Actions::Attack => {
+                    velocity.vx = 0.;
+                    if *texture_atlas != animations.attack_combo {
+                        *texture_atlas = animations.attack_combo.clone();
+                        sprite.index = 0;
+                    };
+                }
+                Actions::Jump => {
+                    if grounded.0 {
+                        velocity.vy = 250.;
+                        transform.translation.y += PLATFORM_MARGIN; //this line is to be sure the player gets out of the platform
+                        grounded.0 = false;
+                    }
+                }
+                Actions::Idle => {
+                    velocity.vx = 0.;
+                    if *texture_atlas != animations.idle {
+                        *texture_atlas = animations.idle.clone();
+                    };
+                }
+            }
+        }
+        if velocity.vy < -1. {
+            if *texture_atlas != animations.jump_fall {
+                *texture_atlas = animations.jump_fall.clone();
+                sprite.index = 0;
+            }
+        } else if velocity.vy > 1. {
+            if *texture_atlas != animations.jump {
+                *texture_atlas = animations.jump.clone();
+                sprite.index = 0;
+            }
+        }
+        recording.index = recording.index + 1;
+        recording.index = recording.index % recording.recorded_actions.len();
+    }
 }

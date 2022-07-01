@@ -22,8 +22,7 @@ use platforms::PlatformsPlugin;
 use player::PlayerPlugin;
 use player_loop::PlayerLoopPlugin;
 
-pub const GROUND_LEVEL: f32 = 0.;
-pub const PLATFORM_MARGIN: f32 = 4.; // this is the thickness of the platforms
+pub const PLATFORM_MARGIN: f32 = 10.; // this is the thickness of the platforms
 
 const BACKGROUND_1: &str = "textures/oak_woods_v1.0/background/background_game/background_1.png";
 const BACKGROUND_2: &str = "textures/oak_woods_v1.0/background/background_game/background_2.png";
@@ -72,8 +71,7 @@ fn setup(
     windows: Res<Windows>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
-    commands
-        .spawn_bundle(Camera2dBundle::default());
+    commands.spawn_bundle(Camera2dBundle::default());
 
     let background_1: Handle<Image> = asset_server.load(BACKGROUND_1);
     let background_2: Handle<Image> = asset_server.load(BACKGROUND_2);

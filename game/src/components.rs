@@ -46,6 +46,8 @@ pub struct Platform {
     pub size: Vec2,
     pub position: Vec3,
 }
+#[derive(Component, Clone)]
+pub struct MovingPlatform;
 //endregion : general components
 
 //region : player components
@@ -58,11 +60,11 @@ pub struct RecordingOn(pub bool);
 
 #[derive(Component, Clone)]
 pub struct Recording {
-    pub index : usize,
-    pub initial_pos : Vec3,
-    pub initial_speed : Velocity,
-    pub initial_acceleration : Acceleration,
-    pub recorded_actions : Vec<Vec<Actions>>,
+    pub index: usize,
+    pub initial_pos: Vec3,
+    pub initial_speed: Velocity,
+    pub initial_acceleration: Acceleration,
+    pub recorded_actions: Vec<Vec<Actions>>,
 }
 
 #[derive(Component)]
