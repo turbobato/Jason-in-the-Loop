@@ -69,15 +69,13 @@ fn enemy_attack_criteria() -> ShouldRun {
 
 // le squelette suit le player selon
 fn skeleton_follow_player(
-    time: Res<Time>,
     mut query_monster: Query<
         (
             &mut Velocity,
             &mut Transform,
             &mut Handle<TextureAtlas>,
             &mut TextureAtlasSprite,
-            &mut Acceleration,
-            &Grounded,
+
         ),
         (With<Skeleton>, Without<Player>),
     >,
@@ -88,7 +86,6 @@ fn skeleton_follow_player(
     const MARGIN_WALK: f32 = 40.;
     const MARGIN_IN: f32 = 80.; // portée de l'attaque
     const MARGIN_OUT: f32 = 400.; // portée de poursuite
-    const MARGIN_Y: f32 = 31.; // erreur en y
 
     let tf_player = query_player.single();
     let (x_player, y_player) = (tf_player.translation.x, tf_player.translation.y);
@@ -98,15 +95,13 @@ fn skeleton_follow_player(
         mut tf_monster,
         mut texture_atlas,
         mut sprite,
-        mut acceleration,
-        mut grounded,
     ) in query_monster.iter_mut()
     {
         let (x_monster, y_monster) = (tf_monster.translation.x, tf_monster.translation.y);
 
         let mut x2_plat_monster = 0.;
         let mut x1_plat_monster = 0.;
-        let mut y_plat_monster = 0;
+
 
         let mut x2_plat_player = 0.;
         let mut x1_plat_player = 0.;
@@ -282,12 +277,10 @@ fn projectile_movement(
 // mouvement des ennemis
 fn eye_movement_2(
     time: Res<Time>,
-    win_size: Res<WinSize>,
     mut query: Query<(Entity, &mut Velocity, &mut Transform), With<Eye>>,
 ) {
     let frame_time = 1. / 60.;
     let now = time.seconds_since_startup() as f32;
-    const MARGIN: f32 = 50.;
 
     // mouvmement circulaire des ennemis
     for (entity, velocity, mut transform) in query.iter_mut() {
