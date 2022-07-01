@@ -23,8 +23,6 @@ impl Plugin for PlayerLoopPlugin {
     }
 }
 
-// add record of initial speed and velocity
-
 fn player_loop_record_system(
     animations: Res<PlayerAnimations>,
     mut commands: Commands,
@@ -36,37 +34,15 @@ fn player_loop_record_system(
         query.get_single_mut().unwrap();
     if kb.just_pressed(KeyCode::K) {
         recording_on.0 = !recording_on.0;
+        if !recording_on.0 { //remove recording if we pressed K without spawning a clone
+            if let Some(ref _recording) = recording_option {
+                commands.entity(entity_id).remove::<Recording>();
+            }
+        }
     }
 
-    if recording_on.0 {
-        let mut buff: Vec<Actions> = Vec::new();
-        if kb.pressed(KeyCode::Q) {
-            buff.push(Actions::Left);
-        } else if kb.pressed(KeyCode::D) {
-            buff.push(Actions::Right);
-        } else if kb.pressed(KeyCode::J) {
-            buff.push(Actions::Attack);
-        }
-        else {
-            buff.push(Actions::Idle);
-        }
-        if kb.pressed(KeyCode::Z) {
-            buff.push(Actions::Jump);
-        }
-        if let Some(mut recording) = recording_option {
-            recording.recorded_actions.push(buff);
-        } else {
-            let mut recorded_actions = Vec::new();
-            recorded_actions.push(buff);
-            commands.entity(entity_id).insert(Recording {
-                index: 0,
-                initial_pos: transform.translation.clone(),
-                initial_acceleration : acceleration.clone(),
-                initial_speed : velocity.clone(),
-                recorded_actions,
-            });
-        }
-    } else if !recording_on.0 && kb.just_pressed(KeyCode::L) {
+    if recording_on.0 && kb.just_pressed(KeyCode::L) {
+        recording_on.0 = false;
         if let Some(recording) = recording_option {
             commands.entity(entity_id).remove::<Recording>();
             let clone_id = commands
@@ -98,6 +74,35 @@ fn player_loop_record_system(
             clones.push(clone_id);
         }
     }
+    else if recording_on.0 {
+        let mut buff: Vec<Actions> = Vec::new();
+        if kb.pressed(KeyCode::Q) {
+            buff.push(Actions::Left);
+        } else if kb.pressed(KeyCode::D) {
+            buff.push(Actions::Right);
+        } else if kb.pressed(KeyCode::J) {
+            buff.push(Actions::Attack);
+        }
+        else {
+            buff.push(Actions::Idle);
+        }
+        if kb.pressed(KeyCode::Z) {
+            buff.push(Actions::Jump);
+        }
+        if let Some(mut recording) = recording_option {
+            recording.recorded_actions.push(buff);
+        } else {
+            let mut recorded_actions = Vec::new();
+            recorded_actions.push(buff);
+            commands.entity(entity_id).insert(Recording {
+                index: 0,
+                initial_pos: transform.translation.clone(),
+                initial_acceleration : acceleration.clone(),
+                initial_speed : velocity.clone(),
+                recorded_actions,
+            });
+        }
+    }
 
     if kb.just_pressed(KeyCode::I) {
         if let Some(entity_id) = clones.pop() {
@@ -105,6 +110,7 @@ fn player_loop_record_system(
         }
     }
 }
+
 
 fn loop_movement_system(
     animations: Res<PlayerAnimations>,
