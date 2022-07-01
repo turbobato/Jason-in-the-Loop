@@ -31,13 +31,9 @@ pub struct PlayerAnimations {
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(player_setup);
-        app.add_system(player_keyboard_event_system);
-            //.add_system(resize_attack);
-    }
-
-    fn name(&self) -> &str {
-        std::any::type_name::<Self>()
+        app.add_startup_system(player_setup)
+            .add_system(player_keyboard_event_system)
+            .add_system(resize_attack);
     }
 }
 
@@ -86,7 +82,7 @@ fn player_setup(
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_idle,
             transform: Transform {
-                translation: Vec3::new(4250., 100. + PLAYER_SPAWN.1, PLAYER_SPAWN.2),
+                translation: Vec3::new(PLAYER_SPAWN.0, PLAYER_SPAWN.1, PLAYER_SPAWN.2),
                 scale: Vec3::splat(PLAYER_SCALE),
                 ..Default::default()
             },
@@ -102,7 +98,10 @@ fn player_setup(
         })
         .insert(Grounded(false))
         .insert(SpriteSize::from(PLAYER_DIMENSIONS))
-        .insert(RecordingOn(false));
+        .insert(RecordingOn(false))
+        .insert(Attack{is_attacking: false,is_attacked: false})
+        .insert(SpriteSizeAttack{..Default::default()});
+
 }
 
 fn player_keyboard_event_system(
@@ -116,7 +115,7 @@ fn player_keyboard_event_system(
             &mut Handle<TextureAtlas>,
             &mut Transform,
             &mut TextureAtlasSprite,
-            //&mut Attack,
+            &mut Attack,
         ),
         With<Player>,
     >,
@@ -128,20 +127,18 @@ fn player_keyboard_event_system(
         mut texture_atlas,
         mut transform,
         mut sprite,
-        //mut attack
+        mut attack
     )) = query.get_single_mut()
     {
-        if kb.pressed(KeyCode::Q) 
-        //&& !attack.is_attacking 
-        {
+        if kb.pressed(KeyCode::Q)
+        && !attack.is_attacking{
             velocity.vx = -200.;
             transform.scale.x = -PLAYER_SCALE;
             if *texture_atlas != animations.run {
                 *texture_atlas = animations.run.clone();
             };
         } else if kb.pressed(KeyCode::D) 
-        //&& !attack.is_attacking
-        {
+        && !attack.is_attacking{
             velocity.vx = 200.;
             transform.scale.x = PLAYER_SCALE;
             if *texture_atlas != animations.run {
@@ -152,13 +149,14 @@ fn player_keyboard_event_system(
             if *texture_atlas != animations.attack_combo {
                 *texture_atlas = animations.attack_combo.clone();
                 sprite.index = 0;
-                //attack.is_attacking = true;
+                attack.is_attacking = true;
             };
-        } /*  else if !attack.is_attacking{
+        } else if !attack.is_attacking{
             velocity.vx = 0.;
             if *texture_atlas != animations.idle {
                 *texture_atlas = animations.idle.clone();
-            };*/
+            };
+        } 
 
         if kb.pressed(KeyCode::Z) {
             if grounded.0 {
@@ -198,11 +196,15 @@ fn respawn(
     transform.translation = Vec3::new(PLAYER_SPAWN.0, PLAYER_SPAWN.1, PLAYER_SPAWN.2);
     (acceleration.ax, acceleration.ay) = (0., 0.);
 }
-/* 
+
 fn resize_attack (mut query_player: Query<
-    (&Transform, &mut Attack, &TextureAtlasSprite, &mut SpriteSizeAttack),
-With<Player>>)
+    (&Transform,
+    &mut Attack,
+    &TextureAtlasSprite,
+    &mut SpriteSizeAttack),
+    With<Player>>)
 {
+    
     for (transform, mut attack, sprite, mut sprite_size_attack ) in query_player.iter_mut(){
         if attack.is_attacking {
             //println!("{}", sprite_size_attack.size[0]);
@@ -212,6 +214,7 @@ With<Player>>)
                 sprite_size_attack.position[0] = transform.translation.x;
                 sprite_size_attack.position[1] = transform.translation.y;
                 attack.is_attacking = false;
+                
             }
             else if sprite.index==8{
                 sprite_size_attack.size[0] = 29.;
@@ -221,7 +224,7 @@ With<Player>>)
             }
             else if sprite.index==7{ 
                 sprite_size_attack.size[0] = 59.;
-                sprite_size_attack.size[0] = 64.;
+                sprite_size_attack.size[1] = 64.;
                 sprite_size_attack.position[0] = transform.translation.x + (3.*PLAYER_SCALE);
                 sprite_size_attack.position[1] = transform.translation.y - (32.*PLAYER_SCALE);
             }
@@ -269,4 +272,4 @@ With<Player>>)
             }
         }
     }
-}*/
+}
