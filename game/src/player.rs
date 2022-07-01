@@ -32,7 +32,8 @@ pub struct PlayerAnimations {
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(player_setup)
-            .add_system(player_keyboard_event_system);
+            .add_system(player_keyboard_event_system)
+            .add_system(resize_attack);
     }
 }
 
@@ -111,6 +112,7 @@ fn player_keyboard_event_system(
             &mut Handle<TextureAtlas>,
             &mut Transform,
             &mut TextureAtlasSprite,
+            &mut Attack,
         ),
         With<Player>,
     >,
@@ -122,15 +124,16 @@ fn player_keyboard_event_system(
         mut texture_atlas,
         mut transform,
         mut sprite,
+        mut attack
     )) = query.get_single_mut()
     {
-        if kb.pressed(KeyCode::Q) {
+        if kb.pressed(KeyCode::Q) && !attack.is_attacking {
             velocity.vx = -200.;
             transform.scale.x = -PLAYER_SCALE;
             if *texture_atlas != animations.run {
                 *texture_atlas = animations.run.clone();
             };
-        } else if kb.pressed(KeyCode::D) {
+        } else if kb.pressed(KeyCode::D) && !attack.is_attacking{
             velocity.vx = 200.;
             transform.scale.x = PLAYER_SCALE;
             if *texture_atlas != animations.run {
@@ -141,8 +144,9 @@ fn player_keyboard_event_system(
             if *texture_atlas != animations.attack_combo {
                 *texture_atlas = animations.attack_combo.clone();
                 sprite.index = 0;
+                attack.is_attacking = true;
             };
-        } else {
+        } else if !attack.is_attacking{
             velocity.vx = 0.;
             if *texture_atlas != animations.idle {
                 *texture_atlas = animations.idle.clone();
@@ -185,71 +189,74 @@ fn respawn(
     transform.translation = Vec3::new(PLAYER_SPAWN.0, PLAYER_SPAWN.1, PLAYER_SPAWN.2);
     (acceleration.ax, acceleration.ay) = (0., 0.);
 }
+
 fn resize_attack (mut query_player: Query<
-    &mut Transform, &SpriteSize, Attack,&mut TextureAtlasSprite,&mut Size_attack
-With<Player>>,
-){
-    for (mut transform, sprite_size, attack, mut sprite, mut size_attack ) in query_player.iter_mut(){
-        if attack.0 {
+    (&Transform, &mut Attack, &TextureAtlasSprite, &mut SpriteSizeAttack),
+With<Player>>)
+{
+    for (transform, mut attack, sprite, mut sprite_size_attack ) in query_player.iter_mut(){
+        if attack.is_attacking {
+            //println!("{}", sprite_size_attack.size[0]);
             if sprite.index==9{ 
-                size_attack.size.0 = 0.;
-                size_attack.size.1 = 0.;
-                size_attack.position.0 = transform.translation.x;
-                size_attack.poistion.1 = transform.translation.y;
+                sprite_size_attack.size[0] = 0.;
+                sprite_size_attack.size[1] = 0.;
+                sprite_size_attack.position[0] = transform.translation.x;
+                sprite_size_attack.position[1] = transform.translation.y;
+                attack.is_attacking = false;
             }
             else if sprite.index==8{
-                size_attack.size.0 = 29.;
-                size_attack.size.1 = 15.;
-                size_attack.position.0 = transform.translation.x -(15*PLAYER_SCALE);
-                size_attack.poistion.1 = transform.translation.y -(33*PLAYER_SCALE);
+                sprite_size_attack.size[0] = 29.;
+                sprite_size_attack.size[1] = 15.;
+                sprite_size_attack.position[0] = transform.translation.x - (15.*PLAYER_SCALE);
+                sprite_size_attack.position[1] = transform.translation.y - (33.*PLAYER_SCALE);
             }
             else if sprite.index==7{ 
-                size_attack.size.0 = 59.;
-                size_attack.size.1 = 64.;
-                size_attack.position.0 = transform.translation.x + (3*PLAYER_SCALE);
-                size_attack.poistion.1 = transform.translation.y - (32*PLAYER_SCALE);
+                sprite_size_attack.size[0] = 59.;
+                sprite_size_attack.size[0] = 64.;
+                sprite_size_attack.position[0] = transform.translation.x + (3.*PLAYER_SCALE);
+                sprite_size_attack.position[1] = transform.translation.y - (32.*PLAYER_SCALE);
             }
             else if sprite.index==6{
-                size_attack.size.0 = 0.;
-                size_attack.size.1 = 0.;
-                size_attack.position.0 = transform.translation.x;
-                size_attack.poistion.1 = transform.translation.y;
+                sprite_size_attack.size[0] = 0.;
+                sprite_size_attack.size[1] = 0.;
+                sprite_size_attack.position[0] = transform.translation.x;
+                sprite_size_attack.position[1] = transform.translation.y;
             }
             else if sprite.index==5{ 
-                size_attack.size.0 = 0.;
-                size_attack.size.1 = 0.;
-                size_attack.position.0 = transform.translation.x;
-                size_attack.poistion.1 = transform.translation.y;
+                sprite_size_attack.size[0]= 0.;
+                sprite_size_attack.size[1] = 0.;
+                sprite_size_attack.position[0] = transform.translation.x;
+                sprite_size_attack.position[1] = transform.translation.y;
             }
             else if sprite.index==4{
-                size_attack.size.0 = 63.;
-                size_attack.size.1 = 40.;
-                size_attack.position.0 = transform.translation.x + (18*PLAYER_SCALE);
-                size_attack.poistion.1 = transform.translation.y - (20*PLAYER_SCALE);
+                sprite_size_attack.size[0] = 63.;
+                sprite_size_attack.size[1] = 40.;
+                sprite_size_attack.position[0] = transform.translation.x + (18.*PLAYER_SCALE);
+                sprite_size_attack.position[1] = transform.translation.y - (20.*PLAYER_SCALE);
             }
             else if sprite.index==3{
-                size_attack.size.0 = 26.;
-                size_attack.size.1 = 12.;
-                size_attack.position.0 = transform.translation.x + (38.*PLAYER_SCALE);
-                size_attack.poistion.1 = transform.translation.y - (34.*PLAYER_SCALE);
+                sprite_size_attack.size[0] = 26.;
+                sprite_size_attack.size[1] = 12.;
+                sprite_size_attack.position[0] = transform.translation.x + (38.*PLAYER_SCALE);
+                sprite_size_attack.position[1] = transform.translation.y - (34.*PLAYER_SCALE);
             }
             else if sprite.index==2{ 
-                size_attack.size.0 = 30. ;
-                size_attack.size.1 = 45. ;
-                size_attack.position.0 = transform.translation.x + (41.*PLAYER_SCALE);
-                size_attack.poistion.1 = transform.translation.y - (18.*PLAYER_SCALE);
+                sprite_size_attack.size[0] = 30. ;
+                sprite_size_attack.size[1] = 45. ;
+                sprite_size_attack.position[0] = transform.translation.x + (41.*PLAYER_SCALE);
+                sprite_size_attack.position[1] = transform.translation.y - (18.*PLAYER_SCALE);
             }
             else if sprite.index==1{
-                size_attack.size.0 = 38.;
-                size_attack.size.1 = 38. ;
-                size_attack.position.0 = transform.translation.x + (37.*PLAYER_SCALE);
-                size_attack.poistion.1 = transform.translation.y - (21.*PLAYER_SCALE);
+                sprite_size_attack.size[0] = 38.;
+                sprite_size_attack.size[1] = 38. ;
+                sprite_size_attack.position[0] = transform.translation.x + (37.*PLAYER_SCALE);
+                sprite_size_attack.position[1] = transform.translation.y - (21.*PLAYER_SCALE);
             }
             else if sprite.index==0{
-                size_attack.size.0 = 0.;
-                size_attack.size.1 = 0.;
-                size_attack.position.0 = transform.translation.x;
-                size_attack.poistion.1 = transform.translation.y;
+                sprite_size_attack.size[0] = 0.;
+                sprite_size_attack.size[1] = 0.;
+                sprite_size_attack.position[0] = transform.translation.x;
+                sprite_size_attack.position[1] = transform.translation.y;
             }
         }
     }
