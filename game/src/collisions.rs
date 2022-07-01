@@ -81,7 +81,6 @@ fn collision_attack(
         {
             // Si le player attacking entre en collision avec le squelette normal
             // DANS LE CAS OUU LE PLAUER REGARDE A DROITE
-            if tf_player.scale.x == 1.5 {
                 // println!("test");
                 let player_position = sprite_size_attack_player.position;
                 let player_size = sprite_size_attack_player.size;
@@ -128,7 +127,6 @@ fn collision_attack(
                         }
                     }
                 }
-            }
 
             // si on regarde vers la droite
             if tf_enemy.scale.x == 1. {
