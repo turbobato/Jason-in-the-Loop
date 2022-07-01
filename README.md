@@ -15,3 +15,8 @@ Welcome to this game, yet uncomplete. The concept of this game is that you can r
 * `L` : if a recording has been started previously (by pressing `K`), spawns a clone and stops the recording. If no recording is ongoing, does nothing
 * `I` : deletes the last spawned clone
 
+## How to play the game :
+
+1. Install rust : follow the instructions for your platform on [rustup](https://rustup.rs/)
+2. Clone this repo : open a terminal and type ```git clone git@gitlab.enst.fr:PAF/2122/projetx.git```
+3. Move to the folder game (`cd game`) and run the game with `cargo run`
