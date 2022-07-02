@@ -90,7 +90,9 @@ fn skeleton_follow_player(
     let tf_player = query_player.single();
     let (x_player, y_player) = (tf_player.translation.x, tf_player.translation.y);
 
-    for (mut velocity, mut tf_monster, mut texture_atlas, mut sprite, mut attack_monster) in query_monster.iter_mut() {
+    for (mut velocity, mut tf_monster, mut texture_atlas, mut sprite, mut attack_monster) in
+        query_monster.iter_mut()
+    {
         let (x_monster, y_monster) = (tf_monster.translation.x, tf_monster.translation.y);
 
         let mut x2_plat_monster = 0.;
@@ -133,7 +135,7 @@ fn skeleton_follow_player(
                 same_plat = true;
                 if (x_monster - x_player).abs() < MARGIN_IN {
                     velocity.vx = 0.;
-                    if  *texture_atlas != enemy_animations.attack_skeleton {
+                    if *texture_atlas != enemy_animations.attack_skeleton {
                         *texture_atlas = enemy_animations.attack_skeleton.clone();
                         attack_monster.is_attacking = true;
                         sprite.index = 0;
@@ -198,8 +200,7 @@ fn skeleton_follow_player(
                         *texture_atlas = enemy_animations.walk_skeleton.clone();
                         sprite.index = 0;
                     }
-                }
-                else {
+                } else {
                     velocity.vx = 0.;
                     if *texture_atlas != enemy_animations.idle_skeleton {
                         *texture_atlas = enemy_animations.idle_skeleton.clone();
@@ -207,11 +208,11 @@ fn skeleton_follow_player(
                     }
                 }
             } else {
-                    velocity.vx = 0.;
-                    if *texture_atlas != enemy_animations.idle_skeleton {
-                        *texture_atlas = enemy_animations.idle_skeleton.clone();
-                        sprite.index = 0;
-                    }
+                velocity.vx = 0.;
+                if *texture_atlas != enemy_animations.idle_skeleton {
+                    *texture_atlas = enemy_animations.idle_skeleton.clone();
+                    sprite.index = 0;
+                }
             }
         }
     }
@@ -265,7 +266,7 @@ fn projectile_movement(
 
         if sprite.index == 7 {
             commands.entity(entity).despawn();
-        } 
+        }
     }
 }
 // mouvement des ennemis
@@ -713,22 +714,21 @@ fn resize_attack(
         if sprite.index == 7 {
             sprite_size_attack.size[0] = 50.;
             sprite_size_attack.size[1] = 32.;
-            if transform.scale.x == 1.{
+            if transform.scale.x == 1. {
                 sprite_size_attack.position[0] = transform.translation.x + 48.;
-               
-            }
-            else{
+            } else {
                 sprite_size_attack.position[0] = transform.translation.x - 48.;
-            } 
+            }
             sprite_size_attack.position[1] = transform.translation.y + 2.;
             attack.is_attacking = false;
         } else if sprite.index == 6 {
             sprite_size_attack.size[0] = 48.;
             sprite_size_attack.size[1] = 42.;
-            if transform.scale.x == 1.{
-            sprite_size_attack.position[0] = transform.translation.x + 49.;}
-            else{
-                sprite_size_attack.position[0] = transform.translation.x - 49.;}
+            if transform.scale.x == 1. {
+                sprite_size_attack.position[0] = transform.translation.x + 49.;
+            } else {
+                sprite_size_attack.position[0] = transform.translation.x - 49.;
+            }
             sprite_size_attack.position[1] = transform.translation.y + 22.;
         } else if sprite.index == 5 {
             sprite_size_attack.size[0] = 0.;

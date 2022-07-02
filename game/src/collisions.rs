@@ -1,6 +1,6 @@
+use crate::player::respawn;
 use crate::*;
 use bevy::prelude::*;
-use crate::player::respawn;
 
 pub const COLLISION_MARGIN: f32 = 10.; //margin for collisions
 
@@ -68,13 +68,30 @@ fn collision_with_platform(
 
 fn collision_attack(
     mut commands: Commands,
-    mut query_player: Query<(&mut Transform, &SpriteSize, &SpriteSizeAttack, &Attack, &mut Velocity, &mut Acceleration), With<Player>>,
+    mut query_player: Query<
+        (
+            &mut Transform,
+            &SpriteSize,
+            &SpriteSizeAttack,
+            &Attack,
+            &mut Velocity,
+            &mut Acceleration,
+        ),
+        With<Player>,
+    >,
     query_monster: Query<
         (Entity, &Transform, &SpriteSize, &SpriteSizeAttack, &Attack),
-        (With<Enemy>, Without<Player>)>,
+        (With<Enemy>, Without<Player>),
+    >,
 ) {
-    for (mut tf_player, sprite_size_player, sprite_size_attack_player, attack_player, mut velocity_player, mut acceleration_player) in
-        query_player.iter_mut()
+    for (
+        mut tf_player,
+        sprite_size_player,
+        sprite_size_attack_player,
+        attack_player,
+        mut velocity_player,
+        mut acceleration_player,
+    ) in query_player.iter_mut()
     {
         for (entity, tf_enemy, sprite_size_enemy, sprite_size_attack_enemy, attack_enemy) in
             query_monster.iter()
@@ -131,13 +148,13 @@ fn collision_attack(
                         break;
                     }
                     Collision::Left => {
-                        if attack_enemy.is_attacking{
-                        respawn(velocity_player, tf_player, acceleration_player);
+                        if attack_enemy.is_attacking {
+                            respawn(velocity_player, tf_player, acceleration_player);
                         }
                         break;
                     }
                     Collision::Right => {
-                        if attack_enemy.is_attacking{
+                        if attack_enemy.is_attacking {
                             respawn(velocity_player, tf_player, acceleration_player);
                         }
                         break;
@@ -146,8 +163,8 @@ fn collision_attack(
                         break;
                     }
                     Collision::Inside => {
-                        if attack_enemy.is_attacking{
-                        respawn(velocity_player, tf_player, acceleration_player);
+                        if attack_enemy.is_attacking {
+                            respawn(velocity_player, tf_player, acceleration_player);
                         }
                         break;
                     }

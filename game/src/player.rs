@@ -1,4 +1,4 @@
-use crate::{components::*, PLATFORM_MARGIN, WinSize};
+use crate::{components::*, WinSize, PLATFORM_MARGIN};
 use bevy::prelude::*;
 
 pub const RUN_SPRITE: &str = "textures/knight/Colour1/NoOutline/120x80_PNGSheets/_Run.png";
@@ -37,9 +37,12 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-fn player_fall_respawn(win_size: Res<WinSize>, mut query : Query<(&mut Transform, &mut Velocity, &mut Acceleration), With<Player>>){
+fn player_fall_respawn(
+    win_size: Res<WinSize>,
+    mut query: Query<(&mut Transform, &mut Velocity, &mut Acceleration), With<Player>>,
+) {
     let (mut transform, mut velocity, mut acceleration) = query.single_mut();
-    if transform.translation.y <= -win_size.win_h /2.{
+    if transform.translation.y <= -win_size.win_h / 2. {
         respawn(velocity, transform, acceleration);
     }
 }
@@ -283,7 +286,6 @@ fn resize_attack(
                     sprite_size_attack.position[0] = transform.translation.x + (41. * PLAYER_SCALE);
                 } else {
                     sprite_size_attack.position[0] = transform.translation.x - (41. * PLAYER_SCALE);
-                   
                 }
                 sprite_size_attack.position[1] = transform.translation.y - (18. * PLAYER_SCALE);
             } else if sprite.index == 1 {
