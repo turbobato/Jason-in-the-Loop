@@ -75,21 +75,22 @@ fn skeleton_follow_player(
             &mut Transform,
             &mut Handle<TextureAtlas>,
             &mut TextureAtlasSprite,
+            &mut Attack,
         ),
         (With<Skeleton>, Without<Player>),
     >,
-    query_player: Query<&Transform, With<Player>>,
+    query_player: Query<&Transform, (With<Player>, Without<Skeleton>)>,
     query_plat: Query<&Platform>,
     enemy_animations: Res<EnemyAnimations>,
 ) {
-    const MARGIN_WALK: f32 = 40.;
+    const MARGIN_WALK: f32 = 60.;
     const MARGIN_IN: f32 = 80.; // portée de l'attaque
     const MARGIN_OUT: f32 = 400.; // portée de poursuite
 
     let tf_player = query_player.single();
     let (x_player, y_player) = (tf_player.translation.x, tf_player.translation.y);
 
-    for (mut velocity, mut tf_monster, mut texture_atlas, mut sprite) in query_monster.iter_mut() {
+    for (mut velocity, mut tf_monster, mut texture_atlas, mut sprite, mut attack_monster) in query_monster.iter_mut() {
         let (x_monster, y_monster) = (tf_monster.translation.x, tf_monster.translation.y);
 
         let mut x2_plat_monster = 0.;
@@ -124,8 +125,6 @@ fn skeleton_follow_player(
             if is_on_plat(x1, x2, y, x_monster, y_monster) {
                 x1_plat_monster = x1;
                 x2_plat_monster = x2;
-                //  y_plat_monster = y;
-                //let platform_monster = platform;
             }
 
             if is_on_plat(x1, x2, y, x_player, y_player)
@@ -134,8 +133,9 @@ fn skeleton_follow_player(
                 same_plat = true;
                 if (x_monster - x_player).abs() < MARGIN_IN {
                     velocity.vx = 0.;
-                    if *texture_atlas != enemy_animations.attack_skeleton {
+                    if  *texture_atlas != enemy_animations.attack_skeleton {
                         *texture_atlas = enemy_animations.attack_skeleton.clone();
+                        attack_monster.is_attacking = true;
                         sprite.index = 0;
                     } // attaque
                 } else if (x_monster - x_player).abs() > MARGIN_IN
@@ -198,13 +198,20 @@ fn skeleton_follow_player(
                         *texture_atlas = enemy_animations.walk_skeleton.clone();
                         sprite.index = 0;
                     }
-                } else {
+                }
+                else {
                     velocity.vx = 0.;
                     if *texture_atlas != enemy_animations.idle_skeleton {
                         *texture_atlas = enemy_animations.idle_skeleton.clone();
                         sprite.index = 0;
                     }
                 }
+            } else {
+                    velocity.vx = 0.;
+                    if *texture_atlas != enemy_animations.idle_skeleton {
+                        *texture_atlas = enemy_animations.idle_skeleton.clone();
+                        sprite.index = 0;
+                    }
             }
         }
     }
@@ -252,18 +259,13 @@ fn projectile_movement(
     >,
 ) {
     let delta = time.delta_seconds();
-    const MARGIN: f32 = 50.;
     for (entity, velocity, mut transform, sprite) in query.iter_mut() {
         transform.translation.x += velocity.vx * delta;
         transform.translation.y += velocity.vy * delta;
 
         if sprite.index == 7 {
             commands.entity(entity).despawn();
-        } else if transform.translation.x <= -win_size.win_h / 2.0 - MARGIN
-            || transform.translation.x >= win_size.win_h / 2.0 + MARGIN
-        {
-            commands.entity(entity).despawn();
-        }
+        } 
     }
 }
 // mouvement des ennemis
@@ -436,7 +438,7 @@ fn enemy_setup(
             is_attacking: false,
         });
 
-        commands
+    commands
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
             transform: Transform {
@@ -462,7 +464,7 @@ fn enemy_setup(
             is_attacking: false,
         });
 
-        commands
+    commands
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
             transform: Transform {
@@ -488,7 +490,7 @@ fn enemy_setup(
             is_attacking: false,
         });
 
-        commands
+    commands
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
             transform: Transform {
@@ -514,7 +516,7 @@ fn enemy_setup(
             is_attacking: false,
         });
 
-        commands
+    commands
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
             transform: Transform {
@@ -540,7 +542,7 @@ fn enemy_setup(
             is_attacking: false,
         });
 
-        commands
+    commands
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
             transform: Transform {
@@ -566,7 +568,7 @@ fn enemy_setup(
             is_attacking: false,
         });
 
-        commands
+    commands
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
             transform: Transform {
@@ -591,7 +593,7 @@ fn enemy_setup(
             is_attacked: false,
             is_attacking: false,
         });
-        commands
+    commands
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
             transform: Transform {
@@ -617,7 +619,7 @@ fn enemy_setup(
             is_attacking: false,
         });
 
-        commands
+    commands
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
             transform: Transform {
@@ -643,7 +645,7 @@ fn enemy_setup(
             is_attacking: false,
         });
 
-        commands
+    commands
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
             transform: Transform {
@@ -669,7 +671,7 @@ fn enemy_setup(
             is_attacking: false,
         });
 
-        commands
+    commands
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle_skeleton_idle.clone(),
             transform: Transform {
@@ -694,7 +696,6 @@ fn enemy_setup(
             is_attacked: false,
             is_attacking: false,
         });
-        
 }
 
 fn resize_attack(
@@ -712,13 +713,22 @@ fn resize_attack(
         if sprite.index == 7 {
             sprite_size_attack.size[0] = 50.;
             sprite_size_attack.size[1] = 32.;
-            sprite_size_attack.position[0] = transform.translation.x + 48.;
+            if transform.scale.x == 1.{
+                sprite_size_attack.position[0] = transform.translation.x + 48.;
+               
+            }
+            else{
+                sprite_size_attack.position[0] = transform.translation.x - 48.;
+            } 
             sprite_size_attack.position[1] = transform.translation.y + 2.;
             attack.is_attacking = false;
         } else if sprite.index == 6 {
             sprite_size_attack.size[0] = 48.;
             sprite_size_attack.size[1] = 42.;
-            sprite_size_attack.position[0] = transform.translation.x + 49.;
+            if transform.scale.x == 1.{
+            sprite_size_attack.position[0] = transform.translation.x + 49.;}
+            else{
+                sprite_size_attack.position[0] = transform.translation.x - 49.;}
             sprite_size_attack.position[1] = transform.translation.y + 22.;
         } else if sprite.index == 5 {
             sprite_size_attack.size[0] = 0.;

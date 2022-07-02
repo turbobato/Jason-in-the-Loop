@@ -1,5 +1,6 @@
 use crate::*;
 use bevy::prelude::*;
+use crate::player::respawn;
 
 pub const COLLISION_MARGIN: f32 = 10.; //margin for collisions
 
@@ -67,21 +68,18 @@ fn collision_with_platform(
 
 fn collision_attack(
     mut commands: Commands,
-    query_player: Query<(&Transform, &SpriteSize, &SpriteSizeAttack, &Attack), With<Player>>,
+    mut query_player: Query<(&mut Transform, &SpriteSize, &SpriteSizeAttack, &Attack, &mut Velocity, &mut Acceleration), With<Player>>,
     query_monster: Query<
         (Entity, &Transform, &SpriteSize, &SpriteSizeAttack, &Attack),
-        With<Enemy>,
-    >,
+        (With<Enemy>, Without<Player>)>,
 ) {
-    for (tf_player, sprite_size_player, sprite_size_attack_player, attack_player) in
-        query_player.iter()
+    for (mut tf_player, sprite_size_player, sprite_size_attack_player, attack_player, mut velocity_player, mut acceleration_player) in
+        query_player.iter_mut()
     {
         for (entity, tf_enemy, sprite_size_enemy, sprite_size_attack_enemy, attack_enemy) in
             query_monster.iter()
         {
             // Si le player attacking entre en collision avec le squelette normal
-            // DANS LE CAS OUU LE PLAUER REGARDE A DROITE
-            // println!("test");
             let player_position = sprite_size_attack_player.position;
             let player_size = sprite_size_attack_player.size;
 
@@ -91,20 +89,17 @@ fn collision_attack(
             if let Some(collision) =
                 collide(player_position, player_size, enemy_position, enemy_size)
             {
-                // si il y a eu une collision : que faire ?
                 match collision {
                     Collision::Top => {
                         break;
                     }
                     Collision::Left => {
-                        //println!("Gauche");
                         if attack_player.is_attacking {
                             commands.entity(entity).despawn();
                         }
                         break;
                     }
                     Collision::Right => {
-                        //println!("Droite");
                         if attack_player.is_attacking {
                             commands.entity(entity).despawn();
                         }
@@ -114,8 +109,6 @@ fn collision_attack(
                         break;
                     }
                     Collision::Inside => {
-                        //println!("Inside");
-                        // il y a un pb quand le player est à gauche mais dans l'intérieur
                         if attack_player.is_attacking {
                             commands.entity(entity).despawn();
                         }
@@ -124,45 +117,39 @@ fn collision_attack(
                 }
             }
 
-            // si on regarde vers la droite
-            if tf_enemy.scale.x == 1. {
-                // IF COLLIDE (monstre attaque et player immobile)
+            let player_position = tf_player.translation;
+            let player_size = sprite_size_player.0;
 
-                let player_position = tf_player.translation;
-                let player_size = sprite_size_player.0;
+            let enemy_position = sprite_size_attack_enemy.position;
+            let enemy_size = sprite_size_attack_enemy.size;
 
-                let enemy_position = sprite_size_attack_enemy.position;
-                let enemy_size = sprite_size_attack_enemy.size;
-
-                // Cela correspond à la collision si le monstre est tourné vers la droite
-                if let Some(collision) =
-                    collide(enemy_position, enemy_size, player_position, player_size)
-                {
-                    match collision {
-                        Collision::Top => {
-                            break;
+            if let Some(collision) =
+                collide(enemy_position, enemy_size, player_position, player_size)
+            {
+                match collision {
+                    Collision::Top => {
+                        break;
+                    }
+                    Collision::Left => {
+                        if attack_enemy.is_attacking{
+                        respawn(velocity_player, tf_player, acceleration_player);
                         }
-                        Collision::Left => {
-                            if attack_enemy.is_attacking {
-                                println!("L'ennemi attaque depuis la gauche");
-                            }
-                            break;
+                        break;
+                    }
+                    Collision::Right => {
+                        if attack_enemy.is_attacking{
+                            respawn(velocity_player, tf_player, acceleration_player);
                         }
-                        Collision::Right => {
-                            if attack_enemy.is_attacking {
-                                println!("L'ennemi attaque depuis la droite");
-                            }
-                            break;
+                        break;
+                    }
+                    Collision::Bottom => {
+                        break;
+                    }
+                    Collision::Inside => {
+                        if attack_enemy.is_attacking{
+                        respawn(velocity_player, tf_player, acceleration_player);
                         }
-                        Collision::Bottom => {
-                            break;
-                        }
-                        Collision::Inside => {
-                            if attack_enemy.is_attacking {
-                                println!("L'ennemi attaque depuis l'intérieur");
-                            }
-                            break;
-                        }
+                        break;
                     }
                 }
             }
